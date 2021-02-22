@@ -5,6 +5,7 @@
 Using Docker Container
 ```
 cd src
+composer install
 ./vendor/bin/sail up
 ```
 
