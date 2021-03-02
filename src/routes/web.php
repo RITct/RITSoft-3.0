@@ -1,7 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use \App\Http\Controllers\RegistrationController;
+use \App\Http\Controllers\UserController;
+use \App\Http\Controllers\RoleController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -21,5 +22,6 @@ Route::get("/test", function (){
    return view('test');
 })->middleware("auth.basic");
 
-Route::get('/register', [RegistrationController::class, "create"]);
-Route::post('/register', [RegistrationController::class, "store"]);
+Route::resource('users', UserController::class);
+Route::resource('roles', RoleController::class);
+
