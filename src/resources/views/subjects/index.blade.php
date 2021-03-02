@@ -1,12 +1,12 @@
 <div class="row">
     <div class="col-lg-12 margin-tb">
         <div class="pull-left">
-            <h2>Role Management</h2>
+            <h2>Subject Management</h2>
         </div>
 
         <div class="pull-right">
-            @can('role-create')
-                <a class="btn btn-success" href="{{ route('roles.create') }}"> Create New Role</a>
+            @can('subject-create')
+                <a class="btn btn-success" href="{{ route('subjects.create') }}"> Create New Subject</a>
             @endcan
         </div>
     </div>
@@ -25,18 +25,15 @@
         <th width="280px">Action</th>
     </tr>
 
-    @foreach ($roles as $key => $role)
+    @foreach ($data as $key => $subject)
         <tr>
             <td>{{ ++$i }}</td>
-            <td>{{ $role->name }}</td>
+            <td>{{ $subject->name }}</td>
             <td>
-                <a class="btn btn-info" href="{{ route('roles.show',$role->id) }}">Show</a>
-                @can('role-edit')
-                    <a class="btn btn-primary" href="{{ route('roles.edit',$role->id) }}">Edit</a>
-                @endcan
+                <a class="btn btn-info" href="{{ route('subjects.show',$subject->id) }}">Show</a>
 
-                @can('role-delete')
-                    {!! Form::open(['method' => 'DELETE','route' => ['roles.destroy', $role->id],'style'=>'display:inline']) !!}
+                @can('subject-delete')
+                    {!! Form::open(['method' => 'DELETE','route' => ['subjects.destroy', $subject->id],'style'=>'display:inline']) !!}
                     {!! Form::submit('Delete', ['class' => 'btn btn-danger']) !!}
                     {!! Form::close() !!}
                 @endcan
@@ -46,4 +43,4 @@
 
 </table>
 
-{!! $roles->render() !!}
+{!! $data->render() !!}

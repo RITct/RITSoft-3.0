@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\RoleController;
+use \App\Http\Controllers\SubjectController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,14 +15,11 @@ use \App\Http\Controllers\RoleController;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::view("/", "welcome");
+
+Route::group(["middleware" => ["auth.basic"]], function (){
+    Route::resource('users', UserController::class);
+    Route::resource('roles', RoleController::class);
+    Route::resource("subjects", SubjectController::class);
 });
-
-Route::get("/test", function (){
-   return view('test');
-})->middleware("auth.basic");
-
-Route::resource('users', UserController::class);
-Route::resource('roles', RoleController::class);
 

@@ -8,6 +8,10 @@ use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
+    public function __construct(){
+        $this->middleware('role:Admin', ["only" => ["index", "create", "store", "show"]]);
+    }
+
     public function index(Request $request){
         $roles = Role::orderBy('id','DESC')->paginate(5);
         return view('roles.index',compact('roles'))
