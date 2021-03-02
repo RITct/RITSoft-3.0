@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use \App\Http\Controllers\RegistrationController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,3 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get("/test", function (){
+   return view('test');
+})->middleware("auth.basic");
+
+Route::get('/register', [RegistrationController::class, "create"]);
+Route::post('/register', [RegistrationController::class, "store"]);

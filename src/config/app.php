@@ -162,6 +162,8 @@ return [
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
 
+        // Permissions
+        Spatie\Permission\PermissionServiceProvider::class,
         /*
          * Package Service Providers...
          */
