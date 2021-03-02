@@ -33,6 +33,7 @@ Mention [@UKnowWhoIm](https://github.com/UKnowWhoIm/) if you have any doubts.
 - Alternatively if you intend to use php artisan to host it, you can use whatever db you like.
 - Head over to your .env file(create from .env.example if you don't have one) and set up the db(set values with prefix DB)
 ```
+cd src
 composer install
 php artisan migrate
 ```
