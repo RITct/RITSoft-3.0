@@ -2,23 +2,21 @@
 
 ## Starting the server
 
-Using Docker Container
 ```
 cd src
 composer install
 npm install
 copy .env.example .env
 php artisan key:generate
+```
+
+1. Using Docker Container
+```
 ./vendor/bin/sail up
 ```
 
-Using PHP artisan
+2. Using PHP artisan
 ```
-cd src
-composer install
-npm install
-copy .env.example .env
-php artisan key:generate
 php artisan serve
 ```
 
@@ -70,9 +68,3 @@ php artisan db:seed --class=HODUserSeeder
 **All users have password: 123456.**
 
 3. Run the server.
-
-```
-php artisan serve
-or 
-./vendor/bin/sail up
-```
