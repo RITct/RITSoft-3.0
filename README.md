@@ -1,19 +1,30 @@
 # RITSoft-3.0
 
-## Starting the server
+A web application for RIT students and teachers for academic management. Developed using larvel.
 
-Using Docker Container
-```
-cd src
-composer install
-npm install
-copy .env.example .env
-php artisan key:generate
-./vendor/bin/sail up
+## Prerequisite
+
+1. [PHP 7/8](https://www.php.net/): Backend
+2. [Composer](https://getcomposer.org/): PHP Dependency Management
+3. [NPM](https://www.npmjs.com/): JS Dependency Management
+4. [Docker](https://www.docker.com/): Container Tool
+
+## Getting Started
+
+### First Step
+
+Check php, npm and composer is working properly by typing following commands in a terminal.
+
+```bash
+composer --version
+npm --version
+php --version
 ```
 
-Using PHP artisan
-```
+### Second Step
+
+```bash
+git clone https://github.com/RITct/RITSoft-3.0.git
 cd src
 composer install
 npm install
@@ -22,57 +33,14 @@ php artisan key:generate
 php artisan serve
 ```
 
-## Running the Permission Example
+| Change config values inside copied .env
 
-This example is based on [Spatie example](https://www.itsolutionstuff.com/post/laravel-8-user-roles-and-permissions-tutorialexample.html)
+## Contributors Guideline
 
-Mention [@UKnowWhoIm](https://github.com/UKnowWhoIm/) if you have any doubts.
+## Licence
 
-1. Setup your database
-- If you intend on using sail to host the server, either use mysql db or edit the dockerfile to create your db.
-- Alternatively if you intend to use php artisan to host it, you can use whatever db you like.
-- Head over to your .env file(create from .env.example if you don't have one) and set up the db(set values with prefix DB)
-```
-cd src
-composer install
-php artisan migrate
-```
+## Docs
 
-2. Create mock values for db.
+1. [Permission Example](./docs/permission.md)
 
-- Create permissions(eg: subject-create, subject-edit, etc)
-  
-    We create basic permissions, which will be assigned to roles, or used directly by middleware
-```
-php artisan db:seed --class=PermissionTableSeeder
-```
-- Create Roles(eg: HOD, Admin, etc)
-    - Admin has all listed permissions.
-    - HOD has all subject permissions(eg: subject-create).
-    - Faculty only has subject-list permission.
-```
-php artisan db:seed --class=RoleSeeder
-```
-
-- Create Users
-```
-php artisan db:seed --class=AdminUserSeeder
-php artisan db:seed --class=FacultyUserSeeder
-php artisan db:seed --class=HODUserSeeder
-```
-
-| User Name | Role | 
-| --- | --- |
-| csefaculty1@ritsoft.com | Faculty |
-| csehod@ritsoft.com | HOD |
-| admin@ritsoft.com | Admin |
-
-**All users have password: 123456.**
-
-3. Run the server.
-
-```
-php artisan serve
-or 
-./vendor/bin/sail up
-```
+## Contributors
