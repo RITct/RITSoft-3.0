@@ -33,7 +33,7 @@ php artisan key:generate
 php artisan serve
 ```
 
-| Change config values inside copied .env
+Change config values inside copied .env
 
 ## Contributors Guideline
 
@@ -41,6 +41,30 @@ php artisan serve
 
 ## Docs
 
-1. [Permission Example](./docs/permission.md)
+[Permission Example](./docs/permission.md)
+
+1. For setting up roles and permissions
+
+```
+php artisan migrate
+php artisan db:seed --class=PermissionTableSeeder
+php artisan db:seed --class=RoleSeeder
+```
+
+2. Setup users
+    - Admin: `php artisan db:seed --class=AdminUserSeeder`
+    - HOD: `php artisan db:seed --class=HODUserSeeder`
+    - Faculty: `php artisan db:seed --class=FacultyUserSeeder`
+    - Student: `php artisan db:seed --class=StudentSeeder`
+    
+| UserName | Roles |
+| --- | --- |
+| csestudent@rit.com | Student |
+| csefaculty1@rit.com | Faculty |
+| csehod@rit.com | HOD |
+| admin@rit.com | Admin |
+
+**All users have 123456 as their password**
+
 
 ## Contributors

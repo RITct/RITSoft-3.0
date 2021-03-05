@@ -4,6 +4,9 @@ This example is based on [Spatie example](https://www.itsolutionstuff.com/post/l
 
 Mention [@UKnowWhoIm](https://github.com/UKnowWhoIm/) if you have any doubts.
 
+0. Goto `spatie-permissions` branch.
+
+
 1. Setup your database
 
 -   If you intend on using sail to host the server, either use mysql db or edit the dockerfile to create your db.
