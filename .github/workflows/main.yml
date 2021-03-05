@@ -25,4 +25,4 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: PHP Lint
-        uses: michaelw90/PHP-Lint@2.1.0
+        uses: overtrue/phplint@master
