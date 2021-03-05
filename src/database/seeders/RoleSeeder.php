@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Roles;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -15,15 +16,12 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $roleAdmin = Role::create(['name' => 'Admin']);
+        $roleAdmin = Role::create(['name' => Roles::Admin]);
         $permissions = Permission::pluck('id','id')->all();
         $roleAdmin->syncPermissions($permissions);
 
-        $roleHod = Role::create(['name' => 'HOD']);
-        $roleHod->syncPermissions(['subject-edit', 'subject-create', 'subject-delete', 'subject-list']);
-
-        $roleFaculty = Role::create(['name' => 'Faculty']);
-        $roleFaculty->syncPermissions(['subject-list']);
-
+        Role::create(['name' => Roles::HOD]);
+        Role::create(['name' => Roles::Faculty]);
+        Role::create(['name' => Roles::Student]);
     }
 }

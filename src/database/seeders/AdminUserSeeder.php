@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Roles;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
@@ -17,11 +18,11 @@ class AdminUserSeeder extends Seeder
     public function run(){
         $user = User::create([
             'name' => 'RITSOFT Admin',
-            'email' => 'admin@ritsoft.com',
+            'email' => 'admin@rit.com',
             'password' => bcrypt('123456')
         ]);
 
-        $user->assignRole("Admin");
+        $user->assignRole(Roles::Admin);
 
     }
 }

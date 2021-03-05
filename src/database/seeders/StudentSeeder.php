@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Enums\Roles;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use App\Enums\Roles;
 
-class HODUserSeeder extends Seeder
+class StudentSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,11 +16,11 @@ class HODUserSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'CSE HOD',
-            'email' => 'csehod@rit.com',
+            'name' => 'CSE Student',
+            'email' => 'csestudent@rit.com',
             'password' => bcrypt('123456')
         ]);
 
-        $user->assignRole(Roles::HOD);
+        $user->assignRole(Roles::Student);
     }
 }

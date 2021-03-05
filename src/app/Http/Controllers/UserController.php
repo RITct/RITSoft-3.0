@@ -12,9 +12,9 @@ class UserController extends Controller
 {
 
     public function __construct(){
-        $this->middleware('permission:user-create', ['only' => ['create', 'store']]);
-        $this->middleware('permission:user-edit', ['only' => ['edit', 'update']]);
-        $this->middleware('permission:user-delete', ['only' => ['destroy']]);
+        $this->middleware('permission:user.create', ['only' => ['create', 'store']]);
+        $this->middleware('permission:user.edit', ['only' => ['edit', 'update']]);
+        $this->middleware('permission:user.delete', ['only' => ['destroy']]);
     }
 
     public function index(Request $request)

@@ -2,14 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Roles;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 
-class RoleController extends Controller
-{
+class RoleController extends Controller{
+
     public function __construct(){
-        $this->middleware('role:Admin', ["only" => ["index", "create", "store", "show"]]);
+        $this->middleware('role:' . Roles::Admin, ["only" => ["index", "create", "store", "show"]]);
     }
 
     public function index(Request $request){
