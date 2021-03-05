@@ -26,5 +26,3 @@ jobs:
 
       - name: PHP Lint
         uses: overtrue/phplint@master
-        with:
-          path: ./src
