@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use \App\Http\Controllers\UserController;
 use \App\Http\Controllers\RoleController;
-use \App\Http\Controllers\SubjectController;
+use \App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -20,6 +20,7 @@ Route::view("/", "welcome");
 Route::group(["middleware" => ["auth.basic"]], function (){
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
-    Route::resource("subjects", SubjectController::class);
 });
 
+Route::get('auth/login', [AuthController::class, "login"])->name("login");
+Route::post("auth/login", [AuthController::class, "authenticate"]);
