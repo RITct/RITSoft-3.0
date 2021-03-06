@@ -37,6 +37,8 @@ Change config values inside copied .env
 
 ## Contributors Guideline
 
+This project is a work in progress, so try to update the readme as you add more features.
+
 ## Licence
 
 ## Docs
