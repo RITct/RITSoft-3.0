@@ -7,11 +7,11 @@
         <nav>
             <div id="nav-auth">
                 @guest
-                    <a href="/auth/login">Login</a>
+                    {!! link_to_route("login", "Login") !!}
                 @endguest
 
                 @auth
-                    <span>You're logged in as {{ Auth::user()->email }}</span>
+                    <span>You're logged in as {{ Auth::user()->email }}, {!! link_to_route("logout", "Logout") !!}</span>
                 @endauth
             </div>
         </nav>

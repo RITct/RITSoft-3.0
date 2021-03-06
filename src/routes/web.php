@@ -17,10 +17,13 @@ use \App\Http\Controllers\AuthController;
 
 Route::view("/", "welcome");
 
-Route::group(["middleware" => ["auth.basic"]], function (){
+Route::group(["middleware" => ["auth"]], function (){
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
+    Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
 });
 
-Route::get('auth/login', [AuthController::class, "login"])->name("login");
-Route::post("auth/login", [AuthController::class, "authenticate"]);
+Route::group(["middleware" => ["guest"]], function (){
+    Route::get("auth/login", [AuthController::class, "login"])->name("login");
+    Route::post("auth/login", [AuthController::class, "authenticate"]);
+});
