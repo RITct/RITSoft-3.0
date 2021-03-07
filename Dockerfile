@@ -15,11 +15,9 @@ ENV PATH="/root/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-ENV DB_DATABASE=/ritsoft/database/database.sqlite
 COPY ./src /ritsoft
-RUN cd /ritsoft \
-&& composer install \
-&& npm install \
-&& php artisan migrate
+WORKDIR /ritsoft
+RUN composer install \
+&& npm install
 
-CMD ["php", "/ritsoft/artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+CMD ["./startserver.sh"]

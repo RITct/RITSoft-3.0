@@ -1,0 +1,36 @@
+version: "3.5"
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Db for laravel
+      DB_CONNECTION: pgsql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 5421
+      DB_DATABASE: ritsoft
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+
+  postgres:
+    container_name: "ritsoft-db"
+    image: "postgres"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ritsoft
+    volumes:
+      - postgres:/data/postgres
+    ports:
+    - "5421:5432"
+    networks:
+      - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+  postgres:
