@@ -17,13 +17,10 @@ class CreateStudentTable extends Migration
             $table->id();
             $table->string('admission_id')->unique();
             $table->tinyInteger('current_sem');
-            $table->integer('sem_id')->unsigned()->nullable();
-            $table->integer('subject_id')->unsigned()->nullable();
-            $table->integer('series_marks_id')->unsigned()->nullable();
-            $table->integer('sessional_marks_id')->unsigned()->nullable();
-            $table->integer('university_marks_id')->unsigned()->nullable();
-            $table->integer('attendence_id')->unsigned()->nullable();
-            $table->integer('feedback_id')->unsigned()->nullable();
+            $table->integer('sem_id')->unsigned();
+            $table->integer('subject_id')->unsigned();
+            $table->integer('curriculum_id')->unsigned();
+            $table->integer('attendance_id')->unsigned();
             $table->timestamps();
         });
     }
