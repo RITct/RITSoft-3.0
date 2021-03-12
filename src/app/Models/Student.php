@@ -28,28 +28,13 @@ class Student extends Model
     //     return $this->hasMany(Subject::class);
     // }
 
-    // public function series_marks()
+    // public function curriculum()
     // {
-    //     return $this->hasMany(Series_marks::class);
-    // }
-
-    // public function sessional_marks()
-    // {
-    //     return $this->hasMany(Sessional_marks::class);
-    // }
-
-    // public function university_marks()
-    // {
-    //     return $this->hasMany(University_marks::class);
+    //     return $this->hasMany(Curriculum::class);
     // }
 
     // public function attendance()
     // {
     //     return $this->hasMany(Attendance::class);
-    // }
-
-    // public function feedback()
-    // {
-    //     return $this->hasMany(Feedback::class);
     // }
 }
