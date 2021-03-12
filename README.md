@@ -37,6 +37,7 @@ Change config values inside copied .env
 
 ## Contributors Guideline
 
+- [Laravel](https://laravel.com/docs/8.x/contributions#coding-style) recommends [PSR-2](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md) coding style. 
 ## Licence
 
 ## Docs
