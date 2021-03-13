@@ -33,6 +33,6 @@ class CreateCurriculumTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('curriculum');
+        Schema::dropIfExists('curriculums');
     }
 }

@@ -17,8 +17,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run(){
         $user = User::create([
-            'name' => 'RITSOFT Admin',
-            'email' => 'admin@rit.com',
+            'username' => 'admin@rit.com',
             'password' => bcrypt('123456')
         ]);
 

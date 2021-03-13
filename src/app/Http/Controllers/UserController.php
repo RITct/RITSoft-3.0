@@ -33,13 +33,12 @@ class UserController extends Controller
 
     public function store(){
         $this->validate(request(), [
-            'name' => 'required',
-            'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
             'roles' => 'required'
         ]);
 
-        $user = User::create(request(['name', 'email', 'password']));
+        $user = User::create(request(['username', 'password']));
 
         foreach (request('roles') as $role)
             $user->assignRole($role);
@@ -65,8 +64,7 @@ class UserController extends Controller
 
     public function update(Request $request, $id){
         $this->validate($request, [
-            'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$id,
+            'email' => 'required|unique:users,username,'.$id,
             'password' => 'same:confirm-password',
             'roles' => 'required'
         ]);

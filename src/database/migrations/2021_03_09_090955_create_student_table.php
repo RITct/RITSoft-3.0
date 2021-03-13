@@ -15,7 +15,10 @@ class CreateStudentTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string('admission_id')->unique();
+            $table->string('admission_id',15)->unique();
+            $table->string('name',40);
+            $table->string('phone', 13);
+            $table->string('address', 256);
             $table->tinyInteger('current_sem');
             $table->integer('sem_reg_id')->unsigned();
             $table->integer('subject_id')->unsigned();

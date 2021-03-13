@@ -16,8 +16,7 @@ class HODUserSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'CSE HOD',
-            'email' => 'csehod@rit.com',
+            'username' => 'csehod@rit.com',
             'password' => bcrypt('123456')
         ]);
 

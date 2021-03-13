@@ -11,7 +11,7 @@
                 @endguest
 
                 @auth
-                    <span>You're logged in as {{ Auth::user()->email }}, {!! link_to_route("logout", "Logout") !!}</span>
+                    <span>You're logged in as {{ Auth::user()->username }}, {!! link_to_route("logout", "Logout") !!}</span>
                 @endauth
             </div>
         </nav>

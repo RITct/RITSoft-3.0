@@ -16,8 +16,7 @@ class FacultyUserSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'CSE Faculty 1',
-            'email' => 'csefaculty1@rit.com',
+            'username' => 'csefaculty1@rit.com',
             'password' => bcrypt('123456')
         ]);
 
