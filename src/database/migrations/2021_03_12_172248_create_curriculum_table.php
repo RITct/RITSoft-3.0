@@ -13,7 +13,7 @@ class CreateCurriculumTable extends Migration
      */
     public function up()
     {
-        Schema::create('curriculum', function (Blueprint $table) {
+        Schema::create('curriculums', function (Blueprint $table) {
             $table->id();
             $table->integer('subject_id')->unsigned();
             $table->integer('student_id')->unsigned();

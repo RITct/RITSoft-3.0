@@ -17,7 +17,7 @@ class CreateStudentTable extends Migration
             $table->id();
             $table->string('admission_id')->unique();
             $table->tinyInteger('current_sem');
-            $table->integer('sem_id')->unsigned();
+            $table->integer('sem_reg_id')->unsigned();
             $table->integer('subject_id')->unsigned();
             $table->integer('curriculum_id')->unsigned();
             $table->integer('attendance_id')->unsigned();
