@@ -14,7 +14,7 @@ class Curriculum extends Model
         'sessional_marks' => null,
         'university_marks' => null,
         'feedback' => false
-    ]
+    ];
 
     // public function subject()
     // {
