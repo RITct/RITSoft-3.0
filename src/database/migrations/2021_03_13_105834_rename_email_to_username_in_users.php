@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddUsernameRemoveNameEmailFromUsers extends Migration
+class RenameEmailToUsernameInUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -15,7 +15,6 @@ class AddUsernameRemoveNameEmailFromUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn("email", "username");
-            $table->dropColumn("name");
         });
     }
 
@@ -28,7 +27,6 @@ class AddUsernameRemoveNameEmailFromUsers extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->renameColumn("username", "email");
-            $table->addColumn("string", "name");
         });
     }
 }
