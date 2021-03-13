@@ -1,32 +1,42 @@
 version: "3"
 
 services:
-  postgres-db:
-    container_name: "ritsoft-db"
-    image: "postgres"
-    environment:
-      POSTGRES_USER: ritsoftadmin
-      POSTGRES_PASSWORD: ritsoftadmin
-      POSTGRES_DB: ritsoft
+  mysql-db:
+    image: 'mysql:8.0'
     ports:
-      - "5421:5432"
+      - '3306:3307'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'ritsoft'
+      MYSQL_DATABASE: 'ritsoft'
+      MYSQL_USER: 'ritsoft'
+      MYSQL_PASSWORD: 'ritsoft'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+
     networks:
       - default
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping" ]
+
+    volumes:
+      - "./db-data:/var/lib/mysql"
 
   app:
+    container_name: "ritsoft_app"
     build: .
     ports:
       - "8000:8000"
     networks:
       - default
+    depends_on:
+      - mysql-db
     environment:
-      # Db for laravel
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres-db
-      - DB_PORT=5432
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql-db
+      - DB_PORT=3306
       - DB_DATABASE=ritsoft
-      - DB_USERNAME=ritsoftadmin
-      - DB_PASSWORD=ritsoftadmin
+      - DB_USERNAME=ritsoft
+      - DB_PASSWORD=ritsoft
 
 networks:
   default:
+    driver: bridge
