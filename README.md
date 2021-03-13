@@ -4,36 +4,38 @@ A web application for RIT students and teachers for academic management. Develop
 
 ## Prerequisite
 
-1. [PHP 7/8](https://www.php.net/): Backend
-2. [Composer](https://getcomposer.org/): PHP Dependency Management
-3. [NPM](https://www.npmjs.com/): JS Dependency Management
-4. [Docker](https://www.docker.com/): Container Tool
+- [Docker](https://www.docker.com/): Container Tool
 
 ## Getting Started
 
 ### First Step
 
-Check php, npm and composer is working properly by typing following commands in a terminal.
-
-```bash
-composer --version
-npm --version
-php --version
+Verify docker and docker-compose is installed by running
+```
+docker --version
+docker-compose --version
 ```
 
 ### Second Step
+Run
+```
+docker-compose build
+docker-compose up -d
+```
+**Run `docker-compose build` only if you're setting up for the first time or have made changes.**
 
-```bash
-git clone https://github.com/RITct/RITSoft-3.0.git
-cd src
-composer install
-npm install
-copy .env.example .env
-php artisan key:generate
-php artisan serve
+If you're setting up for the first time, run
+```
+docker exec -it ritsoft_app /ritsoft/initialsetup.sh
 ```
 
-Change config values inside copied .env
+To stop the container run `docker-compose down`
+
+### Running shell commands inside the container
+
+Use the format `docker exec -it ritsoft_app <CMD>`
+
+An Example `docker exec -it ritsoft_app php artisan migrate`
 
 ## Contributors Guideline
 
@@ -46,16 +48,14 @@ Change config values inside copied .env
 1. For setting up roles and permissions
 
 ```
-php artisan migrate
-php artisan db:seed --class=PermissionTableSeeder
-php artisan db:seed --class=RoleSeeder
+docker exec -it ritsoft_app /ritsoft/initialsetup.sh
 ```
 
 2. Setup users
-    - Admin: `php artisan db:seed --class=AdminUserSeeder`
-    - HOD: `php artisan db:seed --class=HODUserSeeder`
-    - Faculty: `php artisan db:seed --class=FacultyUserSeeder`
-    - Student: `php artisan db:seed --class=StudentSeeder`
+    - Admin: `docker exec -it ritsoft_app php artisan db:seed --class=AdminUserSeeder`
+    - HOD: `docker exec -it ritsoft_app php artisan db:seed --class=HODUserSeeder`
+    - Faculty: `docker exec -it ritsoft_app php artisan db:seed --class=FacultyUserSeeder`
+    - Student: `docker exec -it ritsoft_app php artisan db:seed --class=StudentSeeder`
     
 | UserName | Roles |
 | --- | --- |
