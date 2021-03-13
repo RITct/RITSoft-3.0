@@ -17,7 +17,8 @@ class CreateCurriculumTable extends Migration
             $table->id();
             $table->integer('subject_id')->unsigned();
             $table->integer('student_id')->unsigned();
-            $table->double('series_marks')->nullable();
+            $table->double('series_marks_1')->nullable();
+            $table->double('series_marks_2')->nullable();
             $table->double('sessional_marks')->nullable();
             $table->double('university_marks')->nullable();
             $table->boolean('feedback');

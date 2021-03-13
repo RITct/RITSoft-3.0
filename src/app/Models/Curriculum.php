@@ -10,7 +10,8 @@ class Curriculum extends Model
     use HasFactory;
 
     protected $attributes = [
-        'series_marks' => null,
+        'series_marks_1' => null,
+        'series_marks_2' => null,
         'sessional_marks' => null,
         'university_marks' => null,
         'feedback' => false
