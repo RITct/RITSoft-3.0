@@ -22,6 +22,8 @@ Run
 docker-compose build
 docker-compose up -d
 ```
+Visit `localhost:8000` to view the app.
+
 **Run `docker-compose build` only if you're setting up for the first time or have made changes.**
 
 If you're setting up for the first time, run
