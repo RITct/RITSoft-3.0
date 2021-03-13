@@ -13,7 +13,7 @@ class Student extends Model
     public $incrementing = false;
     protected $keyType = 'string';
 
-    public function role()
+    public function user()
     {
         return $this->hasOne(User::class);
     }

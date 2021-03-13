@@ -19,7 +19,7 @@ class Curriculum extends Migration
             $table->double('series_marks')->unsigned()->nullable();
             $table->double('sessional_marks')->unsigned()->nullable();
             $table->double('university_marks')->unsigned()->nullable();
-            $table->double('feedback_id')->unsigned()->nullable();
+            $table->boolean('feedback');
             $table->timestamps();
         });
     }
