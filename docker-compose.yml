@@ -12,8 +12,6 @@ services:
       MYSQL_PASSWORD: 'ritsoft'
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
 
-    networks:
-      - default
     healthcheck:
       test: [ "CMD", "mysqladmin", "ping" ]
 
@@ -25,8 +23,6 @@ services:
     build: .
     ports:
       - "8000:8000"
-    networks:
-      - default
     depends_on:
       - mysql-db
     environment:
@@ -36,7 +32,3 @@ services:
       - DB_DATABASE=ritsoft
       - DB_USERNAME=ritsoft
       - DB_PASSWORD=ritsoft
-
-networks:
-  default:
-    driver: bridge
