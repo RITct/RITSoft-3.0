@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RemoveNameFromUsers extends Migration
+class CreateStudentAdmissionIdInUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class RemoveNameFromUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn("name");
+            $table->addColumn("integer", "student_admission_id")->nullable();
         });
     }
 
@@ -26,7 +26,7 @@ class RemoveNameFromUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->addColumn("string", "name")->default("");
+            $table->removeColumn("student_admission_id");
         });
     }
 }

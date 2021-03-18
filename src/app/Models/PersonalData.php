@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class PersonalData extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "phone_no", "address"];
+    protected $fillable = ["name", "phone", "address"];
 }

@@ -8,7 +8,7 @@ class Student extends PersonalData
 {
     use HasFactory;
 
-    protected $primaryKey = 'admission_no';
+    protected $primaryKey = 'admission_id';
     public $incrementing = false;
     protected $keyType = 'string';
 
