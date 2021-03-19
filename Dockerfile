@@ -6,7 +6,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 
 # Node/NPM
 ENV NODE_VERSION=14.0.0
-RUN apt install -y curl
+RUN apt install -y curl zip unzip
 RUN curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
 ENV NVM_DIR=/root/.nvm
 RUN . "$NVM_DIR/nvm.sh" && nvm install ${NODE_VERSION}
@@ -19,6 +19,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 COPY ./src /ritsoft
 WORKDIR /ritsoft
 RUN composer install \
-&& npm install
+    && npm install
+
+RUN chmod +x ./startserver.sh
 
 CMD ["./startserver.sh"]
