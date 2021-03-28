@@ -17,7 +17,7 @@ class HODUserSeeder extends Seeder
     {
         $user = User::create([
             'username' => 'csehod@rit.com',
-            'password' => bcrypt('123456')
+            'password' => '123456'
         ]);
 
         $user->assignRole(Roles::HOD);
