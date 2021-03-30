@@ -16,9 +16,8 @@ class FacultyUserSeeder extends Seeder
     public function run()
     {
         $user = User::create([
-            'name' => 'CSE Faculty 1',
-            'email' => 'csefaculty1@rit.com',
-            'password' => bcrypt('123456')
+            'username' => 'csefaculty1@rit.com',
+            'password' => '123456'
         ]);
 
         $user->assignRole(Roles::Faculty);

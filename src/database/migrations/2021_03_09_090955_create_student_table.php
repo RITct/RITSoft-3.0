@@ -15,12 +15,18 @@ class CreateStudentTable extends Migration
     {
         Schema::create('students', function (Blueprint $table) {
             $table->id();
-            $table->string('admission_id')->unique();
+            $table->foreignId("user_id")->references("id")->on("users")->onDelete("cascade");
+            $table->string('admission_id',15)->unique();
+            $table->string('name',40);
+            $table->string('phone', 13);
+            $table->string('address', 256);
             $table->tinyInteger('current_sem');
-            $table->integer('sem_reg_id')->unsigned();
+            $table->foreignId('sem_reg_id')->nullable();
+            /*
             $table->integer('subject_id')->unsigned();
-            $table->integer('curriculum_id')->unsigned();
+            $table->foreignId('curriculum_id');
             $table->integer('attendance_id')->unsigned();
+            */
             $table->timestamps();
         });
     }

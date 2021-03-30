@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Roles;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,8 +19,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name',
-        'email',
+        'username',
         'password',
     ];
 
@@ -41,4 +41,29 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // Hash Password
+    public function setPasswordAttribute($password){
+        $this->attributes['password'] = bcrypt($password);
+    }
+
+    public function student(){
+        return $this->hasOne(Student::class);
+    }
+
+    public function getProfile($authType=null){
+        $profileType = $authType ? $authType : $this->roles()->first()->name;
+        switch ($profileType){
+            case Roles::Student: return $this->student()->first();
+            // Map roles as we create them
+        }
+        return null;
+    }
+
+    public function name(){
+        $profile = $this->getProfile();
+        if($profile)
+            return $profile->name;
+        return "";
+    }
 }

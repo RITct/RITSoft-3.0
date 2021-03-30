@@ -3,13 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
-class Student extends Model
+class Student extends PersonalData
 {
     use HasFactory;
 
-    protected $primaryKey = 'admission_no';
+    protected $primaryKey = 'admission_id';
     public $incrementing = false;
     protected $keyType = 'string';
 
