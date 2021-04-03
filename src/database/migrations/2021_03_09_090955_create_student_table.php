@@ -22,11 +22,6 @@ class CreateStudentTable extends Migration
             $table->string('address', 256);
             $table->tinyInteger('current_sem');
             $table->foreignId('sem_reg_id')->nullable();
-            /*
-            $table->integer('subject_id')->unsigned();
-            $table->foreignId('curriculum_id');
-            $table->integer('attendance_id')->unsigned();
-            */
             $table->timestamps();
         });
     }

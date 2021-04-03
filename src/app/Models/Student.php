@@ -32,8 +32,7 @@ class Student extends PersonalData
     //     return $this->hasMany(Curriculum::class);
     // }
 
-    // public function attendance()
-    // {
-    //     return $this->hasMany(Attendance::class);
-    // }
+    public function attendance(){
+        return $this->hasMany(Attendance::class);
+    }
 }

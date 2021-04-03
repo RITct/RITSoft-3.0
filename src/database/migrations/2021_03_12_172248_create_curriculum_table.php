@@ -16,7 +16,7 @@ class CreateCurriculumTable extends Migration
         Schema::create('curriculums', function (Blueprint $table) {
             $table->id();
             $table->integer('subject_id')->unsigned();
-            $table->integer('student_id')->unsigned();
+            $table->string('student_admission_id');
             $table->double('series_marks_1')->nullable();
             $table->double('series_marks_2')->nullable();
             $table->double('sessional_marks')->nullable();
