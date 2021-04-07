@@ -28,6 +28,11 @@ services:
             - mysql-db
         networks:
             - app-network
+        volumes:
+            - "./src:/ritsoft"
+            # Are these 2 really necessary?
+            - "/ritsoft/node_modules/"
+            - "/ritsoft/vendor/"
 networks:
     app-network:
         driver: bridge
