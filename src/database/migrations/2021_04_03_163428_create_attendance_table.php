@@ -18,7 +18,7 @@ class CreateAttendanceTable extends Migration
             $table->date("date");
             $table->smallInteger("hour")->unsigned();
             $table->boolean("duty_leave")->default(false);
-            $table->string("student_admission_id")->unsigned();
+            $table->string("student_admission_id");
             $table->foreign("student_admission_id")->references("admission_id")->on("students");
             $table->timestamps();
         });
