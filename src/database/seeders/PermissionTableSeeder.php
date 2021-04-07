@@ -25,6 +25,11 @@ class PermissionTableSeeder extends Seeder
             'user.update',
             'user.delete',
             'user.*',
+            'attendance.retrieve',
+            'attendance.list',
+            'attendance.create',
+            'attendance.update',
+            'attendance.delete',
         ];
 
         foreach ($permissions as $permission) {
