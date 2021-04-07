@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+    mysql-db:
+        image: mysql:8.0
+        expose:
+            - "3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ritsoft
+            MYSQL_DATABASE: ritsoft
+            MYSQL_USER: ritsoft
+            MYSQL_PASSWORD: ritsoft
+            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+        command: --default-authentication-plugin=mysql_native_password
+        networks:
+            - app-network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping"]
+        volumes:
+            - "./db-data:/var/lib/mysql"
+
+    app:
+        container_name: "ritsoft_app"
+        build: .
+        ports:
+            - "8000:8000"
+        depends_on:
+            - mysql-db
+        networks:
+            - app-network
+networks:
+    app-network:
+        driver: bridge
