@@ -1,0 +1,1 @@
+docker exec -it ritsoft_app composer require $1
