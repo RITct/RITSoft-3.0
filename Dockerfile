@@ -29,7 +29,6 @@ WORKDIR /ritsoft
 RUN cd /ritsoft && \
     composer install --prefer-dist && \
     npm install && \
-    npm install browser-sync browser-sync-webpack-plugin@2.0.1 --save-dev --production=false && \
     chmod +x ./startserver.sh
 
 CMD ["./startserver.sh"]
