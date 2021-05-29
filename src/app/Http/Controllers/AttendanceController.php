@@ -34,7 +34,7 @@ class AttendanceController extends Controller
         // Only Faculty
     }
 
-    public function show(Request $request, $student_admission_id){
+    public function show($student_admission_id){
         // Here student admission id makes more sense than attendance id
         // Same as index
         // Student can view their only
@@ -42,23 +42,6 @@ class AttendanceController extends Controller
 
         if($student == null || $student_admission_id != $student->admission_id)
             abort(403);
-
-        $raw_from_date = $request->input("from");
-        $raw_to_date = $request->input("to");
-        if($raw_from_date) {
-            $from_date = date_parse($raw_from_date);
-
-            if($raw_to_date)
-                $to_date = date_parse($raw_to_date);
-            else
-                $to_date = date("dd-mm-yyyy");
-
-            Attendance::with('absentees')
-                ->where('absentees.student_id')
-                ->whereBetween('absentees.date', [$from_date, $to_date]);
-
-        }
-
         return view("attendance.retrieve");
     }
 
