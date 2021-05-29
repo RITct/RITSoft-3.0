@@ -54,6 +54,12 @@ Example
 sh ./composer_install.sh bensampo/laravel-enum
 ```
 
+### Creating models
+
+```
+sh ./make_model.sh <model_name>
+```
+
 ### Setting up your IDE and Code Inspection
 
 So far the easiest way I've seen is just copying the vendor directory from the container to host. 

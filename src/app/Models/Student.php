@@ -17,16 +17,6 @@ class Student extends PersonalData
         return $this->hasOne(User::class);
     }
 
-    // public function subject()
-    // {
-    //     return $this->hasMany(Subject::class);
-    // }
-
-    // public function curriculum()
-    // {
-    //     return $this->hasMany(Curriculum::class);
-    // }
-
     public function attendance(){
         return $this->hasMany(Attendance::class);
     }

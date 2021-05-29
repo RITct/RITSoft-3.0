@@ -1,0 +1,1 @@
+docker exec -it ritsoft_app php artisan make:model $1
