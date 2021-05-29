@@ -17,7 +17,7 @@ class Student extends PersonalData
         return $this->hasOne(User::class);
     }
 
-    public function attendance(){
-        return $this->hasMany(Attendance::class);
+    public function absent_dates(){
+        return $this->hasMany(Absentee::class);
     }
 }

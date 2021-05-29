@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStudentTable extends Migration
+class CreateTableStudents extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +14,18 @@ class CreateStudentTable extends Migration
     public function up()
     {
         Schema::create('students', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("user_id")->references("id")->on("users")->onDelete("cascade");
-            $table->string('admission_id',15)->unique();
-            $table->string('name',40);
+            $table->string('admission_id', 15);
+            $table->primary('admission_id');
+
+            $table->string('name', 50);
+            $table->string('address', 200);
             $table->string('phone', 13);
-            $table->string('address', 256);
-            $table->tinyInteger('current_sem');
-            $table->foreignId('sem_reg_id')->nullable();
-            $table->timestamps();
+
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')
+                ->references('id')
+                ->on('users')
+                ->onDelete('cascade');
         });
     }
 

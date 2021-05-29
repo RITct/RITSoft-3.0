@@ -20,10 +20,6 @@ class Curriculum extends Model
         'is_feedback_complete' => false
     ];
 
-    public function subject(){
-        $this->course()->first()->subject;
-    }
-
     public function student(){
          return $this->belongsTo(Student::class);
     }

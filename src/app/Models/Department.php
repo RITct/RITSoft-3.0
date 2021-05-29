@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Department extends Model
 {
-    // TODO
     use HasFactory;
+
+    protected $fillable = [
+        'name',
+        'code'
+    ];
+
+    public function faculties(){
+        return $this->hasMany(Faculty::class);
+    }
 }

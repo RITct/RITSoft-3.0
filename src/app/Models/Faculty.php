@@ -6,6 +6,19 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Faculty extends PersonalData
 {
-    // TODO
     use HasFactory;
+    protected $primaryKey = 'faculty_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
+    public function user()
+    {
+        return $this->hasOne(User::class);
+    }
+
+    public function department()
+    {
+        return $this->hasOne(Department::class);
+    }
+
 }

@@ -9,7 +9,7 @@ class Subject extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'subject_id';
+    protected $primaryKey = 'subject_code';
     public $incrementing = false;
     protected $keyType = 'string';
 

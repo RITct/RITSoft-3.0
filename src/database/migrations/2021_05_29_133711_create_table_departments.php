@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameEmailToUsernameInUsers extends Migration
+class CreateTableDepartments extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class RenameEmailToUsernameInUsers extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn("email", "username");
+        Schema::create('departments', function (Blueprint $table) {
+            $table->id();
+            $table->string('name', 30);
+            $table->string('code', 5)->unique();
         });
     }
 
@@ -25,8 +27,6 @@ class RenameEmailToUsernameInUsers extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn("username", "email");
-        });
+        Schema::dropIfExists('departments');
     }
 }
