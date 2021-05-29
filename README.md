@@ -22,7 +22,7 @@ Run
 docker-compose build
 docker-compose up -d
 ```
-Visit `localhost:8000` to view the app.
+Visit `localhost:3000` to view the app.
 
 **Run `docker-compose build` only if you're setting up for the first time or have made changes.**
 
@@ -33,15 +33,35 @@ docker exec -it ritsoft_app /ritsoft/initialsetup.sh
 
 To stop the container run `docker-compose down`
 
+
+## Contributors Guideline
+
+This project is a work in progress, so try to update the readme as you add more features.
+
 ### Running shell commands inside the container
 
 Use the format `docker exec -it ritsoft_app <CMD>`
 
 An Example `docker exec -it ritsoft_app php artisan migrate`
 
-## Contributors Guideline
+### Installing php packages
 
-This project is a work in progress, so try to update the readme as you add more features.
+```
+sh ./composer_install.sh <package_name>
+```
+Example
+```
+sh ./composer_install.sh bensampo/laravel-enum
+```
+
+### Setting up your IDE and Code Inspection
+
+So far the easiest way I've seen is just copying the vendor directory from the container to host. 
+
+```
+sudo docker cp ritsoft_app:/ritsoft/vendor /absolute/path/to/RITSoft-3.0/src/
+```
+Better alternatives are always welcome
 
 ## Licence
 

@@ -1,33 +1,30 @@
 version: "3"
 
 services:
-    mysql-db:
-        image: mysql:8.0
-        expose:
-            - "3306"
+    db:
+        image: postgres:13-alpine
         environment:
-            MYSQL_ROOT_PASSWORD: ritsoft
-            MYSQL_DATABASE: ritsoft
-            MYSQL_USER: ritsoft
-            MYSQL_PASSWORD: ritsoft
-            MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-        command: --default-authentication-plugin=mysql_native_password
+            POSTGRES_DB: ritsoft
+            POSTGRES_USER: ritsoft
+            POSTGRES_PASSWORD: ritsoft
         networks:
             - app-network
-        healthcheck:
-            test: ["CMD", "mysqladmin", "ping"]
         volumes:
-            - "./db-data:/var/lib/mysql"
+            - "./db-data:/var/lib/postgresql"
 
     app:
         container_name: "ritsoft_app"
         build: .
         ports:
-            - "8000:8000"
+            - "3000:3000"
         depends_on:
-            - mysql-db
+            - db
         networks:
             - app-network
+        volumes:
+            - "./src:/ritsoft"
+            - "/ritsoft/node_modules"
+            - "/ritsoft/vendor"
 networks:
     app-network:
         driver: bridge
