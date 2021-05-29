@@ -22,7 +22,7 @@ Run
 docker-compose build
 docker-compose up -d
 ```
-Visit `localhost:8000` to view the app.
+Visit `localhost:3000` to view the app.
 
 **Run `docker-compose build` only if you're setting up for the first time or have made changes.**
 
@@ -38,6 +38,16 @@ To stop the container run `docker-compose down`
 Use the format `docker exec -it ritsoft_app <CMD>`
 
 An Example `docker exec -it ritsoft_app php artisan migrate`
+
+### Installing php packages
+
+```
+sh ./composer_install.sh <package_name>
+```
+Example
+```
+sh ./composer_install.sh bensampo/laravel-enum
+```
 
 ## Contributors Guideline
 
