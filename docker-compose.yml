@@ -14,12 +14,7 @@ services:
 
     app:
         container_name: "ritsoft_app"
-        build:
-            # If you wanna change UID, 'cause Y TF NOT?
-            #args:
-            #    UID: 2000
-            #    GID: 2000
-            context: .
+        build: .
         ports:
             - "3000:3000"
         depends_on:

@@ -33,6 +33,11 @@ docker exec -it ritsoft_app /ritsoft/initialsetup.sh
 
 To stop the container run `docker-compose down`
 
+
+## Contributors Guideline
+
+This project is a work in progress, so try to update the readme as you add more features.
+
 ### Running shell commands inside the container
 
 Use the format `docker exec -it ritsoft_app <CMD>`
@@ -49,9 +54,14 @@ Example
 sh ./composer_install.sh bensampo/laravel-enum
 ```
 
-## Contributors Guideline
+### Setting up your IDE and Code Inspection
 
-This project is a work in progress, so try to update the readme as you add more features.
+So far the easiest way I've seen is just copying the vendor directory from the container to host. 
+
+```
+sudo docker cp ritsoft_app:/ritsoft/vendor /absolute/path/to/RITSoft-3.0/src/
+```
+Better alternatives are always welcome
 
 ## Licence
 
