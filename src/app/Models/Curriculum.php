@@ -20,6 +20,8 @@ class Curriculum extends Model
         'is_feedback_complete' => false
     ];
 
+    public $timestamps = false;
+
     public function student(){
          return $this->belongsTo(Student::class);
     }

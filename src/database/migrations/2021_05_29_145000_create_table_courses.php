@@ -15,7 +15,7 @@ class CreateTableCourses extends Migration
     {
         Schema::create('courses', function (Blueprint $table) {
             $table->id();
-            $table->string('semester', 3);
+            $table->smallInteger('semester');
 
             # Faculty is null only when deleted
             $table->string('faculty_id', 20)->nullable();

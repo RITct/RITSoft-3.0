@@ -12,6 +12,13 @@ class Student extends PersonalData
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
+    protected $guarded = [
+        'current_semester',
+        'roll_no'
+    ];
+
     public function user()
     {
         return $this->hasOne(User::class);

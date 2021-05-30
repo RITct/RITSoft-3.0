@@ -11,6 +11,8 @@ class Faculty extends PersonalData
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
     public function user()
     {
         return $this->hasOne(User::class);

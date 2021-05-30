@@ -14,6 +14,8 @@ class Department extends Model
         'code'
     ];
 
+    public $timestamps = false;
+
     public function faculties(){
         return $this->hasMany(Faculty::class);
     }

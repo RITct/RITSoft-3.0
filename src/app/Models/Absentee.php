@@ -15,6 +15,8 @@ class Absentee extends Model
         'duty_leave' => false
     ];
 
+    public $timestamps = false;
+
     public function student(){
         return $this->belongsTo(Student::class);
     }

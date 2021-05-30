@@ -20,6 +20,8 @@ class CreateTableStudents extends Migration
             $table->string('name', 50);
             $table->string('address', 200);
             $table->string('phone', 13);
+            $table->smallInteger('current_semester');
+            $table->integer('roll_no')->nullable()->default(null);
 
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')
