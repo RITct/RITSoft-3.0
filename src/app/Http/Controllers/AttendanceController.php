@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\Roles;
 use App\Models\Attendance;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -40,19 +41,44 @@ class AttendanceController extends Controller
         // Student can view their only
         $student = Auth::user()->student;
 
-        if($student == null || $student_admission_id != $student->admission_id)
+        if($student != null && $student_admission_id != $student->admission_id)
             abort(403);
+
+        if(!Student::where('admission_id', $student_admission_id)->first())
+            abort(404);
+
+        $request->validate([
+           "from" => "date",
+           "to" => "date"
+        ]);
 
         $raw_from_date = $request->input("from");
         $raw_to_date = $request->input("to");
 
+        if($raw_from_date)
+            $from_date = date_create($raw_from_date);
+        if($raw_to_date)
+            $to_date = date_create($raw_to_date);
+
         $attendance = Attendance::getAttendanceOfStudent(
             $student_admission_id,
-            $raw_from_date,
-            $raw_to_date
+            $from_date ?? null,
+            $to_date ?? null
         );
 
-        return view("attendance.retrieve", ["attendance" => $attendance]);
+        foreach ($attendance as $day){
+            $absent = false;
+            foreach ($day->absentees as $absentee) {
+                if ($student_admission_id == $absentee->student_admission_id)
+                    $absent = true;
+            }
+            $day->absent = $absent;
+        }
+
+        return view("attendance.retrieve", [
+            "attendance" => $attendance,
+            "student_admission_id" => $student_admission_id
+        ]);
     }
 
     public function edit(){

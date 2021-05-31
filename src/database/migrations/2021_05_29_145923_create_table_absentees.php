@@ -22,6 +22,11 @@ class CreateTableAbsentees extends Migration
             $table->foreign('attendance_id')
                 ->on('attendance')
                 ->references('id');
+
+            $table->string('student_admission_id', 15);
+            $table->foreign('student_admission_id')
+                ->on('students')
+                ->references('admission_id');
         });
     }
 

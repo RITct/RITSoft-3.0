@@ -27,7 +27,7 @@ class CreateTableCourses extends Migration
             $table->string('subject_code', 6);
             $table->foreign('subject_code')
                 ->on('subjects')
-                ->references('subject_code');
+                ->references('code');
         });
     }
 

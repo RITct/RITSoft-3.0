@@ -28,10 +28,10 @@ class CreateTableFaculties extends Migration
                 ->references('id')
                 ->onDelete('cascade');
 
-            $table->integer('department_id');
-            $table->foreign('department_id')
+            $table->string('department_code');
+            $table->foreign('department_code')
                 ->on('departments')
-                ->references('id');
+                ->references('code');
         });
     }
 

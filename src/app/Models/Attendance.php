@@ -26,24 +26,19 @@ class Attendance extends Model
         return $this->hasMany(Absentee::class);
     }
 
-    public static function getAttendanceOfStudent($admission_id, $from_date_raw=null, $to_date_raw=null){
-        if($from_date_raw) {
-            $from_date = date_parse($from_date_raw);
+    public static function getAttendanceOfStudent($admission_id, $from_date=null, $to_date=null){
 
-            if($to_date_raw)
-                $to_date = date_parse($to_date_raw);
-            else
-                $to_date = date("dd-mm-yyyy");
+        $base_query = Attendance::with(['absentees', 'course.subject', 'course.curriculums.student']);
 
-            return Attendance::with('Absentee')
-                ->whereBetween('date', [$from_date, $to_date])
-                ->whereHas('Absentee', function ($q) use ($admission_id) {
-                    $q->where('student_admission_id', $admission_id);
-                })->get();
+        if($from_date) {
+            if(!$to_date)
+                $to_date = date("Y-m-d");
+
+            $base_query = $base_query->whereBetween('date', [$from_date, $to_date]);
         }
-        return Attendance::with('Absentee')
-            ->whereHas('Absentee', function ($q) use ($admission_id) {
-                $q->where('student_admission_id', $admission_id);
-            });
+        return $base_query
+            ->whereHas('course.curriculums.student', function ($q) use ($admission_id) {
+                $q->where('admission_id', $admission_id);
+            })->get();
     }
 }
