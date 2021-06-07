@@ -21,7 +21,7 @@ class CreateTableCourses extends Migration
             $table->string('faculty_id', 20)->nullable();
             $table->foreign('faculty_id')
                 ->on('faculties')
-                ->references('faculty_id')
+                ->references('id')
                 ->onDelete('set null');
 
             $table->string('subject_code', 6);

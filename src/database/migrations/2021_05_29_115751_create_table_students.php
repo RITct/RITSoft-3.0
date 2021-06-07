@@ -28,6 +28,12 @@ class CreateTableStudents extends Migration
                 ->references('id')
                 ->on('users')
                 ->onDelete('cascade');
+
+            $table->string('department_code');
+            $table->foreign('department_code')
+                ->references('code')
+                ->on('departments')
+                ->onDelete('cascade');
         });
     }
 

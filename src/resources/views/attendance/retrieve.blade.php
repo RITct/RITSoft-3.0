@@ -2,15 +2,23 @@
 
 @section("content")
     <h1>Attendance View</h1>
-    @foreach($attendance as $day)
+    @foreach($attendance as $period)
         <div>
-            <h3>{{$day->course->subject->name}} | {{$day->course->subject->code}}</h3>
-            Date: {{ $day->date }}<br/>
-            Hour: {{ $day->hour }}<br/>
-            @if($day->absent)
+            <h3>{{$period->course->subject->name}} | {{$period->course->subject->code}}</h3>
+            Date: {{ $period->date }}<br/>
+            Hour: {{ $period->hour }}<br/>
+            Faculty: {{ $period->course->faculty->name }}<br/>
+            Status: @if($period->absent)
                 Absent
+                <br/>Medical Leave: {{ ($period->medical_leave) ? "True" : "False" }}
+                <br/>Duty Leave: {{ $period->duty_leave ? "True" : "False"}}<br/>
             @else
-                Present
+                Present<br/>
+
+            @endif
+
+            @if($period->editable)
+                <a href="#" onclick="alert('Ithu implement cheyyanm mister')">Edit</a>
             @endif
         </div>
     @endforeach

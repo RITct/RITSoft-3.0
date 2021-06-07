@@ -29,7 +29,8 @@ class StudentSeeder extends Seeder
            'current_semester' => 1,
            'name' => 'student',
            'phone' => '1234567890',
-           'address' => 'xyz'
+           'address' => 'xyz',
+           'department_code' => 'CSE',
         ]);
 
         $profile->user()->save($user);

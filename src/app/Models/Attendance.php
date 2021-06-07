@@ -27,8 +27,8 @@ class Attendance extends Model
     }
 
     public static function getAttendanceOfStudent($admission_id, $from_date=null, $to_date=null){
-
-        $base_query = Attendance::with(['absentees', 'course.subject', 'course.curriculums.student']);
+        // Returns Eloquent Query, call get() to execute
+        $base_query = Attendance::with(['absentees', 'course.subject', 'course.curriculums.student', 'course.faculty']);
 
         if($from_date) {
             if(!$to_date)
@@ -39,6 +39,6 @@ class Attendance extends Model
         return $base_query
             ->whereHas('course.curriculums.student', function ($q) use ($admission_id) {
                 $q->where('admission_id', $admission_id);
-            })->get();
+            });
     }
 }

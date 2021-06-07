@@ -39,17 +39,24 @@ class AttendanceController extends Controller
         // Here student admission id makes more sense than attendance id
         // Same as index
         // Student can view their only
-        $student = Auth::user()->student;
+        $auth_user = Auth::user();
+        $student = $auth_user->student;
+        $faculty = $auth_user->faculty;
 
         if($student != null && $student_admission_id != $student->admission_id)
+            // Student trying to access other student
             abort(403);
 
-        if(!Student::where('admission_id', $student_admission_id)->first())
+        if(!$student)
+            $student = Student::where('admission_id', $student_admission_id)->first();
+
+        if(!$student)
+            // Student doesn't exist
             abort(404);
 
         $request->validate([
-           "from" => "date",
-           "to" => "date"
+            "from" => "date",
+            "to" => "date"
         ]);
 
         $raw_from_date = $request->input("from");
@@ -66,13 +73,32 @@ class AttendanceController extends Controller
             $to_date ?? null
         );
 
-        foreach ($attendance as $day){
+        // HOD of student's dept
+        $is_hod = $faculty && $faculty->is_hod() && $student->department_id == $faculty->department_id;
+
+        if($auth_user->student || $faculty && $is_hod || $auth_user->hasRole(Roles::Admin))
+            // TODO: Add principal, Dean etc
+            $attendance = $attendance->get();
+        elseif ($faculty && !$is_hod)
+            // Filter by class
+            $attendance = $attendance->whereHas('course.faculty', function ($q) use ($faculty) {
+                $q->where('id', $faculty->id);
+            })->get();
+
+        foreach ($attendance as $period){
             $absent = false;
-            foreach ($day->absentees as $absentee) {
+            foreach ($period->absentees as $absentee) {
                 if ($student_admission_id == $absentee->student_admission_id)
                     $absent = true;
+                    $period->medical_leave = $absentee->medical_leave;
+                    $period->duty_leave = $absentee->duty_leave;
             }
-            $day->absent = $absent;
+            $period->absent = $absent;
+            if($faculty && $period->course->faculty_id == $faculty->id || $auth_user->hasRole(Roles::Admin))
+                // Only allow that particular faculty or admin to edit
+                $period->editable = true;
+            else
+                $period->editable = false;
         }
 
         return view("attendance.retrieve", [

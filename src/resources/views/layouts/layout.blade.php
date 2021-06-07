@@ -2,6 +2,8 @@
     <head>
         <link rel="stylesheet" href="{{ URL::asset("app.css") }}"/>
         <title>RITSoft | @yield('title')</title>
+        @section("head")
+        @show
     </head>
     <body>
         <nav>

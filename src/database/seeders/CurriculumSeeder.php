@@ -17,11 +17,16 @@ class CurriculumSeeder extends Seeder
     public function run()
     {
         $student = Student::all()->first();
-        $course = Course::all()->first();
+        $course = Course::all();
 
         Curriculum::create([
             'student_admission_id' => $student->admission_id,
-            'course_id' => $course->id
+            'course_id' => $course[0]->id
+        ]);
+
+        Curriculum::create([
+            'student_admission_id' => $student->admission_id,
+            'course_id' => $course[1]->id
         ]);
     }
 }

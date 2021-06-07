@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Enums\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Faculty extends PersonalData
 {
     use HasFactory;
-    protected $primaryKey = 'faculty_id';
+    protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
 
@@ -16,6 +17,15 @@ class Faculty extends PersonalData
     public function user()
     {
         return $this->hasOne(User::class);
+    }
+
+    public function is_staff_advisor(){
+        // TODO
+        return true;
+    }
+
+    public function is_hod(){
+        return User::where('id', $this->user_id)->first()->hasRole(Roles::HOD);
     }
 
     public function department()

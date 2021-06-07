@@ -35,5 +35,17 @@ class AttendanceSeeder extends Seeder
             'hour' => 2,
             'course_id' => $course->id
         ]);
+
+        Attendance::create([
+            'date' => '2021-05-20',
+            'hour' => 2,
+            'course_id' => $course->id
+        ]);
+
+        Attendance::create([
+            'date' => '2021-05-20',
+            'hour' => 4,
+            'course_id' => 2
+        ]);
     }
 }

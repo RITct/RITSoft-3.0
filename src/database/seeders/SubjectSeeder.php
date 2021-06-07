@@ -18,11 +18,19 @@ class SubjectSeeder extends Seeder
 
         $cse = Department::where('code', 'CSE')->first();
         Subject::create([
-           'name' => 'Data Structures',
-           'code' => 'CSE201',
-           'credits' => 4,
-           'type' => 'test',
-           'department_code' => $cse->code
+            'name' => 'Data Structures',
+            'code' => 'CSE201',
+            'credits' => 4,
+            'type' => 'test',
+            'department_code' => $cse->code
+        ]);
+
+        Subject::create([
+            'name' => 'Objective Oriented Programming',
+            'code' => 'CSE301',
+            'credits' => 4,
+            'type' => 'test',
+            'department_code' => $cse->code
         ]);
     }
 }

@@ -14,14 +14,13 @@ class CreateTableFaculties extends Migration
     public function up()
     {
         Schema::create('faculties', function (Blueprint $table) {
-            $table->string('faculty_id', 20);
-            $table->primary('faculty_id');
+            $table->string('id', 20);
+            $table->primary('id');
 
             $table->string('name', 50);
             $table->string('address', 200);
             $table->string('phone', 13);
 
-            $table->boolean('is_hod')->default(false);
             $table->integer('user_id');
             $table->foreign('user_id')
                 ->on('users')
