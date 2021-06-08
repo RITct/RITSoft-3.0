@@ -17,4 +17,4 @@ jobs:
       - name: Test
         run: sleep 5 && curl localhost:3000
       - name: Lint
-        uses: overtrue/phplint@v3.0.2
+        uses: overtrue/phplint@3.0.2
