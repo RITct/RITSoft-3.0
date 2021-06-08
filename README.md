@@ -38,6 +38,8 @@ To stop the container run `docker-compose down`
 
 This project is a work in progress, so try to update the readme as you add more features.
 
+Refer [Contributing](Contributing.MD) for a few pointers on PHP/Laravel.
+
 ### Running shell commands inside the container
 
 Use the format `docker exec -it ritsoft_app <CMD>`
