@@ -21,4 +21,4 @@ jobs:
       - name: Build and run the containers
         run: docker-compose up -d
       - name: Curl
-        run: chmod +x ./src/wait_for_it.sh && ./src/wait_for_it.sh localhost:3000 && curl localhost:3000
+        run: chmod +x ./docker-test.sh && ./docker-test.sh
