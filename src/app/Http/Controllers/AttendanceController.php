@@ -20,11 +20,52 @@ class AttendanceController extends Controller
         $this->middleware("permission:attendance.delete", ["only" => "destroy"]);
     }
 
-    public function index(){
+
+    private function serialize_course($data, $faculty=null, $is_admin=null): array {
+        $new_data = [];
+        foreach ($data as $period) {
+            if(array_key_exists($period->course_id, $new_data))
+                array_push($new_data[$period->course_id]["attendances"], $period);
+            else
+                $new_data[$period->course_id] = [
+                    "id" => $period->course_id,
+                    "faculty" => $period->course->faculty,
+                    "subject" => $period->course->subject,
+                    "semester" => $period->course->semester,
+                    "attendances" => [$period],
+                    "editable" => $faculty && $faculty->id == $period->course->faculty_id || $is_admin
+                ];
+        }
+        return $new_data;
+    }
+
+    public function index(Request $request){
         // Principal, Admin can view all
         // HOD can view their dept
         // Staff advisor, Faculty can view their class
+        $auth_user = Auth::user();
+        $faculty = $auth_user->faculty;
 
+        $request->validate([
+            "from" => "date",
+            "to" => "date"
+        ]);
+        if($auth_user->is_admin())
+            // OR Principal
+            $query = Attendance::get_base_query($request->get("from"), $request->get("to"));
+        else if($faculty && $faculty->is_hod())
+            $query = Attendance::get_attendance_of_department($faculty->department->code, $request->get("from"), $request->get("to"));
+        else if($faculty)
+            $query = Attendance::get_attendance_of_faculty($faculty->id, $request->get("from"), $request->get("to"));
+        // Todo Staff Advisor
+        else
+            abort(403);
+
+        // TODO Additional Query Filters like semester, subject, etc
+
+        return view("attendance.index", [
+            "attendance" => $this->serialize_course($query->get(), $faculty, $auth_user->is_admin())
+        ]);
     }
 
     public function create(){
@@ -67,7 +108,7 @@ class AttendanceController extends Controller
         if($raw_to_date)
             $to_date = date_create($raw_to_date);
 
-        $attendance = Attendance::getAttendanceOfStudent(
+        $attendance = Attendance::get_attendance_of_student(
             $student_admission_id,
             $from_date ?? null,
             $to_date ?? null
@@ -76,7 +117,7 @@ class AttendanceController extends Controller
         // HOD of student's dept
         $is_hod = $faculty && $faculty->is_hod() && $student->department_id == $faculty->department_id;
 
-        if($auth_user->student || $faculty && $is_hod || $auth_user->hasRole(Roles::Admin))
+        if($auth_user->student || $faculty && $is_hod || $auth_user->is_admin())
             // TODO: Add principal, Dean etc
             $attendance = $attendance->get();
         elseif ($faculty && !$is_hod)
@@ -94,7 +135,7 @@ class AttendanceController extends Controller
                     $period->duty_leave = $absentee->duty_leave;
             }
             $period->absent = $absent;
-            if($faculty && $period->course->faculty_id == $faculty->id || $auth_user->hasRole(Roles::Admin))
+            if($faculty && $period->course->faculty_id == $faculty->id || $auth_user->is_admin())
                 // Only allow that particular faculty or admin to edit
                 $period->editable = true;
             else

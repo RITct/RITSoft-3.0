@@ -17,6 +17,8 @@ class CreateTableCourses extends Migration
             $table->id();
             $table->smallInteger('semester');
 
+            $table->boolean('active')->default(true);
+
             # Faculty is null only when deleted
             $table->string('faculty_id', 20)->nullable();
             $table->foreign('faculty_id')

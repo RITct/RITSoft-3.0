@@ -11,6 +11,11 @@ class Course extends Model
 
     public $timestamps = false;
 
+    protected $guarded = [
+        'semester',
+        'active' => true
+    ];
+
     public function faculty(){
         return $this->belongsTo(Faculty::class);
     }

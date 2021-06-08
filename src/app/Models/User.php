@@ -72,6 +72,10 @@ class User extends Authenticatable
         return count($this->roles) > 1;
     }
 
+    public function is_admin(){
+        return $this->hasRole(Roles::Admin);
+    }
+
     public function name(){
         $profile = $this->get_profile();
         if($profile)
