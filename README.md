@@ -33,6 +33,25 @@ docker exec -it ritsoft_app /ritsoft/initialsetup.sh
 
 To stop the container run `docker-compose down`
 
+
+## Contributors Guideline
+
+### Initial setup and credentials
+
+```
+docker exec -it ritsoft_app /ritsoft/initialsetup.sh
+```
+
+| UserName | Roles |
+| --- | --- |
+| csestudent@rit.com | Student |
+| csefaculty1@rit.com | Faculty |
+| csefaculty2@rit.com | Faculty |
+| hodcse@rit.com | HOD |
+| admin@rit.com | Admin |
+
+**All users have 123456 as their password**
+
 ### Running shell commands inside the container
 
 Use the format `docker exec -it ritsoft_app <CMD>`
@@ -49,36 +68,25 @@ Example
 sh ./composer_install.sh bensampo/laravel-enum
 ```
 
-## Contributors Guideline
+### Creating models
 
-This project is a work in progress, so try to update the readme as you add more features.
+```
+sh ./make_model.sh <model_name>
+```
+
+### Setting up your IDE and Code Inspection
+
+So far the easiest way I've seen is just copying the vendor directory from the container to host. 
+
+```
+sudo docker cp ritsoft_app:/ritsoft/vendor /absolute/path/to/RITSoft-3.0/src/
+```
+Better alternatives are always welcome
 
 ## Licence
 
 ## Docs
 
 [Permission Example](./docs/permission.md)
-
-1. For setting up roles and permissions
-
-```
-docker exec -it ritsoft_app /ritsoft/initialsetup.sh
-```
-
-2. Setup users
-    - Admin: `docker exec -it ritsoft_app php artisan db:seed --class=AdminUserSeeder`
-    - HOD: `docker exec -it ritsoft_app php artisan db:seed --class=HODUserSeeder`
-    - Faculty: `docker exec -it ritsoft_app php artisan db:seed --class=FacultyUserSeeder`
-    - Student: `docker exec -it ritsoft_app php artisan db:seed --class=StudentSeeder`
-    
-| UserName | Roles |
-| --- | --- |
-| csestudent@rit.com | Student |
-| csefaculty1@rit.com | Faculty |
-| csehod@rit.com | HOD |
-| admin@rit.com | Admin |
-
-**All users have 123456 as their password**
-
 
 ## Contributors

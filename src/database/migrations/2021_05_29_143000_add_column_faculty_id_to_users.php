@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RenameEmailToUsernameInUsers extends Migration
+class AddColumnFacultyIdToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,10 @@ class RenameEmailToUsernameInUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn("email", "username");
+            $table->string('faculty_id')->nullable();
+            $table->foreign('faculty_id')
+                ->on('faculties')
+                ->references('id');
         });
     }
 
@@ -26,7 +29,7 @@ class RenameEmailToUsernameInUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->renameColumn("username", "email");
+            $table->dropColumn('faculty_id');
         });
     }
 }

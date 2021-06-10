@@ -12,28 +12,19 @@ class Student extends PersonalData
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public $timestamps = false;
+
+    protected $guarded = [
+        'current_semester',
+        'roll_no'
+    ];
+
     public function user()
     {
         return $this->hasOne(User::class);
     }
 
-    // public function semester_reg()
-    // {
-    //     return $this->hasOne(Semester_reg::class);
-    // }
-
-    // public function subject()
-    // {
-    //     return $this->hasMany(Subject::class);
-    // }
-
-    // public function curriculum()
-    // {
-    //     return $this->hasMany(Curriculum::class);
-    // }
-
-    // public function attendance()
-    // {
-    //     return $this->hasMany(Attendance::class);
-    // }
+    public function absent_dates(){
+        return $this->hasMany(Absentee::class);
+    }
 }

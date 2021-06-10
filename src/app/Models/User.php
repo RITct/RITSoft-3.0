@@ -23,6 +23,10 @@ class User extends Authenticatable
         'password',
     ];
 
+    protected $guarded = [
+        'is_active'
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -51,17 +55,29 @@ class User extends Authenticatable
         return $this->hasOne(Student::class);
     }
 
-    public function getProfile($authType=null){
-        $profileType = $authType ? $authType : $this->roles()->first()->name;
+    public function faculty(){
+        return $this->hasOne(Faculty::class);
+    }
+
+    public function get_profile($authType=null){
+        $profileType = $authType ? $authType : $this->roles->first()->name;
         switch ($profileType){
-            case Roles::Student: return $this->student()->first();
+            case Roles::Student: return $this->student->first();
             // Map roles as we create them
         }
         return null;
     }
 
+    public function has_multiple_profiles(){
+        return count($this->roles) > 1;
+    }
+
+    public function is_admin(){
+        return $this->hasRole(Roles::Admin);
+    }
+
     public function name(){
-        $profile = $this->getProfile();
+        $profile = $this->get_profile();
         if($profile)
             return $profile->name;
         return "";

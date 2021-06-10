@@ -7,14 +7,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v2
-      - name: Build and run the containers
-        run: docker-compose up -d
-      - name: Test
-        run: sleep 5 && curl localhost:3000
       - name: Lint
-        uses: overtrue/phplint@master
+        uses: overtrue/phplint@3.0.2

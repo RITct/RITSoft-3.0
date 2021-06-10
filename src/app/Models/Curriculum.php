@@ -9,21 +9,27 @@ class Curriculum extends Model
 {
     use HasFactory;
 
-    protected $attributes = [
-        'series_marks_1' => null,
-        'series_marks_2' => null,
-        'sessional_marks' => null,
-        'university_marks' => null,
-        'feedback' => false
+    protected $table = "curriculums";
+
+
+    protected $guarded = [
+        'series_marks_1',
+        'series_marks_2',
+        'sessional_marks',
+        'university_marks',
     ];
 
-    // public function subject()
-    // {
-    //     return $this->belongsTo(Subject::class);
-    // }
+    protected $attributes = [
+        'is_feedback_complete' => false
+    ];
 
-    // public function student()
-    // {
-    //     return $this->belongsTo(Student::class);
-    // }
+    public $timestamps = false;
+
+    public function student(){
+         return $this->belongsTo(Student::class);
+    }
+
+    public function course(){
+        return $this->belongsTo(Course::class);
+    }
 }

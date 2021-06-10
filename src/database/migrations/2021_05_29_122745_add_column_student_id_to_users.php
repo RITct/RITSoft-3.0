@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateStudentAdmissionIdInUsers extends Migration
+class AddColumnStudentIdToUsers extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,10 @@ class CreateStudentAdmissionIdInUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->addColumn("integer", "student_admission_id")->nullable();
+            $table->string('student_admission_id')->nullable();
+            $table->foreign('student_admission_id')
+                ->on('students')
+                ->references('admission_id');
         });
     }
 
@@ -26,7 +29,7 @@ class CreateStudentAdmissionIdInUsers extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->removeColumn("student_admission_id");
+            $table->dropColumn('student_admission_id');
         });
     }
 }

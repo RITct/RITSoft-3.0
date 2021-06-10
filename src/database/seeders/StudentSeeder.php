@@ -26,10 +26,11 @@ class StudentSeeder extends Seeder
         $profile = Student::create([
            'user_id' => $user->id,
            'admission_id' => '19brxxxxx',
-           'current_sem' => '1',
+           'current_semester' => 1,
            'name' => 'student',
            'phone' => '1234567890',
-           'address' => 'xyz'
+           'address' => 'xyz',
+           'department_code' => 'CSE',
         ]);
 
         $profile->user()->save($user);
