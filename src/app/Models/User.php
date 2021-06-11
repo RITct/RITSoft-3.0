@@ -27,6 +27,10 @@ class User extends Authenticatable
         'is_active'
     ];
 
+    protected $with = [
+        'roles',
+    ];
+
     /**
      * The attributes that should be hidden for arrays.
      *

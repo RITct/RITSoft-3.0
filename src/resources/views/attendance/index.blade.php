@@ -28,7 +28,7 @@
                 </li>
             @endforeach
             @if($course["editable"])
-                <li><a href="#">Edit</a></li>
+                <li><a href="{{ route("attendance.create") }}">Add</a></li>
             @endif
         </ul>
     @endforeach

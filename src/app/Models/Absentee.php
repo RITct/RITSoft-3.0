@@ -20,4 +20,8 @@ class Absentee extends Model
     public function student(){
         return $this->belongsTo(Student::class);
     }
+
+    public function attendance(){
+        return $this->belongsTo(Attendance::class);
+    }
 }

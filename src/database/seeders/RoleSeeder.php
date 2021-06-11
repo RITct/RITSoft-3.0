@@ -20,11 +20,16 @@ class RoleSeeder extends Seeder
         $permissions = Permission::pluck('id','id')->all();
         $roleAdmin->syncPermissions($permissions);
 
-        $attendance_view = ["attendance.retrieve", "attendance.list"];
+        $attendance_permissions = [
+            "view" => ["attendance.retrieve", "attendance.list"],
+            "alter" => ["attendance.create", "attendance.update"],
+            "delete" => ["attendance.delete"]
+        ];
+
         $roleHOD = Role::create(['name' => Roles::HOD]);
         $roleFaculty = Role::create(['name' => Roles::Faculty]);
-        $roleHOD->syncPermissions($attendance_view);
-        $roleFaculty->syncPermissions($attendance_view);
+        $roleHOD->syncPermissions($attendance_permissions["view"]);
+        $roleFaculty->syncPermissions(array_merge($attendance_permissions["view"], $attendance_permissions["alter"]));
 
         $roleStudent = Role::create(['name' => Roles::Student]);
         $roleStudent->syncPermissions("attendance.retrieve");

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use function MongoDB\BSON\toRelaxedExtendedJSON;
 
 class Course extends Model
 {
@@ -26,5 +27,9 @@ class Course extends Model
 
     public function curriculums(){
         return $this->hasMany(Curriculum::class);
+    }
+
+    static function get_base_query(){
+        return Course::with("subject")->where("active", true);
     }
 }
