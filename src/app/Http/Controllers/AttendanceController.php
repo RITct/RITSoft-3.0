@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Common\CommonAttendance;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Absentee;
 use App\Models\Attendance;
@@ -18,53 +19,9 @@ class AttendanceController extends Controller
         $this->middleware("permission:attendance.create", ["only" => ["create", "store"]]);
         $this->middleware("permission:attendance.update", ["only" => ["edit", "update"]]);
         $this->middleware("permission:attendance.delete", ["only" => "destroy"]);
-    }
 
-
-    private function serialize_course($data, $faculty=null, $is_admin=null): array {
-        $new_data = [];
-        foreach ($data as $period) {
-            if(array_key_exists($period->course_id, $new_data))
-                array_push($new_data[$period->course_id]["attendances"], $period);
-            else
-                $new_data[$period->course_id] = [
-                    "id" => $period->course_id,
-                    "faculty" => $period->course->faculty,
-                    "subject" => $period->course->subject,
-                    "semester" => $period->course->semester,
-                    "attendances" => [$period],
-                    "editable" => $faculty && $faculty->id == $period->course->faculty_id || $is_admin
-                ];
-        }
-        return $new_data;
-    }
-
-    private function parse_attendance_input($inp){
-        // This should be an excel/workbook parser
-        // For now parse csv
-
-        $data = explode(",", trim($inp));
-        return array_filter($data, function ($val){
-            return $val != "";
-        });
-    }
-
-    private function serialize_attendance_from_student($attendance, $student_admission_id, $faculty, $is_admin){
-        foreach ($attendance as $period){
-            $absent = false;
-            foreach ($period->absentees as $absentee) {
-                if ($student_admission_id == $absentee->student_admission_id)
-                    $absent = true;
-                $period->medical_leave = $absentee->medical_leave;
-                $period->duty_leave = $absentee->duty_leave;
-            }
-            $period->absent = $absent;
-            if($faculty && $period->course->faculty_id == $faculty->id || $is_admin)
-                // Only allow that particular faculty or admin to edit
-                $period->editable = true;
-            else
-                $period->editable = false;
-        }
+        $this->middleware("attendance_edit", ["only" => "edit", "update"]);
+        $this->middleware("attendance_same_student", ["only" => "show"]);
     }
 
     public function index(AttendanceRequest $request){
@@ -93,7 +50,7 @@ class AttendanceController extends Controller
         // TODO Additional Query Filters like semester, subject, etc
 
         return view("attendance.index", [
-            "attendance" => $this->serialize_course($query->get(), $faculty, $auth_user->is_admin())
+            "attendance" => CommonAttendance::serialize_course($query->get(), $faculty, $auth_user->is_admin())
         ]);
     }
 
@@ -122,7 +79,7 @@ class AttendanceController extends Controller
 
         /*
         TODO
-        $conflicted_attendance = Attendance::where(
+        $conflicted_attendance = CommonAttendance::where(
             ["date" => $request->input("date"), "hour" => $request->input("hour")])->first();
 
         if($conflicted_attendance)
@@ -134,7 +91,7 @@ class AttendanceController extends Controller
             array_push($valid_student_ids, $curriculum->student->admission_id);
 
         if($auth_user->is_admin() || $course->faculty == $auth_user->faculty){
-            $absentee_ids = $this->parse_attendance_input($request->input("absentee_admission_nums"));
+            $absentee_ids = CommonAttendance::parse_attendance_input($request->input("absentee_admission_nums"));
 
             $attendance = new Attendance([
                 "date" => $request->input("date"),
@@ -142,6 +99,7 @@ class AttendanceController extends Controller
             ]);
             $attendance->course()->associate($course);
             $attendance->save();
+            $attendance->refresh();
 
             $absentees = [];
             foreach ($absentee_ids as $absentee_id){
@@ -149,17 +107,19 @@ class AttendanceController extends Controller
                     abort(400,
                         sprintf("Student with admission no %s is not enrolled in your course", $absentee_id));
 
-                $absentee = new Absentee();
-                $absentee->student()->associate(
-                    $course->curriculums->filter(function ($curriculum) use ($absentee_id){
+                // Only arrays support bulk insert
+                $absentee = (new Absentee())->toArray();
+                $absentee["student_admission_id"] = $course->curriculums->filter(
+                    function ($curriculum) use ($absentee_id){
                         return $curriculum->student->admission_id == $absentee_id;
-                    })->first()->student
-                );
-                $absentee->attendance()->associate($attendance);
+                    })->first()->student->admission_id;
+
+                $absentee["attendance_id"] = $attendance->id;
+
                 array_push($absentees, $absentee);
             }
+            Absentee::insert($absentees);
 
-            $attendance->absentees()->saveMany($absentees);
             return redirect("/attendance");
         }
         abort(403);
@@ -167,37 +127,18 @@ class AttendanceController extends Controller
 
     public function show(AttendanceRequest $request, $student_admission_id){
         // Here student admission id makes more sense than attendance id
-        // Same as index
-        // Student can view their only
         $request->validated();
 
         $auth_user = Auth::user();
-        $student = $auth_user->student;
         $faculty = $auth_user->faculty;
 
-        if($student != null && $student_admission_id != $student->admission_id)
-            // Student trying to access other student
-            abort(403);
-
-        if(!$student)
-            $student = Student::where('admission_id', $student_admission_id)->first();
-
-        if(!$student)
-            // Student doesn't exist
-            abort(404, "Student doesn't exist");
-
-        $raw_from_date = $request->input("from");
-        $raw_to_date = $request->input("to");
-
-        if($raw_from_date)
-            $from_date = date_create($raw_from_date);
-        if($raw_to_date)
-            $to_date = date_create($raw_to_date);
+        if(!$auth_user->student)
+            $student = Student::findOrFail($student_admission_id);
 
         $attendance = Attendance::get_attendance_of_student(
             $student_admission_id,
-            $from_date ?? null,
-            $to_date ?? null
+            $request->input("from"),
+            $request->input("to")
         );
 
         // HOD of student's dept
@@ -207,12 +148,12 @@ class AttendanceController extends Controller
             // TODO: Add principal, Dean etc
             $attendance = $attendance->get();
         elseif ($faculty && !$is_hod)
-            // Filter by class
+            // Filter by course
             $attendance = $attendance->whereHas('course.faculty', function ($q) use ($faculty) {
                 $q->where('id', $faculty->id);
             })->get();
 
-        $this->serialize_attendance_from_student(
+        CommonAttendance::serialize_attendance_from_student(
             $attendance, $student_admission_id, $faculty, $auth_user->is_admin());
 
         return view("attendance.retrieve", [
@@ -221,12 +162,54 @@ class AttendanceController extends Controller
         ]);
     }
 
-    public function edit(){
+    public function edit($attendance_id){
         // Faculty, Staff Advisor/HOD?(For duty leave)
+        $attendance = Attendance::get_base_query()->findOrFail($attendance_id);
+        return view("attendance.edit", [
+            "attendance" => $attendance
+        ]);
     }
 
-    public function update(){
-        // Faculty, Staff Advisor/HOD?(For duty leave)
+    public function update(AttendanceRequest $request, $attendance_id){
+        // Faculty
+        // Staff Advisor/HOD?(For duty leave) -> NOT IMPLEMENTED
+        $attendance = Attendance::get_base_query()->findOrFail($attendance_id);
+        // To aid in removing absentees
+        $absentee_exist_map = [];
+        foreach ($request->json("absentees") as $admission_id => $leave_type){
+            $absentee = $attendance->absentees->firstWhere("student_admission_id", $admission_id);
+            if(!$absentee) {
+                // Create new absentee
+                $student = $attendance->course->curriculums->firstWhere("student_admission_id", $admission_id);
+                if(!$student)
+                    abort(400, sprintf(
+                        "Student with %s doesn't exist, or isn't enrolled in your class", $admission_id));
+                $absentee = new Absentee();
+                $absentee->attendance()->associate($attendance);
+                $absentee->student()->associate($student);
+            }
+            else
+                $absentee_exist_map[$absentee->id] = true;
+            switch ($leave_type){
+                case "duty_leave": $absentee->duty_leave = true;
+                    $absentee->medical_leave = false;
+                    break;
+                case "medical_leave": $absentee->medical_leave = true;
+                    $absentee->duty_leave = false;
+                    break;
+                default: $absentee->medical_leave = false;
+                    $absentee->duty_leave = false;
+            }
+            // TODO Bulk update is possible?
+            $absentee->save();
+        }
+
+        $removed_absentees = array_filter($attendance->absentees->toArray(), function ($absentee) use ($absentee_exist_map){
+            return !array_key_exists($absentee["id"], $absentee_exist_map);
+        });
+        Absentee::destroy(array_map(function ($absentee){return $absentee["id"];}, $removed_absentees));
+
+        return response("OK");
     }
 
     public function destroy(){

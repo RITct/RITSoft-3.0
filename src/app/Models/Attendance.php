@@ -35,10 +35,10 @@ class Attendance extends Model
         return $base_query;
     }
 
-    public static function get_base_query($from_date, $to_date){
+    public static function get_base_query($from_date=null, $to_date=null){
         // Get all related data, and select only active courses
         return Attendance::filter_by_date(
-            Attendance::with(['course.subject', 'course.curriculums.student', 'course.faculty']),
+            Attendance::with(['course.subject', 'course.curriculums.student', 'course.faculty', 'absentees']),
             $from_date,
             $to_date)
             ->whereHas("course", function ($q){
@@ -59,7 +59,7 @@ class Attendance extends Model
 
     public static function get_attendance_of_department($dept_code, $from_date=null, $to_date=null, $base_query=null){
         // Returns Eloquent Query, call get() to execute
-        // Attendance of all STUDENTS in department, NOT COURSE
+        // CommonAttendance of all STUDENTS in department, NOT COURSE
         // Eg: If an EC minor is chosen by CS student, CS HOD can view attendance not EC HOD
         if(!$base_query)
             $base_query = Attendance::get_base_query($from_date, $to_date);

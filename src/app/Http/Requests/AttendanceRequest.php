@@ -36,5 +36,6 @@ class AttendanceRequest extends FormRequest
                 "course_id" => ["required", "integer"],
                 "hour" => ["required", "integer"],
             ];
+        return [];
     }
 }

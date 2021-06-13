@@ -27,6 +27,7 @@ class StudentSeeder extends Seeder
            'user_id' => $user->id,
            'admission_id' => '19brxxxxx',
            'current_semester' => 1,
+           'roll_no' => 1,
            'name' => 'student',
            'phone' => '1234567890',
            'address' => 'xyz',
