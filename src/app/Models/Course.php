@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\CourseTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use function MongoDB\BSON\toRelaxedExtendedJSON;
 
 class Course extends Model
 {
@@ -14,6 +14,7 @@ class Course extends Model
 
     protected $guarded = [
         'semester',
+        'type',
         'active' => true
     ];
 
@@ -29,6 +30,21 @@ class Course extends Model
         return $this->hasMany(Curriculum::class);
     }
 
+    public function classroom(){
+        return $this->belongsTo(Classroom::class);
+    }
+
+    public function get_target_department(){
+        // Department of students studying the course
+        return $this->classroom->department;
+    }
+
+    public function get_subject_department(){
+        return $this->subject->department;
+    }
+    public function is_an_elective(){
+        return $this->type != CourseTypes::Regular;
+    }
     static function get_base_query(){
         return Course::with("subject")->where("active", true);
     }

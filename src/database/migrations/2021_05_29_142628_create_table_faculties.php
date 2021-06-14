@@ -31,6 +31,12 @@ class CreateTableFaculties extends Migration
             $table->foreign('department_code')
                 ->on('departments')
                 ->references('code');
+
+            $table->integer('advisor_classroom_id')->unsigned()->nullable();
+            $table->foreign('advisor_classroom_id')
+                ->references('id')
+                ->on('classrooms')
+                ->onDelete('cascade');
         });
     }
 

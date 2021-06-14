@@ -21,7 +21,8 @@ class CreateTableAbsentees extends Migration
             $table->integer('attendance_id');
             $table->foreign('attendance_id')
                 ->on('attendance')
-                ->references('id');
+                ->references('id')
+                ->onDelete('cascade');
 
             $table->string('student_admission_id', 15);
             $table->foreign('student_admission_id')

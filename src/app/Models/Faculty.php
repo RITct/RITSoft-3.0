@@ -28,9 +28,11 @@ class Faculty extends PersonalData
         return User::where('id', $this->user_id)->first()->hasRole(Roles::HOD);
     }
 
-    public function department()
-    {
+    public function department(){
         return $this->belongsTo(Department::class);
+    }
+    public function advisor_classroom(){
+        return $this->belongsTo(Classroom::class, "advisor_classroom_id");
     }
 
 }

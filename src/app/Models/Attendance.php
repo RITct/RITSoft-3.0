@@ -64,7 +64,7 @@ class Attendance extends Model
         if(!$base_query)
             $base_query = Attendance::get_base_query($from_date, $to_date);
 
-        return $base_query->whereHas('course.curriculums.student', function ($q) use ($dept_code){
+        return $base_query->whereHas('course.classroom', function ($q) use ($dept_code){
            $q->where('department_code', $dept_code);
         });
     }

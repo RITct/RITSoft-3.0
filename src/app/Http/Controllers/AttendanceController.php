@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Common\CommonAttendance;
+use App\Enums\CourseTypes;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Absentee;
 use App\Models\Attendance;
@@ -20,7 +21,7 @@ class AttendanceController extends Controller
         $this->middleware("permission:attendance.update", ["only" => ["edit", "update"]]);
         $this->middleware("permission:attendance.delete", ["only" => "destroy"]);
 
-        $this->middleware("attendance_edit", ["only" => "edit", "update"]);
+        $this->middleware("attendance_same_faculty", ["only" => ["edit", "update", "destroy"]]);
         $this->middleware("attendance_same_student", ["only" => "show"]);
     }
 
@@ -77,14 +78,19 @@ class AttendanceController extends Controller
         if(!$course)
             abort(400, "Course not found");
 
-        /*
-        TODO
-        $conflicted_attendance = CommonAttendance::where(
-            ["date" => $request->input("date"), "hour" => $request->input("hour")])->first();
+
+        $conflicted_attendance = Attendance::where([
+            "date" => $request->input("date"),
+            "hour" => $request->input("hour"),
+        ])->whereHas("course", function ($q) use ($course){
+            $q->where([
+                "classroom_id" => $course->classroom_id,
+                "type" => CourseTypes::Regular
+            ]);
+        })->first();
 
         if($conflicted_attendance)
             abort(400, "There seems to be another entry with the same date and hour");
-       */
 
         $valid_student_ids = [];
         foreach ($course->curriculums as $curriculum)
@@ -172,7 +178,7 @@ class AttendanceController extends Controller
 
         // Sort alphabetically
         usort($students, function ($student1, $student2){
-            return strtolower($student1->name) <=> strtolower($student2->name);
+            return strtolower($student1["name"]) <=> strtolower($student2["name"]);
         });
         return view("attendance.edit", [
             "attendance" => $attendance,
@@ -223,7 +229,9 @@ class AttendanceController extends Controller
         return response("OK");
     }
 
-    public function destroy(){
+    public function destroy($attendance_id){
         // Faculty
+        Attendance::destroy(array($attendance_id));
+        return response("OK");
     }
 }
