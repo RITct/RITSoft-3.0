@@ -2,8 +2,11 @@
 
 @section("head")
     <script>
+        const students = {!! json_encode($students) !!};
+        let addNewStudentVisible = false;
+
         function patchAttendance(){
-            let data = {"absentees": {}};//{"_token": "{{ csrf_token() }}"};
+            let data = {"absentees": {}};
             for(const element of document.getElementsByClassName("form-element"))
                 data.absentees[element.name] = element.value;
             fetch("/attendance/{{ $attendance->id }}/", {
@@ -17,9 +20,35 @@
                     alert("FAILED");
             })
         }
+        const getStudentByAdmissionNo = (admission_id) => students.find((student) => student.admission_id === admission_id);
 
-        function addNewStudent(){
+        function studentHTML(admission_id){
+            let element = document.createElement("div");
+            element.setAttribute("id", `student-${admission_id}`);
+            element.innerHTML = `
+                <p>Roll No: ${getStudentByAdmissionNo(admission_id).roll_no}</p>
+                <p>Student: ${getStudentByAdmissionNo(admission_id).name}</p>
+                <p>
+                    Reason for absence: <select class=\"form-element\" name=\"${admission_id}\">
+                        <option value=\"\" selected>No Excuse</option>
+                        <option value=\"medical_leave\">Medical Leave</option>
+                        <option value=\"duty_leave\">Duty Leave</option>
+                    </select>
+        `;
+        return element;
+    }
 
+        function handleNewStudentClick() {
+            if(addNewStudentVisible){
+                let student_admission_id = document.getElementById("new_student_create").value;
+                if(student_admission_id && document.getElementById(`student-${student_admission_id}`) == null)
+                    document.getElementById("absentees").append(studentHTML(student_admission_id));
+                else if(document.getElementById(`student-${student_admission_id}`) != null)
+                    alert("Student is already absent")
+            }
+
+            document.getElementById("new_student_create").classList.toggle("disabled");
+            addNewStudentVisible = !addNewStudentVisible;
         }
 
         const removeStudent = (student_id) => document.getElementById("student-" + student_id).remove();
@@ -38,7 +67,8 @@
         Hour: <input disabled type="number" value="{{ $attendance->hour }}">
     </div>
     <h3>Absentees</h3>
-        @foreach($attendance->absentees as $absentee)
+        <div id="absentees">
+            @foreach($attendance->absentees as $absentee)
             <div id="student-{{ $absentee->student->admission_id }}">
                 <p>Roll No: {{ $absentee->student->roll_no }}</p>
                 <p>Student: {{ $absentee->student->name }}</p>
@@ -62,7 +92,16 @@
                     </select>
                 </p>
                 <p><button onclick="removeStudent('{{ $absentee->student->admission_id }}')">Remove Student</button></p>
-            </div>
+                </div>
+            @endforeach
+        </div>
+    <select id="new_student_create" class="disabled">
+        @foreach($students as $student)
+            <option value={{ $student["admission_id"] }}>{{ $student["name"] }} | {{ $student["admission_id"] }}</option>
         @endforeach
+    </select>
+    <p>
+        <button onclick="handleNewStudentClick()">Add New Absentee</button>
         <button onclick="patchAttendance()">Confirm Changes</button>
+    </p>
 @endsection

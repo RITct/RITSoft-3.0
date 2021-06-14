@@ -165,8 +165,18 @@ class AttendanceController extends Controller
     public function edit($attendance_id){
         // Faculty, Staff Advisor/HOD?(For duty leave)
         $attendance = Attendance::get_base_query()->findOrFail($attendance_id);
+        $students = array_map(
+            function ($curriculum){
+                return $curriculum["student"];
+            }, $attendance->course->curriculums->toArray());
+
+        // Sort alphabetically
+        usort($students, function ($student1, $student2){
+            return strtolower($student1->name) <=> strtolower($student2->name);
+        });
         return view("attendance.edit", [
-            "attendance" => $attendance
+            "attendance" => $attendance,
+            "students" => $students,
         ]);
     }
 
@@ -180,7 +190,8 @@ class AttendanceController extends Controller
             $absentee = $attendance->absentees->firstWhere("student_admission_id", $admission_id);
             if(!$absentee) {
                 // Create new absentee
-                $student = $attendance->course->curriculums->firstWhere("student_admission_id", $admission_id);
+                $student = $attendance->course->curriculums->firstWhere(
+                    "student_admission_id", $admission_id)->student;
                 if(!$student)
                     abort(400, sprintf(
                         "Student with %s doesn't exist, or isn't enrolled in your class", $admission_id));
