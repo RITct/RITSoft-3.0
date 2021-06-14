@@ -7,11 +7,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: build
+      - name: Build
         run: docker-compose up -d
-      - name: lint
+      - name: Test
+        run: docker-compose run app php artisan test
+      - name: Lint
         run: docker-compose run app ./vendor/bin/phpcs --standard=PSR12 --extensions=php ./app ./routes
