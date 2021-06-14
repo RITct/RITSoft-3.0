@@ -36,7 +36,6 @@ class CreateTableCourses extends Migration
             $table->foreign('classroom_id')
                 ->references('id')
                 ->on('classrooms');
-
         });
     }
 

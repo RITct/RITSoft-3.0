@@ -61,9 +61,9 @@ class FacultyUserSeeder extends Seeder
             'department_code' => $cse->code,
         ]);
 
-        $user1->assignRole(Roles::Faculty);
-        $user2->assignRole(Roles::Faculty);
+        $user1->assignRole(Roles::FACULTY);
+        $user2->assignRole(Roles::FACULTY);
         $user3->assignRole(Roles::HOD);
-        $user3->assignRole(Roles::Faculty);
+        $user3->assignRole(Roles::FACULTY);
     }
 }

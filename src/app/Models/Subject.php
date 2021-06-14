@@ -21,11 +21,13 @@ class Subject extends Model
         'credit'
     ];
 
-    protected function courses(){
+    protected function courses()
+    {
         return $this->hasMany(Course::class);
     }
 
-    protected function department(){
+    protected function department()
+    {
         return $this->hasOne(Department::class);
     }
 }

@@ -16,14 +16,16 @@ class AttendanceSameFaculty
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next){
+    public function handle(Request $request, Closure $next)
+    {
         $auth_user = Auth::user();
 
         $attendance = Attendance::with("course.faculty")
             ->findOrFail($request->route()->parameter("attendance"));
 
-        if($attendance->course->faculty != $auth_user->faculty && !$auth_user->is_admin())
+        if ($attendance->course->faculty != $auth_user->faculty && !$auth_user->isAdmin()) {
             abort("403");
+        }
 
         return $next($request);
     }

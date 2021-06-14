@@ -11,5 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Lint
-        uses: overtrue/phplint@3.0.2
+      - name: build
+        run: docker-compose up -d
+      - name: lint
+        run: docker-compose run app ./vendor/bin/phpcs --standard=PSR12 --extensions=php ./app ./routes

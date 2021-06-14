@@ -11,8 +11,8 @@ use BenSampo\Enum\Enum;
  */
 final class CourseTypes extends Enum
 {
-    const Regular = "regular";
-    const RegularElective = "elective";
-    const Honors = "honors";
-    const Minor = "minor";
+    public const REGULAR = "regular";
+    public const REGULAR_ELECTIVE = "elective";
+    public const HONORS = "honors";
+    public const MINOR = "minor";
 }

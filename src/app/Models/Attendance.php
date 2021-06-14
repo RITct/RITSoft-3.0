@@ -18,38 +18,46 @@ class Attendance extends Model
         "hour",
     ];
 
-    public function course(){
+    public function course()
+    {
         return $this->belongsTo(Course::class);
     }
 
-    public function absentees(){
+    public function absentees()
+    {
         return $this->hasMany(Absentee::class);
     }
 
-    protected static function filter_by_date($base_query, $from_date, $to_date){
-        if($from_date) {
-            if(!$to_date)
+    protected static function filterByDate($base_query, $from_date, $to_date)
+    {
+        if ($from_date) {
+            if (!$to_date) {
                 $to_date = date("Y-m-d");
+            }
             return $base_query->whereBetween('date', [$from_date, $to_date]);
         }
         return $base_query;
     }
 
-    public static function get_base_query($from_date=null, $to_date=null){
+    public static function getBaseQuery($from_date = null, $to_date = null)
+    {
         // Get all related data, and select only active courses
-        return Attendance::filter_by_date(
+        return Attendance::filterByDate(
             Attendance::with(['course.subject', 'course.curriculums.student', 'course.faculty', 'absentees']),
             $from_date,
-            $to_date)
-            ->whereHas("course", function ($q){
+            $to_date
+        )
+            ->whereHas("course", function ($q) {
                 $q->where("active", true);
             });
     }
 
-    public static function get_attendance_of_student($admission_id, $from_date=null, $to_date=null, $base_query=null){
+    public static function getAttendanceOfStudent($admission_id, $from_date = null, $to_date = null, $base_query = null)
+    {
         // Returns Eloquent Query, call get() to execute
-        if(!$base_query)
-            $base_query = Attendance::get_base_query($from_date, $to_date);
+        if (!$base_query) {
+            $base_query = Attendance::getBaseQuery($from_date, $to_date);
+        }
 
         return $base_query
             ->whereHas('course.curriculums.student', function ($q) use ($admission_id) {
@@ -57,31 +65,37 @@ class Attendance extends Model
             });
     }
 
-    public static function get_attendance_of_department($dept_code, $from_date=null, $to_date=null, $base_query=null){
+    public static function getAttendanceOfDepartment($dept_code, $from_date = null, $to_date = null, $base_query = null)
+    {
         // Returns Eloquent Query, call get() to execute
         // CommonAttendance of all STUDENTS in department, NOT COURSE
         // Eg: If an EC minor is chosen by CS student, CS HOD can view attendance not EC HOD
-        if(!$base_query)
-            $base_query = Attendance::get_base_query($from_date, $to_date);
+        if (!$base_query) {
+            $base_query = Attendance::getBaseQuery($from_date, $to_date);
+        }
 
-        return $base_query->whereHas('course.classroom', function ($q) use ($dept_code){
-           $q->where('department_code', $dept_code);
+        return $base_query->whereHas('course.classroom', function ($q) use ($dept_code) {
+            $q->where('department_code', $dept_code);
         });
     }
 
-    public static function get_attendance_of_course($course_id, $from_date=null, $to_date=null, $base_query=null){
-        if(!$base_query)
-            $base_query = Attendance::get_base_query($from_date, $to_date);
+    public static function getAttendanceOfCourse($course_id, $from_date = null, $to_date = null, $base_query = null)
+    {
+        if (!$base_query) {
+            $base_query = Attendance::getBaseQuery($from_date, $to_date);
+        }
 
         return $base_query->where("course", $course_id);
     }
 
-    public static function get_attendance_of_faculty($faculty_id, $from_date=null, $to_date=null, $base_query=null){
-        if(!$base_query)
-            $base_query = Attendance::get_base_query($from_date, $to_date);
+    public static function getAttendanceOfFaculty($faculty_id, $from_date = null, $to_date = null, $base_query = null)
+    {
+        if (!$base_query) {
+            $base_query = Attendance::getBaseQuery($from_date, $to_date);
+        }
 
-        return $base_query->whereHas("course", function ($q) use ($faculty_id){
-           $q->where("faculty_id", $faculty_id);
+        return $base_query->whereHas("course", function ($q) use ($faculty_id) {
+            $q->where("faculty_id", $faculty_id);
         });
     }
 }

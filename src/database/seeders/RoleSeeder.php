@@ -16,8 +16,8 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        $roleAdmin = Role::create(['name' => Roles::Admin]);
-        $permissions = Permission::pluck('id','id')->all();
+        $roleAdmin = Role::create(['name' => Roles::ADMIN]);
+        $permissions = Permission::pluck('id', 'id')->all();
         $roleAdmin->syncPermissions($permissions);
 
         $attendance_permissions = [
@@ -28,11 +28,11 @@ class RoleSeeder extends Seeder
         ];
 
         $roleHOD = Role::create(['name' => Roles::HOD]);
-        $roleFaculty = Role::create(['name' => Roles::Faculty]);
+        $roleFaculty = Role::create(['name' => Roles::FACULTY]);
         $roleHOD->syncPermissions($attendance_permissions["view"]);
         $roleFaculty->syncPermissions($attendance_permissions["all"]);
 
-        $roleStudent = Role::create(['name' => Roles::Student]);
+        $roleStudent = Role::create(['name' => Roles::STUDENT]);
         $roleStudent->syncPermissions("attendance.retrieve");
     }
 }

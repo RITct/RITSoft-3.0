@@ -31,7 +31,6 @@ class CreateTableCurriculums extends Migration
                 ->references('id');
 
             $table->boolean('is_feedback_complete')->default(false);
-
         });
     }
 

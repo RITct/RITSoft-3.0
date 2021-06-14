@@ -23,18 +23,22 @@ class Student extends PersonalData
         return $this->hasOne(User::class);
     }
 
-    public function absent_dates(){
+    public function absentDates()
+    {
         return $this->hasMany(Absentee::class);
     }
 
-    public function classroom(){
+    public function classroom()
+    {
         return $this->belongsTo(Classroom::class);
     }
 
-    public function semester(){
+    public function semester()
+    {
         return $this->classroom->semester;
     }
-    public function department(){
+    public function department()
+    {
         return $this->classroom->department;
     }
 }

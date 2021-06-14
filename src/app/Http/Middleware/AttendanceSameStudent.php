@@ -17,12 +17,14 @@ class AttendanceSameStudent
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next){
+    public function handle(Request $request, Closure $next)
+    {
         $auth_user = Auth::user();
 
         // /attendance/<student_admission_id>
-        if($auth_user->student && $auth_user->student->admission_id != $request->route()->parameter("attendance"))
+        if ($auth_user->student && $auth_user->student->admission_id != $request->route()->parameter("attendance")) {
             abort(403);
+        }
         return $next($request);
     }
 }

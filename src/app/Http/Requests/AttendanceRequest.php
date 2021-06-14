@@ -11,7 +11,7 @@ class AttendanceRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize() : bool
+    public function authorize(): bool
     {
         return true;
     }
@@ -21,21 +21,23 @@ class AttendanceRequest extends FormRequest
      *
      * @return array
      */
-    public function rules() : array
+    public function rules(): array
     {
-        if($this->method() == "GET")
+        if ($this->method() == "GET") {
             // index, show, create
             return [
                 "from" => ["date"],
                 "to" => ["date"],
             ];
-        if($this->method() == "POST")
+        }
+        if ($this->method() == "POST") {
             // store
             return [
                 "date" => ["required", "date"],
                 "course_id" => ["required", "integer"],
                 "hour" => ["required", "integer"],
             ];
+        }
         return [];
     }
 }

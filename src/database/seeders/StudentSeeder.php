@@ -15,13 +15,14 @@ class StudentSeeder extends Seeder
      *
      * @return void
      */
-    private function create_student($i, $classroom_id){
+    private function createStudent($i, $classroom_id)
+    {
         $user = User::create([
             'username' => sprintf('csestudent%d@rit.com', $i),
             'password' => '123456'
         ]);
 
-        $user->assignRole(Roles::Student);
+        $user->assignRole(Roles::STUDENT);
 
         $profile = Student::create([
             'user_id' => $user->id,
@@ -39,7 +40,8 @@ class StudentSeeder extends Seeder
     {
 
         $s1classroom = Classroom::where(["semester" => 1, "department_code" => "CSE"])->first();
-        for ($i=0; $i < 3; $i++)
-            $this->create_student($i, $s1classroom->id);
+        for ($i = 0; $i < 3; $i++) {
+            $this->createStudent($i, $s1classroom->id);
+        }
     }
 }

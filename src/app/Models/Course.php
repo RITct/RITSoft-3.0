@@ -18,34 +18,42 @@ class Course extends Model
         'active' => true
     ];
 
-    public function faculty(){
+    public function faculty()
+    {
         return $this->belongsTo(Faculty::class);
     }
 
-    public function subject(){
+    public function subject()
+    {
         return $this->belongsTo(Subject::class);
     }
 
-    public function curriculums(){
+    public function curriculums()
+    {
         return $this->hasMany(Curriculum::class);
     }
 
-    public function classroom(){
+    public function classroom()
+    {
         return $this->belongsTo(Classroom::class);
     }
 
-    public function get_target_department(){
+    public function getTargetDepartment()
+    {
         // Department of students studying the course
         return $this->classroom->department;
     }
 
-    public function get_subject_department(){
+    public function getSubjectDepartment()
+    {
         return $this->subject->department;
     }
-    public function is_an_elective(){
-        return $this->type != CourseTypes::Regular;
+    public function isAnElective()
+    {
+        return $this->type != CourseTypes::REGULAR;
     }
-    static function get_base_query(){
+    public static function getBaseQuery()
+    {
         return Course::with("subject")->where("active", true);
     }
 }

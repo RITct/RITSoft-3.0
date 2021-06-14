@@ -8,21 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class Classroom extends Model
 {
     use HasFactory;
+
     protected $guarded = [
         "semester",
         "degree_type"
     ];
 
-    public function students(){
+    public function students()
+    {
         return $this->hasMany(Student::class);
     }
-    public function staff_advisors(){
+    public function staffAdvisors()
+    {
         return $this->hasMany(Faculty::class);
     }
-    public function department(){
+    public function department()
+    {
         return $this->belongsTo(Department::class);
     }
-    public function promotion(){
+    public function promotion()
+    {
         return $this->hasOne(Classroom::class, "promotion_id");
     }
 }

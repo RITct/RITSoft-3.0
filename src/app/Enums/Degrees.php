@@ -11,9 +11,9 @@ use BenSampo\Enum\Enum;
  */
 final class Degrees extends Enum
 {
-    const BTECH =   "B.Tech";
-    const MTECH =   "M.Tech";
-    const BARCH =   "B.Arch";
-    const MCA =     "MCA";
-    const PHD =     "PhD";
+    public const BTECH = "B.Tech";
+    public const MTECH = "M.Tech";
+    public const BARCH = "B.Arch";
+    public const MCA = "MCA";
+    public const PHD = "PhD";
 }

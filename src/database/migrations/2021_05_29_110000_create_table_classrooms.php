@@ -28,7 +28,7 @@ class CreateTableClassrooms extends Migration
             $table->timestamps();
         });
 
-        Schema::table('classrooms', function (Blueprint $table){
+        Schema::table('classrooms', function (Blueprint $table) {
             $table->foreign("promotion_id")
                 ->references("id")
                 ->on("classrooms");

@@ -14,9 +14,6 @@ class CurriculumSeeder extends Seeder
      *
      * @return void
      */
-    private function create_curriculum($admission_id, $course_id){
-
-    }
 
     public function run()
     {
@@ -28,7 +25,7 @@ class CurriculumSeeder extends Seeder
             $q->where("department_code", "CSE");
         })->get();
 
-        foreach ($students as $student){
+        foreach ($students as $student) {
             Curriculum::create([
                 'student_admission_id' => $student->admission_id,
                 'course_id' => $courses[0]->id
