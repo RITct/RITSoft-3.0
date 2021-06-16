@@ -12,7 +12,7 @@ class AuthTest extends TestCase
 
     public function testLoginOk()
     {
-        $loginData = ["username" => "admin@rit.com", "password" => TestCase::$defaultPassword];
+        $loginData = ["username" => "blah@rit.com", "password" => TestCase::$defaultPassword];
         User::factory()->create($loginData);
 
         $this->post('/auth/login', $loginData, ["HTTP_REFERER" => "/auth/login"])

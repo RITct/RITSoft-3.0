@@ -38,7 +38,7 @@ class AttendanceController extends Controller
         if ($auth_user->isAdmin()) {
             // OR Principal
             $query = Attendance::getBaseQuery($request->get("from"), $request->get("to"));
-        } elseif ($faculty && $faculty->is_hod()) {
+        } elseif ($faculty && $faculty->isHOD()) {
             $query = Attendance::getAttendanceOfDepartment(
                 $faculty->department->code,
                 $request->get("from"),
@@ -166,7 +166,7 @@ class AttendanceController extends Controller
         );
 
         // HOD of student's dept
-        $is_hod = $faculty && $faculty->is_hod() && $student->department_id == $faculty->department_id;
+        $is_hod = $faculty && $faculty->isHOD() && $student->department_id == $faculty->department_id;
 
         if ($auth_user->student || $faculty && $is_hod || $auth_user->isAdmin()) {
             // TODO: Add principal, Dean etc
@@ -219,7 +219,8 @@ class AttendanceController extends Controller
         $attendance = Attendance::getBaseQuery()->findOrFail($attendance_id);
         // To aid in removing absentees
         $absentee_exist_map = [];
-        foreach ($request->json("absentees") as $admission_id => $leave_type) {
+        foreach ($request->json("absentees", array()) as $admission_id => $leave_type) {
+            echo $admission_id, $leave_type;
             $absentee = $attendance->absentees->firstWhere("student_admission_id", $admission_id);
             if (!$absentee) {
                 // Create new absentee

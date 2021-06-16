@@ -18,7 +18,6 @@ class CreateTableSubjects extends Migration
             $table->primary('code');
 
             $table->string('name', 30);
-            $table->string('type', 20);
             $table->smallInteger('credits');
 
             $table->string('department_code');

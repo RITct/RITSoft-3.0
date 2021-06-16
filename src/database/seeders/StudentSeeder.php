@@ -33,8 +33,7 @@ class StudentSeeder extends Seeder
             'address' => 'xyz',
             'classroom_id' => $classroom_id
         ]);
-
-        $profile->user()->save($user);
+        $user->student()->associate($profile)->save();
     }
     public function run()
     {

@@ -12,6 +12,7 @@ class Faculty extends PersonalData
     protected $primaryKey = 'id';
     public $incrementing = false;
     protected $keyType = 'string';
+    protected $with = ['user'];
 
     public $timestamps = false;
 
@@ -28,15 +29,21 @@ class Faculty extends PersonalData
 
     public function isHOD()
     {
-        return User::where('id', $this->user_id)->first()->hasRole(Roles::HOD);
+        return $this->user->hasRole(Roles::HOD);
     }
 
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
+
     public function advisorClassroom()
     {
         return $this->belongsTo(Classroom::class, "advisor_classroom_id");
+    }
+
+    public function courses()
+    {
+        return $this->hasMany(Course::class);
     }
 }

@@ -60,12 +60,12 @@ class User extends Authenticatable
 
     public function student()
     {
-        return $this->hasOne(Student::class);
+        return $this->belongsTo(Student::class);
     }
 
     public function faculty()
     {
-        return $this->hasOne(Faculty::class);
+        return $this->belongsTo(Faculty::class);
     }
 
     public function getProfile($authType = null)

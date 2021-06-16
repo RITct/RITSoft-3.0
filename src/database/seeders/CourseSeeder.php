@@ -20,20 +20,20 @@ class CourseSeeder extends Seeder
     {
         $subject1 = Subject::where('code', 'CSE201')->first();
         $subject2 = Subject::where('code', 'CSE301')->first();
-        $faculty = Faculty::where('department_code', 'CSE')->get();
+        $faculties = Faculty::where('department_code', 'CSE')->get();
         $s1classroom = Classroom::where(["semester" => 1, "department_code" => "CSE"])->first();
 
         Course::create([
             'subject_code' => $subject1->code,
             'type' => CourseTypes::REGULAR,
-            'faculty_id' => $faculty[0]->id,
+            'faculty_id' => $faculties[0]->id,
             'semester' => 1,
             'classroom_id' => $s1classroom->id
         ]);
 
         Course::create([
             'subject_code' => $subject2->code,
-            'faculty_id' => $faculty[1]->id,
+            'faculty_id' => $faculties[1]->id,
             'type' => CourseTypes::REGULAR,
             'semester' => 1,
             'classroom_id' => $s1classroom->id

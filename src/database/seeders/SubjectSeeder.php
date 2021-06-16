@@ -21,7 +21,6 @@ class SubjectSeeder extends Seeder
             'name' => 'Data Structures',
             'code' => 'CSE201',
             'credits' => 4,
-            'type' => 'test',
             'department_code' => $cse->code
         ]);
 
@@ -29,7 +28,6 @@ class SubjectSeeder extends Seeder
             'name' => 'Objective Oriented Programming',
             'code' => 'CSE301',
             'credits' => 4,
-            'type' => 'test',
             'department_code' => $cse->code
         ]);
     }
