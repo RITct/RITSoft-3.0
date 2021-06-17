@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Common\CommonAttendance;
 use App\Enums\CourseTypes;
-use App\Enums\LeaveType;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Absentee;
 use App\Models\Attendance;

@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use App\Enums\LeaveType;
 
-class CreateTableAbsentees extends Migration
+class CreateAbsenteesTable extends Migration
 {
     /**
      * Run the migrations.
