@@ -23,9 +23,11 @@ abstract class TestCase extends BaseTestCase
         $this->setUpUsers();
     }
 
-    public function pickRandomUser($role=null){
-        if($role)
+    public function pickRandomUser($role = null)
+    {
+        if ($role) {
             return $this->users[$role][array_rand($this->users[$role])];
+        }
         $random_role = $this->users[array_rand($this->users)];
         return $random_role[array_rand($random_role)];
     }
@@ -46,8 +48,12 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    public function assertUsersOnEndpoint(string $url, string $method, array $user_status_map, array $data=array()) : void
-    {
+    public function assertUsersOnEndpoint(
+        string $url,
+        string $method,
+        array $user_status_map,
+        array $data = array()
+    ): void {
         // Function to assert level permissions on endpoints
         foreach ($user_status_map as $role => $status) {
             $response = call_user_func(

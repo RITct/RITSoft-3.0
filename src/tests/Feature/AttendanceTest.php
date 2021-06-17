@@ -7,21 +7,16 @@ use App\Enums\Roles;
 use App\Models\Absentee;
 use App\Models\Attendance;
 use App\Models\Course;
-use App\Models\Curriculum;
-use App\Models\Faculty;
 use App\Models\Student;
 use App\Models\User;
-use Database\Factories\StudentFactory;
-use Database\Seeders\AdminUserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class AttendanceTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIndex() : void
+    public function testIndex(): void
     {
         // Attendance requires login
         $this->get('/attendance')->assertRedirect("/auth/login");
@@ -37,7 +32,7 @@ class AttendanceTest extends TestCase
             )
         );
     }
-    public function testStudentAttendance() : void
+    public function testStudentAttendance(): void
     {
         foreach ($this->users[Roles::STUDENT] as $student_user) {
             $url = sprintf("/attendance/%s", $student_user->student_admission_id);
@@ -56,7 +51,7 @@ class AttendanceTest extends TestCase
                 ->assertStatus(200);
 
             foreach ($this->users[Roles::STUDENT] as $anotherStudent) {
-                if($student_user != $anotherStudent) {
+                if ($student_user != $anotherStudent) {
                     $this->actingAs($anotherStudent)
                         ->get($url)
                         ->assertStatus(403);
@@ -65,7 +60,7 @@ class AttendanceTest extends TestCase
         }
     }
 
-    public function testAttendanceCreate() : void
+    public function testAttendanceCreate(): void
     {
         $this->assertUsersOnEndpoint(
             "/attendance/create",
@@ -101,7 +96,7 @@ class AttendanceTest extends TestCase
                 "course_id" => $attendance->course_id
             ])->assertStatus(400);
 
-        // Hour is changed, to prevent conflicting attendance records
+        // Hour is changed, to prevent conflicting attendance records because I dont trust laravel
         $hour = 1;
         foreach (Course::with("faculty.user")->get() as $course) {
             $attendance = Attendance::factory(["course_id" => $course->id, "hour" => $hour])->make();
@@ -124,11 +119,12 @@ class AttendanceTest extends TestCase
         }
     }
 
-    private function alterAttendance($mainMethod, $edit=false, $data=array()){
+    private function alterAttendance($mainMethod, $edit = false, $data = array()): void
+    {
         $all_attendance = Attendance::with("course.faculty")->get();
-        foreach ($all_attendance as $attendance){
+        foreach ($all_attendance as $attendance) {
             $urls = [sprintf("/attendance/%d", $attendance->id) => $mainMethod];
-            if($edit) {
+            if ($edit) {
                 $urls[sprintf("/attendance/%d/edit", $attendance->id)] = "get";
             }
             $valid_users = array(
@@ -156,14 +152,14 @@ class AttendanceTest extends TestCase
                     $data
                 )->assertStatus(200);
 
-                if(!$edit)
+                if (!$edit) {
                     $this->assertEquals(null, Attendance::find($attendance->id));
-
+                }
             }
         }
     }
 
-    public function testAttendanceUpdate() : void
+    public function testAttendanceUpdate(): void
     {
         $absentee = Absentee::with("attendance.course.faculty")->first();
         $faculty = $absentee->attendance->course->faculty;
@@ -196,11 +192,25 @@ class AttendanceTest extends TestCase
                 ["absentees" => [$student->admission_id => LeaveType::NO_EXCUSE]]
             )->assertStatus(400);
 
+        // Create a new absentee
+        $random_course = Course::with("curriculums.student")->get()->random();
+        $random_student_id = $random_course->curriculums->random()->student_admission_id;
+        $attendance = Attendance::factory(["course_id" => $random_course->id])->create();
+        $leave_excuse = LeaveType::getRandomValue();
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))
+            ->json(
+                "PATCH",
+                sprintf("/attendance/%d", $attendance->id),
+                ["absentees" => [$random_student_id => $leave_excuse]]
+            )->assertStatus(200);
+
+        $absentee_in_db = Attendance::find($attendance->id)->absentees->first();
+        $this->assertEquals($absentee_in_db->leave_excuse, $leave_excuse);
         // Verify object-level permissions & remove absentees
         $this->alterAttendance("patch", edit: true);
     }
 
-    public function testAttendanceDelete() : void
+    public function testAttendanceDelete(): void
     {
         $this->alterAttendance("delete");
     }

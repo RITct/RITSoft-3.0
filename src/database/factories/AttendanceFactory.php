@@ -22,7 +22,7 @@ class AttendanceFactory extends Factory
     public function definition()
     {
         return [
-            "date" => $this->faker->date(),
+            "date" => $this->faker->unique()->date(),
             "hour" => $this->faker->numberBetween(1, 6)
         ];
     }

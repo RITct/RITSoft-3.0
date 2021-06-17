@@ -243,7 +243,6 @@ class AttendanceController extends Controller
                 $absentee_exist_map[$absentee->id] = true;
             }
             $absentee->leave_excuse = $leave_type;
-            echo $absentee;
 
             // TODO Bulk update is possible?
             $absentee->save();
