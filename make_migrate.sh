@@ -1,1 +1,0 @@
-docker exec -it ritsoft_app php artisan make:migration $1 --create=$2
