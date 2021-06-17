@@ -46,13 +46,14 @@ abstract class TestCase extends BaseTestCase
         }
     }
 
-    public function assertUsersOnEndpoint(string $url, string $method, array $user_status_map) : void
+    public function assertUsersOnEndpoint(string $url, string $method, array $user_status_map, array $data=array()) : void
     {
         // Function to assert level permissions on endpoints
         foreach ($user_status_map as $role => $status) {
             $response = call_user_func(
                 array($this->actingAs($this->pickRandomUser($role)), $method),
-                $url
+                $url,
+                $data
             );
             $response->assertStatus($status);
         }

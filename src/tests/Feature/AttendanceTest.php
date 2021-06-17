@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\Roles;
 use App\Models\Absentee;
 use App\Models\Attendance;
+use App\Models\Course;
 use App\Models\Curriculum;
 use App\Models\Faculty;
 use App\Models\Student;
@@ -75,6 +76,50 @@ class AttendanceTest extends TestCase
                 Roles::STUDENT => 403
             )
         );
+
+        // Validation Errors
+        $this->actingAs($this->pickRandomUser(Roles::FACULTY))
+            ->post("/attendance", ["date" => "abcd", "hour" => "mosf", "course_id" => "jwse"])
+            ->assertRedirect("/attendance/create");
+
+        $this->actingAs($this->pickRandomUser(Roles::FACULTY))
+            ->post("/attendance", ["hour" => 1, "course_id" => 1])
+            ->assertRedirect("/attendance/create");
+
+        // Invalid course id
+        $this->actingAs($this->pickRandomUser(Roles::FACULTY))
+            ->post("/attendance", ["date" => "29-11-2021", "hour" => 1, "course_id" => 0])
+            ->assertStatus(400);
+
+        // Test conflicting attendance
+        $attendance = Attendance::factory(["course_id" => Course::all()->first()->id])->create();
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))
+            ->post("/attendance", [
+                "date" => $attendance->date,
+                "hour" => $attendance->hour,
+                "course_id" => $attendance->course_id
+            ])->assertStatus(400);
+
+        // Hour is changed, to prevent conflicting attendance records
+        $hour = 1;
+        foreach (Course::with("faculty.user")->get() as $course) {
+            $attendance = Attendance::factory(["course_id" => Course::all()->first()->id, "hour" => $hour])->make();
+            $valid_users = [$this->pickRandomUser(Roles::ADMIN), $course->faculty->user];
+            // these 3 values together are unique
+            $array_attendance = [
+                "date" => $attendance->date,
+                "hour" => $attendance->hour,
+                "course_id" => $attendance->course_id
+            ];
+            // Either correct faculty or Admin(Random)
+            $this->actingAs($valid_users[array_rand($valid_users)])
+                ->post("/attendance", $array_attendance)
+                ->assertRedirect("/attendance");
+
+            // Check in DB
+            $this->assertNotNull(Attendance::where($array_attendance)->first());
+            $hour++;
+        }
     }
 
     private function alterAttendance($mainMethod, $edit=false, $data=array()){

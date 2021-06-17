@@ -220,7 +220,6 @@ class AttendanceController extends Controller
         // To aid in removing absentees
         $absentee_exist_map = [];
         foreach ($request->json("absentees", array()) as $admission_id => $leave_type) {
-            echo $admission_id, $leave_type;
             $absentee = $attendance->absentees->firstWhere("student_admission_id", $admission_id);
             if (!$absentee) {
                 // Create new absentee
