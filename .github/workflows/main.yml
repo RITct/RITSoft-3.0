@@ -11,11 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Set User and Group ID
-        run: sudo su - $(id -un 1000) && sudo chmod +777 .
+      - name: Set user and group id
+        run: sudo su - $(id -un 1000) && sudo chown -R $(id -un 1000) .
       - name: Build
         run: docker-compose up -d
       - name: Test
         run: sh ./test.sh
       - name: Lint
         run: sh ./lint.sh
+      - name: Give back permissions to user
+        run: rm -r node_modules vendor && sudo chown -R $(id -un 1001) .
