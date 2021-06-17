@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\LeaveType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,8 +13,7 @@ class Absentee extends Model
     protected $table = "absentees";
 
     protected $attributes = [
-        'medical_leave' => false,
-        'duty_leave' => false
+        'leave_excuse' => LeaveType::NO_EXCUSE
     ];
 
     public $timestamps = false;

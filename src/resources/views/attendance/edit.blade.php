@@ -9,6 +9,7 @@
             let data = {"absentees": {}};
             for(const element of document.getElementsByClassName("form-element"))
                 data.absentees[element.name] = element.value;
+
             fetch("/attendance/{{ $attendance->id }}/", {
                 "method": "PATCH",
                 "headers": {"X-CSRF-TOKEN": "{{ csrf_token() }}"},
@@ -74,18 +75,18 @@
                 <p>Student: {{ $absentee->student->name }}</p>
                 <p>
                     Reason for absence: <select class="form-element" name="{{ $absentee->student->admission_id }}">
-                        <option value=""
-                        @if(!$absentee->duty_leave && !$absentee->medical_leave)
+                        <option value="{{ \App\Enums\LeaveType::NO_EXCUSE }}"
+                        @if($absentee->leave_excuse == \App\Enums\LeaveType::NO_EXCUSE)
                             selected
                         @endif
                         >No Excuse</option>
-                        <option value="medical_leave"
-                        @if($absentee->medical_leave)
+                        <option value="{{ \App\Enums\LeaveType::MEDICAL_LEAVE }}"
+                        @if($absentee->leave_excuse == \App\Enums\LeaveType::MEDICAL_LEAVE)
                             selected
                         @endif
                         >Medical Leave</option>
-                        <option value="duty_leave"
-                        @if($absentee->duty_leave)
+                        <option value="{{ \App\Enums\LeaveType::DUTY_LEAVE }}"
+                        @if($absentee->leave_excuse == \App\Enums\LeaveType::DUTY_LEAVE)
                             selected
                         @endif
                         >Duty Leave</option>

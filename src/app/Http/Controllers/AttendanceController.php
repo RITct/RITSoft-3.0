@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Common\CommonAttendance;
 use App\Enums\CourseTypes;
+use App\Enums\LeaveType;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Absentee;
 use App\Models\Attendance;
@@ -104,8 +105,7 @@ class AttendanceController extends Controller
         foreach ($course->curriculums as $curriculum) {
             array_push($valid_student_ids, $curriculum->student->admission_id);
         }
-
-        if ($auth_user->isAdmin() || $course->faculty == $auth_user->faculty) {
+        if ($auth_user->isAdmin() || $course->faculty_id == $auth_user->faculty_id) {
             $absentee_ids = CommonAttendance::parseAttendanceInput($request->input("absentee_admission_nums"));
 
             $attendance = new Attendance([
@@ -223,37 +223,28 @@ class AttendanceController extends Controller
             $absentee = $attendance->absentees->firstWhere("student_admission_id", $admission_id);
             if (!$absentee) {
                 // Create new absentee
-                $student = $attendance->course->curriculums->firstWhere(
-                    ["student_admission_id" => $admission_id]
-                )->student;
-                if (!$student) {
+                $student_curriculum = $attendance->course->curriculums->firstWhere(
+                    "student_admission_id",
+                    $admission_id
+                );
+                if (!$student_curriculum) {
                     abort(
                         400,
                         sprintf(
-                            "Student with %s doesn't exist, or isn't enrolled in your class",
+                            "Student with admission id %s doesn't exist, or isn't enrolled in your class",
                             $admission_id
                         )
                     );
                 }
                 $absentee = new Absentee();
                 $absentee->attendance()->associate($attendance);
-                $absentee->student()->associate($student);
+                $absentee->student()->associate($student_curriculum->student);
             } else {
                 $absentee_exist_map[$absentee->id] = true;
             }
-            switch ($leave_type) {
-                case "duty_leave":
-                    $absentee->duty_leave = true;
-                    $absentee->medical_leave = false;
-                    break;
-                case "medical_leave":
-                    $absentee->medical_leave = true;
-                    $absentee->duty_leave = false;
-                    break;
-                default:
-                    $absentee->medical_leave = false;
-                    $absentee->duty_leave = false;
-            }
+            $absentee->leave_excuse = $leave_type;
+            echo $absentee;
+
             // TODO Bulk update is possible?
             $absentee->save();
         }

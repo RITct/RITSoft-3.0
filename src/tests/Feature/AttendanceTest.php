@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Enums\LeaveType;
 use App\Enums\Roles;
 use App\Models\Absentee;
 use App\Models\Attendance;
@@ -103,8 +104,9 @@ class AttendanceTest extends TestCase
         // Hour is changed, to prevent conflicting attendance records
         $hour = 1;
         foreach (Course::with("faculty.user")->get() as $course) {
-            $attendance = Attendance::factory(["course_id" => Course::all()->first()->id, "hour" => $hour])->make();
-            $valid_users = [$this->pickRandomUser(Roles::ADMIN), $course->faculty->user];
+            $attendance = Attendance::factory(["course_id" => $course->id, "hour" => $hour])->make();
+
+            $valid_users = [$course->faculty->user, $this->pickRandomUser(Roles::ADMIN)];
             // these 3 values together are unique
             $array_attendance = [
                 "date" => $attendance->date,
@@ -167,9 +169,9 @@ class AttendanceTest extends TestCase
         $faculty = $absentee->attendance->course->faculty;
 
         $request_datas = [
-            [$absentee->student_admission_id => ""],
-            [$absentee->student_admission_id => "duty_leave"],
-            [$absentee->student_admission_id => "medical_leave"]
+            [$absentee->student_admission_id => LeaveType::NO_EXCUSE],
+            [$absentee->student_admission_id => LeaveType::DUTY_LEAVE],
+            [$absentee->student_admission_id => LeaveType::MEDICAL_LEAVE]
         ];
 
         foreach ($request_datas as $request_data) {
@@ -181,9 +183,18 @@ class AttendanceTest extends TestCase
                 )->assertStatus(200);
 
             $absentee = Absentee::find($absentee->id);
-            $this->assertEquals(array_values($request_data)[0] == "medical_leave", $absentee->medical_leave);
-            $this->assertEquals(array_values($request_data)[0] == "duty_leave", $absentee->duty_leave);
+            $this->assertEquals(array_values($request_data)[0], $absentee->leave_excuse);
         }
+
+        // Try to add a student who's not enrolled in this course
+        $student_user = User::factory()->create();
+        $student = Student::factory(["user_id" => $student_user->id])->create();
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))
+            ->json(
+                "PATCH",
+                sprintf("/attendance/%d", $absentee->attendance->id),
+                ["absentees" => [$student->admission_id => LeaveType::NO_EXCUSE]]
+            )->assertStatus(400);
 
         // Verify object-level permissions & remove absentees
         $this->alterAttendance("patch", edit: true);
