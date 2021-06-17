@@ -20,4 +20,4 @@ jobs:
       - name: Lint
         run: sh ./lint.sh
       - name: Give back permissions to user
-        run: rm -r node_modules vendor && sudo chown -R $(id -un 1001) .
+        run: rm -r src/node_modules src/vendor && sudo chown -R $(id -un 1001) .
