@@ -12,11 +12,20 @@ services:
         volumes:
             - "./db-data:/var/lib/postgresql"
 
+    test-db:
+        image: postgres:13-alpine
+        environment:
+            POSTGRES_DB: ritsoft
+            POSTGRES_USER: ritsoft
+            POSTGRES_PASSWORD: ritsoft
+        networks:
+            - app-network
+
     app:
         container_name: "ritsoft_app"
         build: .
         ports:
-            - "3000:3000"
+            - "8000:8000"
         depends_on:
             - db
         networks:
@@ -25,6 +34,17 @@ services:
             - "./src:/ritsoft"
             - "/ritsoft/node_modules"
             - "/ritsoft/vendor"
+    pg-admin:
+        container_name: "pg-admin-ritsoft"
+        image: dpage/pgadmin4
+        ports:
+            - "9000:80"
+        environment:
+            PGADMIN_DEFAULT_EMAIL: "admin@ritsoft.com"
+            PGADMIN_DEFAULT_PASSWORD: "password"
+        networks:
+            - app-network
+
 networks:
     app-network:
         driver: bridge

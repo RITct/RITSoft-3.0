@@ -22,13 +22,13 @@ Run
 docker-compose build
 docker-compose up -d
 ```
-Visit `localhost:3000` to view the app.
+Visit `localhost:8000` to view the app.
 
 **Run `docker-compose build` only if you're setting up for the first time or have made changes.**
 
 If you're setting up for the first time, run
 ```
-docker exec -it ritsoft_app /ritsoft/initialsetup.sh
+docker-compose run app sh initialsetup.sh
 ```
 
 To stop the container run `docker-compose down`
@@ -36,43 +36,7 @@ To stop the container run `docker-compose down`
 
 ## Contributors Guideline
 
-### Initial setup and credentials
-
-```
-docker exec -it ritsoft_app /ritsoft/initialsetup.sh
-```
-
-| UserName | Roles |
-| --- | --- |
-| csestudent@rit.com | Student |
-| csefaculty1@rit.com | Faculty |
-| csefaculty2@rit.com | Faculty |
-| hodcse@rit.com | HOD |
-| admin@rit.com | Admin |
-
-**All users have 123456 as their password**
-
-### Running shell commands inside the container
-
-Use the format `docker exec -it ritsoft_app <CMD>`
-
-An Example `docker exec -it ritsoft_app php artisan migrate`
-
-### Installing php packages
-
-```
-sh ./composer_install.sh <package_name>
-```
-Example
-```
-sh ./composer_install.sh bensampo/laravel-enum
-```
-
-### Creating models
-
-```
-sh ./make_model.sh <model_name>
-```
+[Contributing](Contributing.MD)
 
 ### Setting up your IDE and Code Inspection
 
@@ -86,7 +50,5 @@ Better alternatives are always welcome
 ## Licence
 
 ## Docs
-
-[Permission Example](./docs/permission.md)
 
 ## Contributors

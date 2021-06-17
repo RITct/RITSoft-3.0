@@ -34,7 +34,7 @@ class FacultyUserSeeder extends Seeder
 
         $cse = Department::where('code', 'CSE')->first();
 
-        Faculty::create([
+        $faculty_1 = Faculty::create([
             'user_id' => $user1->id,
             'id' => 'blah_blah',
             'name' => 'cse_faculty',
@@ -43,7 +43,7 @@ class FacultyUserSeeder extends Seeder
             'department_code' => $cse->code,
         ]);
 
-        Faculty::create([
+        $faculty_2 = Faculty::create([
             'user_id' => $user2->id,
             'id' => 'blah_blah_2',
             'name' => 'cse_faculty_2',
@@ -52,7 +52,7 @@ class FacultyUserSeeder extends Seeder
             'department_code' => $cse->code,
         ]);
 
-        Faculty::create([
+        $faculty_3 = Faculty::create([
             'user_id' => $user3->id,
             'id' => 'hod_cse',
             'name' => 'hod_cse',
@@ -61,9 +61,13 @@ class FacultyUserSeeder extends Seeder
             'department_code' => $cse->code,
         ]);
 
-        $user1->assignRole(Roles::Faculty);
-        $user2->assignRole(Roles::Faculty);
+        $user1->assignRole(Roles::FACULTY);
+        $user2->assignRole(Roles::FACULTY);
         $user3->assignRole(Roles::HOD);
-        $user3->assignRole(Roles::Faculty);
+        $user3->assignRole(Roles::FACULTY);
+
+        $user1->faculty()->associate($faculty_1)->save();
+        $user2->faculty()->associate($faculty_2)->save();
+        $user3->faculty()->associate($faculty_3)->save();
     }
 }

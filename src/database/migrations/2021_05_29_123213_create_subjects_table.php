@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableSubjects extends Migration
+class CreateSubjectsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -18,7 +18,6 @@ class CreateTableSubjects extends Migration
             $table->primary('code');
 
             $table->string('name', 30);
-            $table->string('type', 20);
             $table->smallInteger('credits');
 
             $table->string('department_code');

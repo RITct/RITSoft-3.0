@@ -7,9 +7,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  lint:
+  Test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Set User and Group ID
+        run: sudo su - $(id -un 1000) && sudo chown -R $(id -un 1000) .
+      - name: Build
+        run: docker-compose up -d
+      - name: Test
+        run: sh ./test.sh
       - name: Lint
-        uses: overtrue/phplint@3.0.2
+        run: sh ./lint.sh

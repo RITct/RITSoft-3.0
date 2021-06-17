@@ -15,7 +15,6 @@ class Student extends PersonalData
     public $timestamps = false;
 
     protected $guarded = [
-        'current_semester',
         'roll_no'
     ];
 
@@ -24,7 +23,22 @@ class Student extends PersonalData
         return $this->hasOne(User::class);
     }
 
-    public function absent_dates(){
+    public function absentDates()
+    {
         return $this->hasMany(Absentee::class);
+    }
+
+    public function classroom()
+    {
+        return $this->belongsTo(Classroom::class);
+    }
+
+    public function semester()
+    {
+        return $this->classroom->semester;
+    }
+    public function department()
+    {
+        return $this->classroom->department;
     }
 }

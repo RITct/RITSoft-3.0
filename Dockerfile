@@ -28,12 +28,14 @@ COPY ./src /ritsoft
 
 WORKDIR /ritsoft
 
+RUN chown $UNAME -R /ritsoft
+
+USER $UNAME
+
 RUN cd /ritsoft && \
     composer install --prefer-dist && \
     npm install && \
     chmod +x ./startserver.sh && \
     chmod +x ./wait_for_it.sh
-
-USER $UNAME
 
 CMD ["./startserver.sh"]

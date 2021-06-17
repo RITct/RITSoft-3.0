@@ -3,8 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Enums\LeaveType;
 
-class CreateTableAbsentees extends Migration
+class CreateAbsenteesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,13 +16,14 @@ class CreateTableAbsentees extends Migration
     {
         Schema::create('absentees', function (Blueprint $table) {
             $table->id();
-            $table->boolean('duty_leave')->default(false);
-            $table->boolean('medical_leave')->default(false);
+            $table->enum("leave_excuse", LeaveType::getValues())
+                ->default(LeaveType::NO_EXCUSE);
 
             $table->integer('attendance_id');
             $table->foreign('attendance_id')
                 ->on('attendance')
-                ->references('id');
+                ->references('id')
+                ->onDelete('cascade');
 
             $table->string('student_admission_id', 15);
             $table->foreign('student_admission_id')

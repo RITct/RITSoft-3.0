@@ -11,7 +11,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory;
+    use Notifiable;
+    use HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -25,6 +27,10 @@ class User extends Authenticatable
 
     protected $guarded = [
         'is_active'
+    ];
+
+    protected $with = [
+        'roles',
     ];
 
     /**
@@ -47,39 +53,48 @@ class User extends Authenticatable
     ];
 
     // Hash Password
-    public function setPasswordAttribute($password){
+    public function setPasswordAttribute($password)
+    {
         $this->attributes['password'] = bcrypt($password);
     }
 
-    public function student(){
-        return $this->hasOne(Student::class);
+    public function student()
+    {
+        return $this->belongsTo(Student::class);
     }
 
-    public function faculty(){
-        return $this->hasOne(Faculty::class);
+    public function faculty()
+    {
+        return $this->belongsTo(Faculty::class);
     }
 
-    public function get_profile($authType=null){
+    public function getProfile($authType = null)
+    {
         $profileType = $authType ? $authType : $this->roles->first()->name;
-        switch ($profileType){
-            case Roles::Student: return $this->student->first();
+        switch ($profileType) {
+            case Roles::STUDENT:
+                return $this->student->first();
             // Map roles as we create them
         }
         return null;
     }
 
-    public function has_multiple_profiles(){
+    public function hasMultipleProfiles()
+    {
         return count($this->roles) > 1;
     }
 
-    public function is_admin(){
-        return $this->hasRole(Roles::Admin);
+    public function isAdmin()
+    {
+        return $this->hasRole(Roles::ADMIN);
     }
 
-    public function name(){
-        $profile = $this->get_profile();
-        if($profile)
+    public function name()
+    {
+        $profile = $this->getProfile();
+        if ($profile) {
             return $profile->name;
+        }
         return "";
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateTableCurriculums extends Migration
+class CreateCurriculumsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -31,7 +31,6 @@ class CreateTableCurriculums extends Migration
                 ->references('id');
 
             $table->boolean('is_feedback_complete')->default(false);
-
         });
     }
 

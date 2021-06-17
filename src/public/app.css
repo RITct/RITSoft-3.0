@@ -18,3 +18,7 @@ nav{
 #nav-auth{
     text-align: right;
 }
+
+.disabled{
+    display: none;
+}

@@ -15,13 +15,13 @@ class AdminUserSeeder extends Seeder
      *
      * @return void
      */
-    public function run(){
+    public function run()
+    {
         $user = User::create([
             'username' => 'admin@rit.com',
             'password' => '123456'
         ]);
 
-        $user->assignRole(Roles::Admin);
-
+        $user->assignRole(Roles::ADMIN);
     }
 }

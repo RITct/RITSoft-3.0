@@ -25,11 +25,13 @@ class Curriculum extends Model
 
     public $timestamps = false;
 
-    public function student(){
+    public function student()
+    {
          return $this->belongsTo(Student::class);
     }
 
-    public function course(){
+    public function course()
+    {
         return $this->belongsTo(Course::class);
     }
 }

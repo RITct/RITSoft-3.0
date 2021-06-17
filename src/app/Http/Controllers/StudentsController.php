@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-
 /*
 |--------------------------------------------------------------------------
-| Students 
+| Students
 |--------------------------------------------------------------------------
 |Upload photo for verification.
 |Students current class details.
@@ -17,57 +16,69 @@ use Illuminate\Http\Request;
 |View series exam marks.
 |View draft/final sessional marks.
 |Feedback for faculty evaluation.
-| 
+|
 |
 */
 
 class StudentsController extends Controller
 {
-    public function dashboards(){
+    public function dashboards()
+    {
         return view('students.dashboard');
     }
 
-    public function attendance(){
+    public function attendance()
+    {
         return view('students.attendance');
     }
 
-    public function semRegistrations(){
+    public function semRegistrations()
+    {
         return view('students.semRegistrations');
     }
 
-    public function postSemRegistrations(){
+    public function postSemRegistrations()
+    {
         return view('students.semRegistrations');
     }
 
-    public function universityMarks(){
+    public function universityMarks()
+    {
         return view('students.universityMarks');
     }
 
-    public function postUniversityMarks(Request $request){
+    public function postUniversityMarks(Request $request)
+    {
         return view('students.universityMarks');
     }
 
-    public function seriesMarks(){
+    public function seriesMarks()
+    {
         return view('students.seriesMarks');
     }
 
-    public function sessionMarks(){
+    public function sessionMarks()
+    {
         return view('students.sessionMarks');
     }
 
-    public function facultyEvaluvations(){
+    public function facultyEvaluvations()
+    {
         return view('students.facultyEvaluvations');
     }
 
-    public function postfacultyEvaluvations(Request $request){
+    public function postfacultyEvaluvations(Request $request)
+    {
         return view('students.facultyEvaluvations');
     }
 
-    public function photos(){
+    public function photos()
+    {
         return view('students.photos');
     }
 
-    public function postPhotos(Request $request){
+    public function postPhotos(Request $request)
+    {
         return view('students.photos');
     }
 }

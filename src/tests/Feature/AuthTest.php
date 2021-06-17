@@ -12,14 +12,10 @@ class AuthTest extends TestCase
 
     public function testLoginOk()
     {
-        $loginData = ['username' => 'testuser', 'password' => '123456'];
+        $loginData = ["username" => "blah@rit.com", "password" => TestCase::$defaultPassword];
+        User::factory()->create($loginData);
 
-        $user = User::factory()->create([
-            'username' => $loginData['username'],
-            'password' => bcrypt($loginData['password'])
-        ]);
-
-        $this->json('POST', 'auth/login/', $loginData, ['Accept' => 'application/json'])
+        $this->post('/auth/login', $loginData, ["HTTP_REFERER" => "/auth/login"])
             ->assertRedirect("/");
 
         $this->assertAuthenticated();
@@ -28,8 +24,8 @@ class AuthTest extends TestCase
     public function testLoginFail()
     {
         $loginData = ['username' => 'testuser', 'password' => '123456'];
-
-        $this->json('POST', 'auth/login/', $loginData, ['Accept' => 'application/json']);
+        $this->post('/auth/login', $loginData, ["HTTP_REFERER" => "/auth/login"])
+            ->assertRedirect("/auth/login");
 
         $this->assertGuest();
     }

@@ -19,7 +19,13 @@ class Department extends Model
 
     public $timestamps = false;
 
-    public function faculties(){
+    public function faculties()
+    {
         return $this->hasMany(Faculty::class);
+    }
+
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
     }
 }

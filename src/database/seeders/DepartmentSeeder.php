@@ -23,6 +23,5 @@ class DepartmentSeeder extends Seeder
             'name' => 'Electronics And Communication Engineering',
             'code' => 'ECE'
         ]);
-
     }
 }
