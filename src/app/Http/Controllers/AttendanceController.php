@@ -50,16 +50,24 @@ class AttendanceController extends Controller
                 $request->get("from"),
                 $request->get("to")
             );
-        } else {
-            abort(403);
+        }
+
+        $query = $query->get();
+
+        if($faculty?->isStaffAdvisor()) {
+            $query = $query->concat(
+                Attendance::getAttendanceOfClassroom(
+                    $faculty->advisor_classroom_id,
+                    $request->get("from"),
+                    $request->get("to")
+                )->get());
         }
         // TODO Additional Query Filters like semester, subject, etc
 
         return view("attendance.index", [
-            "attendance" => CommonAttendance::serializeCourse($query->get(), $faculty, $auth_user->isAdmin())
+            "attendance" => CommonAttendance::serializeCourse($query, $faculty, $auth_user->isAdmin())
         ]);
     }
-
     public function create()
     {
         // Only Faculty
@@ -165,9 +173,10 @@ class AttendanceController extends Controller
         );
 
         // HOD of student's dept
-        $is_hod = $faculty && $faculty->isHOD() && $student->department_id == $faculty->department_id;
+        $is_hod = $faculty?->isHOD() && $student->department_id == $faculty->department_id;
+        $is_staff_advisor = $faculty?->isStaffAdvisor() && $student->classroom_id == $faculty->advisor_classroom_id;
 
-        if ($auth_user->student || $faculty && $is_hod || $auth_user->isAdmin()) {
+        if ($auth_user->student || $faculty && $is_hod || $auth_user->isAdmin() || $is_staff_advisor) {
             // TODO: Add principal, Dean etc
             $attendance = $attendance->get();
         } elseif ($faculty && !$is_hod) {

@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Degrees;
 use App\Enums\Roles;
+use App\Models\Classroom;
 use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
@@ -36,7 +38,7 @@ class FacultyUserSeeder extends Seeder
 
         $faculty_1 = Faculty::create([
             'user_id' => $user1->id,
-            'id' => 'blah_blah',
+            'id' => 'faculty_1',
             'name' => 'cse_faculty',
             'phone' => '1234567890',
             'address' => 'xyz',
@@ -45,7 +47,7 @@ class FacultyUserSeeder extends Seeder
 
         $faculty_2 = Faculty::create([
             'user_id' => $user2->id,
-            'id' => 'blah_blah_2',
+            'id' => 'faculty_2',
             'name' => 'cse_faculty_2',
             'phone' => '1234568190',
             'address' => 'xyz',
@@ -63,8 +65,16 @@ class FacultyUserSeeder extends Seeder
 
         $user1->assignRole(Roles::FACULTY);
         $user2->assignRole(Roles::FACULTY);
+        $user2->assignRole(Roles::STAFF_ADVISOR);
         $user3->assignRole(Roles::HOD);
         $user3->assignRole(Roles::FACULTY);
+
+        $s1_btech_cse = Classroom::where([
+            "department_code" => "CSE",
+            "semester" => 1,
+            "degree_type" => Degrees::BTECH]
+        )->first();
+        $faculty_2->advisor_classroom()->associate($s1_btech_cse)->save();
 
         $user1->faculty()->associate($faculty_1)->save();
         $user2->faculty()->associate($faculty_2)->save();

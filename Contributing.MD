@@ -38,7 +38,9 @@ docker exec -it ritsoft_app sh initialsetup.sh
 | admin@rit.com | Admin |
 
 - Departments: CSE, ECE
-- Classrooms: BTECH S1 CSE, BTECH S2 CSE. All students are enrolled in Classroom `BTECH S1 CSE`
+- Classrooms: BTECH S1 CSE, BTECH S2 CSE. 
+  - All students are enrolled in Classroom `BTECH S1 CSE`
+  - `csefaculty2@rit.com` is the staff advisor of `BTECH S1 CSE`
 - Subjects: CSE201, CSE301
 - Courses:
   - `csefaculty1@rit.com` takes `CSE201` for `BTECH S1 CSE`

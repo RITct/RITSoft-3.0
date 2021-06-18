@@ -43,7 +43,13 @@ class Attendance extends Model
     {
         // Get all related data, and select only active courses
         return Attendance::filterByDate(
-            Attendance::with(['course.subject', 'course.curriculums.student', 'course.faculty', 'absentees']),
+            Attendance::with([
+                'course.classroom',
+                'course.subject',
+                'course.curriculums.student',
+                'course.faculty',
+                'absentees'
+            ]),
             $from_date,
             $to_date
         )
@@ -96,6 +102,17 @@ class Attendance extends Model
 
         return $base_query->whereHas("course", function ($q) use ($faculty_id) {
             $q->where("faculty_id", $faculty_id);
+        });
+    }
+
+    public static function getAttendanceOfClassroom($classroom_id, $from_date = null, $to_date = null, $base_query = null)
+    {
+        if(!$base_query) {
+            $base_query = Attendance::getBaseQuery($from_date, $to_date);
+        }
+
+        return $base_query->whereHas("course.classroom", function ($q) use ($classroom_id) {
+            return $q->where("id", $classroom_id);
         });
     }
 }
