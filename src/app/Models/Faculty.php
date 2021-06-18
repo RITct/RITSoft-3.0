@@ -26,7 +26,7 @@ class Faculty extends PersonalData
 
     public function isStaffAdvisor(): bool
     {
-        return $this->advisor_classroom != null;
+        return $this->advisor_classroom_id != null;
     }
 
     public function isHOD(): bool
@@ -34,12 +34,17 @@ class Faculty extends PersonalData
         return $this->user->hasRole(Roles::HOD);
     }
 
+    public function isPrincipal(): bool
+    {
+        return $this->user->hasRole(Roles::PRINCIPAL);
+    }
+
     public function department(): BelongsTo
     {
         return $this->belongsTo(Department::class);
     }
 
-    public function advisor_classroom(): BelongsTo
+    public function advisorClassroom(): BelongsTo
     {
         return $this->belongsTo(Classroom::class, "advisor_classroom_id");
     }

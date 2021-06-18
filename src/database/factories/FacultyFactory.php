@@ -25,10 +25,9 @@ class FacultyFactory extends Factory
     public function definition()
     {
         return [
-            "user_id" => User::factory(),
             "name" => Str::random(10),
             "address" => Str::random(10),
-            "phone" => $this->faker->unique(),
+            "phone" => $this->faker->unique()->realText(10),
             "department_code" => "CSE"
         ];
     }

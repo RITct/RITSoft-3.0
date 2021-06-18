@@ -105,9 +105,13 @@ class Attendance extends Model
         });
     }
 
-    public static function getAttendanceOfClassroom($classroom_id, $from_date = null, $to_date = null, $base_query = null)
-    {
-        if(!$base_query) {
+    public static function getAttendanceOfClassroom(
+        $classroom_id,
+        $from_date = null,
+        $to_date = null,
+        $base_query = null
+    ) {
+        if (!$base_query) {
             $base_query = Attendance::getBaseQuery($from_date, $to_date);
         }
 

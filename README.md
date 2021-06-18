@@ -38,15 +38,6 @@ To stop the container run `docker-compose down`
 
 [Contributing](Contributing.MD)
 
-### Setting up your IDE and Code Inspection
-
-So far the easiest way I've seen is just copying the vendor directory from the container to host. 
-
-```
-sudo docker cp ritsoft_app:/ritsoft/vendor /absolute/path/to/RITSoft-3.0/src/
-```
-Better alternatives are always welcome
-
 ## Licence
 
 ## Docs

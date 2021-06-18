@@ -1,1 +1,2 @@
-docker-compose run app ./vendor/bin/phpcs --standard=PSR12 --extensions=php ./app ./routes ./tests
+docker-compose run app ./vendor/bin/phpcs --ignore=./database/migrations --standard=PSR12 --extensions=php \
+./app ./routes ./tests ./database

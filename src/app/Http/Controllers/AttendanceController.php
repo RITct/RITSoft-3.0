@@ -34,8 +34,7 @@ class AttendanceController extends Controller
 
         $auth_user = Auth::user();
         $faculty = $auth_user->faculty;
-
-        if ($auth_user->isAdmin()) {
+        if ($auth_user->isAdmin() || $faculty?->isPrincipal()) {
             // OR Principal
             $query = Attendance::getBaseQuery($request->get("from"), $request->get("to"));
         } elseif ($faculty && $faculty->isHOD()) {
@@ -54,13 +53,14 @@ class AttendanceController extends Controller
 
         $query = $query->get();
 
-        if($faculty?->isStaffAdvisor()) {
+        if ($faculty?->isStaffAdvisor()) {
             $query = $query->concat(
                 Attendance::getAttendanceOfClassroom(
                     $faculty->advisor_classroom_id,
                     $request->get("from"),
                     $request->get("to")
-                )->get());
+                )->get()
+            );
         }
         // TODO Additional Query Filters like semester, subject, etc
 
@@ -176,10 +176,10 @@ class AttendanceController extends Controller
         $is_hod = $faculty?->isHOD() && $student->department_id == $faculty->department_id;
         $is_staff_advisor = $faculty?->isStaffAdvisor() && $student->classroom_id == $faculty->advisor_classroom_id;
 
-        if ($auth_user->student || $faculty && $is_hod || $auth_user->isAdmin() || $is_staff_advisor) {
-            // TODO: Add principal, Dean etc
+        if ($auth_user->student || $is_hod || $auth_user->isAdmin() || $is_staff_advisor || $faculty?->isPrincipal()) {
+            // TODO: Add dean
             $attendance = $attendance->get();
-        } elseif ($faculty && !$is_hod) {
+        } elseif ($faculty) {
             // Filter by course
             $attendance = $attendance->whereHas('course.faculty', function ($q) use ($faculty) {
                 $q->where('id', $faculty->id);
