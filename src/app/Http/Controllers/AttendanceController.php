@@ -108,6 +108,12 @@ class AttendanceController extends Controller
             abort(400, "There seems to be another entry with the same date and hour");
         }
 
+        $attendance_date = date_create_from_format("Y-m-d", $request->input("date"));
+        $today = date_create_from_format("Y-m-d", date("Y-m-d"));
+        if ($attendance_date > $today) {
+            abort(400, "Date shouldn't be in the future");
+        }
+
         $valid_student_ids = [];
         foreach ($course->curriculums as $curriculum) {
             array_push($valid_student_ids, $curriculum->student->admission_id);

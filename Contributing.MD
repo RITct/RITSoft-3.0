@@ -40,6 +40,7 @@ docker exec -it ritsoft_app sh initialsetup.sh
 | principal@rit.com | Principal |
 | admin@rit.com | Admin |
 
+- Principal is an ECE faculty, without any courses
 - Departments: CSE, ECE
 - Classrooms: BTECH S1 CSE, BTECH S2 CSE. 
   - All students are enrolled in Classroom `BTECH S1 CSE`
