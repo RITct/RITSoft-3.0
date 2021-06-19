@@ -96,6 +96,15 @@ class AttendanceTest extends TestCase
                 "course_id" => $attendance->course_id
             ])->assertStatus(400);
 
+        // Future date shouldn't work
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))
+            ->post("/attendance", [
+                "course_id" => Course::all()->random()->id,
+                "date" => date("Y-m-d", strtotime("tomorrow")),
+                "hour" => 3,
+            ])
+            ->assertStatus(400);
+
         // Hour is changed, to prevent conflicting attendance records because I dont trust laravel
         $hour = 1;
         foreach (Course::with("faculty.user")->get() as $course) {

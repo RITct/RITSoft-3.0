@@ -26,14 +26,14 @@ class CourseSeeder extends Seeder
         Course::create([
             'subject_code' => $subject1->code,
             'type' => CourseTypes::REGULAR,
-            'faculty_id' => $faculties[0]->id,
+            'faculty_id' => "faculty_1",
             'semester' => 1,
             'classroom_id' => $s1classroom->id
         ]);
 
         Course::create([
             'subject_code' => $subject2->code,
-            'faculty_id' => $faculties[1]->id,
+            'faculty_id' => "faculty_2",
             'type' => CourseTypes::REGULAR,
             'semester' => 1,
             'classroom_id' => $s1classroom->id

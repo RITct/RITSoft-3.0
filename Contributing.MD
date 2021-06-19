@@ -6,13 +6,15 @@
 - [Initial Setup](#initial-setup-and-credentials)
 - [Running shell commands inside container](#running-shell-commands-inside-the-container)
 - [Installing PHP Packages](#installing-php-packages)
-- [Creating Middleware](#creating-middleware)
+- [Creating Middlewares](#creating-middleware)
 - [Creating Models](#creating-models)
-- [Creating Migration](#creating-migrations)
+- [Creating Migrations](#creating-migrations)
 - [Running Migrations](#running-migrations)
 - [Making Tests](#making-tests)
 - [Running Tests](#running-tests)
 - [Running Linter](#running-linter)
+- [pgAdmin](#using-pgadmin)
+- [Code Inspection](#setting-up-your-ide-and-code-inspection)
 
 ### Standard of code
 
@@ -33,12 +35,16 @@ docker exec -it ritsoft_app sh initialsetup.sh
 | csestudent1@rit.com | Student |
 | csestudent2@rit.com | Student |
 | csefaculty1@rit.com | Faculty |
-| csefaculty2@rit.com | Faculty |
+| csefaculty2@rit.com | Faculty, StaffAdvisor |
 | hodcse@rit.com | HOD, Faculty |
+| principal@rit.com | Principal |
 | admin@rit.com | Admin |
 
+- Principal is an ECE faculty, without any courses
 - Departments: CSE, ECE
-- Classrooms: BTECH S1 CSE, BTECH S2 CSE. All students are enrolled in Classroom `BTECH S1 CSE`
+- Classrooms: BTECH S1 CSE, BTECH S2 CSE. 
+  - All students are enrolled in Classroom `BTECH S1 CSE`
+  - `csefaculty2@rit.com` is the staff advisor of `BTECH S1 CSE`
 - Subjects: CSE201, CSE301
 - Courses:
   - `csefaculty1@rit.com` takes `CSE201` for `BTECH S1 CSE`
@@ -52,7 +58,7 @@ Use the format `docker exec -it ritsoft_app <CMD>` or `docker-compose run app <C
 
 An Example `docker exec -it ritsoft_app php artisan migrate` or `docker-compose run app php artisan migrate`
 
-### Installing php packages
+### Installing PHP packages
 ```
 docker exec -it ritsoft_app composer install <package_name> 
 ```
@@ -61,7 +67,7 @@ Or
 docker-compose run app composer install <package_name>
 ```
 
-### Creating Middleware
+### Creating Middlewares
 ```
 docker exec -it ritsoft_app php artisan make:middleware <middleware_name>
 ```
@@ -96,7 +102,7 @@ create_&lt;feature&gt;_tables
 
 For adding columns, add_column_&lt;column_name&gt;&lowbar;to&lowbar;&lt;table_name&gt;
 
-For removing columns, remove_column_&lt;column_name&gt;&lowbar;to&lowbar;&lt;table_name&gt;
+For removing columns, remove_column_&lt;column_name&gt;&lowbar;from&lowbar;&lt;table_name&gt;
 
 ### Running Migrations
 
@@ -129,3 +135,28 @@ sh ./test.sh
 ```
 sh ./lint.sh
 ```
+
+### Using pgAdmin
+pgAdmin can be used to directly access the database for debugging purposes.
+0. Start pgAdmin service by `docker-compose --profile pg-admin up -d`
+1. Visit [localhost:9000](http://localhost:9000) and login
+   - Username: admin@rit.com
+   - Password: 123456
+2. Get Ip Address of the container
+```
+docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ritsoft_db
+```
+3. Click add new server, set any name and paste this IP Address in the Connection > Host Column.
+4. **DO NOT** change the database
+    - Username: ritsoft
+    - Password: ritsoft
+5. After successful connection, click Databases > ritsoft, in the left panel.
+6. You can now do whatever you want with this db.
+
+### Setting up your IDE and Code Inspection
+So far the easiest way I've seen is just copying the vendor directory from the container to host.
+
+```
+sudo docker cp ritsoft_app:/ritsoft/vendor /absolute/path/to/RITSoft-3.0/src/
+```
+Better alternatives are always welcome

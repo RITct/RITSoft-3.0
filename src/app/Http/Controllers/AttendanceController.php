@@ -34,8 +34,7 @@ class AttendanceController extends Controller
 
         $auth_user = Auth::user();
         $faculty = $auth_user->faculty;
-
-        if ($auth_user->isAdmin()) {
+        if ($auth_user->isAdmin() || $faculty?->isPrincipal()) {
             // OR Principal
             $query = Attendance::getBaseQuery($request->get("from"), $request->get("to"));
         } elseif ($faculty && $faculty->isHOD()) {
@@ -50,16 +49,25 @@ class AttendanceController extends Controller
                 $request->get("from"),
                 $request->get("to")
             );
-        } else {
-            abort(403);
+        }
+
+        $query = $query->get();
+
+        if ($faculty?->isStaffAdvisor()) {
+            $query = $query->concat(
+                Attendance::getAttendanceOfClassroom(
+                    $faculty->advisor_classroom_id,
+                    $request->get("from"),
+                    $request->get("to")
+                )->get()
+            );
         }
         // TODO Additional Query Filters like semester, subject, etc
 
         return view("attendance.index", [
-            "attendance" => CommonAttendance::serializeCourse($query->get(), $faculty, $auth_user->isAdmin())
+            "attendance" => CommonAttendance::serializeCourse($query, $faculty, $auth_user->isAdmin())
         ]);
     }
-
     public function create()
     {
         // Only Faculty
@@ -98,6 +106,12 @@ class AttendanceController extends Controller
 
         if ($conflicted_attendance) {
             abort(400, "There seems to be another entry with the same date and hour");
+        }
+
+        $attendance_date = date_create_from_format("Y-m-d", $request->input("date"));
+        $today = date_create_from_format("Y-m-d", date("Y-m-d"));
+        if ($attendance_date > $today) {
+            abort(400, "Date shouldn't be in the future");
         }
 
         $valid_student_ids = [];
@@ -165,12 +179,13 @@ class AttendanceController extends Controller
         );
 
         // HOD of student's dept
-        $is_hod = $faculty && $faculty->isHOD() && $student->department_id == $faculty->department_id;
+        $is_hod = $faculty?->isHOD() && $student->department_id == $faculty->department_id;
+        $is_staff_advisor = $faculty?->isStaffAdvisor() && $student->classroom_id == $faculty->advisor_classroom_id;
 
-        if ($auth_user->student || $faculty && $is_hod || $auth_user->isAdmin()) {
-            // TODO: Add principal, Dean etc
+        if ($auth_user->student || $is_hod || $auth_user->isAdmin() || $is_staff_advisor || $faculty?->isPrincipal()) {
+            // TODO: Add dean
             $attendance = $attendance->get();
-        } elseif ($faculty && !$is_hod) {
+        } elseif ($faculty) {
             // Filter by course
             $attendance = $attendance->whereHas('course.faculty', function ($q) use ($faculty) {
                 $q->where('id', $faculty->id);
