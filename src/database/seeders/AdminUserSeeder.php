@@ -17,7 +17,7 @@ class AdminUserSeeder extends Seeder
      */
     public function run()
     {
-        $user = User::create([
+        $user = User::factory()->create([
             'username' => 'admin@rit.com',
             'password' => '123456'
         ]);
