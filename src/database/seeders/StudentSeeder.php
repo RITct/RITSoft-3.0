@@ -17,10 +17,10 @@ class StudentSeeder extends Seeder
      */
     private function createStudent($i, $classroom_id)
     {
-        $user = User::create([
+        $user = User::factory([
             'username' => sprintf('csestudent%d@rit.com', $i),
             'password' => '123456'
-        ]);
+        ])->create();
 
         $user->assignRole(Roles::STUDENT);
 
