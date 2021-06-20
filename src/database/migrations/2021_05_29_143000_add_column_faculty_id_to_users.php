@@ -17,7 +17,8 @@ class AddColumnFacultyIdToUsers extends Migration
             $table->string('faculty_id')->nullable();
             $table->foreign('faculty_id')
                 ->on('faculties')
-                ->references('id');
+                ->references('id')
+                ->onDelete("cascade");
         });
     }
 

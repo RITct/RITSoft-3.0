@@ -23,11 +23,17 @@ class FacultyRequest extends FormRequest
      */
     public function rules()
     {
-        if($this->method == "POST")
+        if($this->method() == "POST")
             return [
-                "id" => "required|unique:faculty,id",
+                "id" => "required|unique:faculties,id",
                 "name" => "required",
-                "phone" => "phone"
+                "phone" => "required|numeric|digits:10",
+                "email" => "required|email|unique:users,email"
+            ];
+        if($this->method() == "PATCH")
+            return [
+                "phone" => "numeric|digits:10",
+                "email" => "email|unique:users,email"
             ];
     }
 }

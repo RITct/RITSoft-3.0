@@ -27,7 +27,7 @@ class FacultyFactory extends Factory
         return [
             "name" => Str::random(10),
             "address" => Str::random(10),
-            "phone" => $this->faker->unique()->realText(10),
+            "phone" => $this->faker->unique()->numerify("##########"),
             "department_code" => "CSE"
         ];
     }
