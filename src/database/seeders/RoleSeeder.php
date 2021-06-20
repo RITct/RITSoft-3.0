@@ -26,6 +26,12 @@ class RoleSeeder extends Seeder
             "delete" => ["attendance.delete"],
             "all" => "attendance.*"
         ];
+        $faculty_permissions = [
+            "view" => ["faculty.retrieve", "faculty.list"],
+            "alter" => ["faculty.create", "faculty.update"],
+            "delete" => ["faculty.delete"],
+            "all" => "faculty.*"
+        ];
 
         $roleHOD = Role::create(['name' => Roles::HOD]);
         $roleFaculty = Role::create(['name' => Roles::FACULTY]);
@@ -36,6 +42,12 @@ class RoleSeeder extends Seeder
         $roleFaculty->syncPermissions($attendance_permissions["all"]);
         $roleAdvisor->syncPermissions($attendance_permissions["view"]);
         $rolePrincipal->syncPermissions($attendance_permissions["view"]);
+
+        $roleHOD->syncPermissions(
+            array_merge(["faculty.create"], $faculty_permissions["view"], $faculty_permissions["delete"])
+        );
+        $rolePrincipal->syncPermissions($faculty_permissions["view"]);
+        $roleFaculty->syncPermissions("faculty.retrieve");
 
         $roleStudent = Role::create(['name' => Roles::STUDENT]);
         $roleStudent->syncPermissions("attendance.retrieve");
