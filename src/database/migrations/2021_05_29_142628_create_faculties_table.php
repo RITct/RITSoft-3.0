@@ -18,8 +18,8 @@ class CreateFacultiesTable extends Migration
             $table->primary('id');
 
             $table->string('name', 50);
-            $table->string('address', 200);
-            $table->string('phone', 13);
+            $table->string('address', 200)->nullable();
+            $table->string('phone', 13)->unique();
 
             $table->integer('user_id');
             $table->foreign('user_id')

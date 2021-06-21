@@ -6,6 +6,8 @@
 - [Initial Setup](#initial-setup-and-credentials)
 - [Running shell commands inside container](#running-shell-commands-inside-the-container)
 - [Installing PHP Packages](#installing-php-packages)
+- [Creating Controllers](#creating-controllers)
+- [Creating Request Class](#creating-requests-class)
 - [Creating Middlewares](#creating-middleware)
 - [Creating Models](#creating-models)
 - [Creating Migrations](#creating-migrations)
@@ -67,7 +69,25 @@ Or
 docker-compose run app composer install <package_name>
 ```
 
-### Creating Middlewares
+### Creating Controllers
+```
+docker exec -it ritsoft_app php artisan make:controller <controller_name> 
+```
+Or
+```
+docker-compose run app php artisan make:controller <controller_name>
+```
+
+### Creating Request Class
+```
+docker exec -it ritsoft_app php artisan make:request <name> 
+```
+Or
+```
+docker-compose run app php artisan make:request <name>
+```
+
+### Creating Middleware
 ```
 docker exec -it ritsoft_app php artisan make:middleware <middleware_name>
 ```

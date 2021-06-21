@@ -13,7 +13,7 @@ A web application for RIT students and teachers for academic management. Develop
 Verify docker and docker-compose is installed by running
 ```
 docker --version
-docker-compose --version
+docker-compose --version (>=1.28)
 ```
 
 ### Second Step

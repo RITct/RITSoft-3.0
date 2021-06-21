@@ -5,11 +5,14 @@ namespace Tests;
 use App\Enums\Roles;
 use App\Models\User;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
+    use WithFaker;
 
     public static $defaultPassword = "123456";
     public $users;
@@ -32,6 +35,24 @@ abstract class TestCase extends BaseTestCase
         return $random_role[array_rand($random_role)];
     }
 
+    private function getHighestRole($roles)
+    {
+        $role_names = array_map(function ($role) {
+            return $role["name"];
+        }, $roles->toArray());
+
+        if (in_array(Roles::PRINCIPAL, $role_names)) {
+            return Roles::PRINCIPAL;
+        } elseif (in_array(Roles::HOD, $role_names)) {
+            return Roles::HOD;
+        } elseif (in_array(Roles::STAFF_ADVISOR, $role_names)) {
+            return Roles::STAFF_ADVISOR;
+        } else {
+            // Faculty, Student
+            return array_pop($role_names);
+        }
+    }
+
     public function setUpUsers()
     {
         // Arrange users according to their roles
@@ -39,12 +60,13 @@ abstract class TestCase extends BaseTestCase
         $_users = User::all();
         foreach ($_users as $user) {
             $roles = $user->roles()->get();
-            foreach ($roles as $role) {
-                if (!key_exists($role->name, $this->users)) {
-                    $this->users[$role->name] = array();
-                }
-                array_push($this->users[$role->name], $user);
+
+            $role = $this->getHighestRole($roles);
+
+            if (!key_exists($role, $this->users)) {
+                $this->users[$role] = array();
             }
+            array_push($this->users[$role], $user);
         }
     }
 
@@ -63,5 +85,11 @@ abstract class TestCase extends BaseTestCase
             );
             $response->assertStatus($status);
         }
+    }
+
+    public function assertLoginRequired($url, $method = "get")
+    {
+        Auth::logout();
+        call_user_func([$this, $method], $url)->assertRedirect("/auth/login");
     }
 }
