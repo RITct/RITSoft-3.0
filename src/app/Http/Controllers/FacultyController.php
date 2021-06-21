@@ -50,18 +50,27 @@ class FacultyController extends Controller
     public function store(FacultyRequest $request)
     {
         // TODO Send email to faculty with a random password after integrating mailing system
+        $auth_user = Auth::user();
         $user = User::create([
-            "username" => $request->id,
-            "password" => $request->id,
-            "email" => $request->email,
+            "username" => $request->input("id"),
+            "password" => $request->input("id"),
+            "email" => $request->input("email"),
         ]);
         $faculty = new Faculty([
-            "name" => $request->name,
-            "phone" => $request->phone,
+            "name" => $request->input("name"),
+            "phone" => $request->input("phone"),
         ]);
         $faculty->user_id = $user->id;
         $faculty->id = $request->id;
-        $faculty->department_code = Auth::user()->faculty->department_code;
+        if ($auth_user->isAdmin()) {
+            $department_code = $request->input("department_code");
+            if (!$department_code) {
+                return back()->withErrors("department_code is required");
+            }
+            $faculty->department_code = $department_code;
+        } else {
+            $faculty->department_code = $auth_user->faculty->department_code;
+        }
         $faculty->save();
 
         $user->faculty()->associate($faculty);
@@ -75,11 +84,12 @@ class FacultyController extends Controller
         $faculty = Faculty::with("user")->findOrFail($faculty_id);
 
         $has_unrestricted_access = $auth_user->isAdmin() || $auth_user->faculty->isPrincipal();
-        $is_department_hod = $auth_user->faculty->isHOD() && $faculty->department_code == $auth_user->faculty->department_code;
+        $is_department_hod = $auth_user->faculty?->isHOD()
+            && $faculty->department_code == $auth_user->faculty->department_code;
         $is_same_faculty = $faculty_id == $auth_user->faculty_id;
 
         if ($has_unrestricted_access || $is_department_hod || $is_same_faculty) {
-            return view("faculty.retrieve", ["faculty" => $faculty]);
+            return view("faculty.retrieve", ["faculty" => CommonFaculty::markEditableFaculty($faculty, $auth_user)]);
         }
         abort(403);
     }
@@ -110,12 +120,12 @@ class FacultyController extends Controller
     {
         $auth_user = Auth::user();
         $faculty = Faculty::findOrFail($faculty_id);
-        $isHODSameDepartment = $faculty->department_code == $auth_user->faculty->department_code;
-        if ($auth_user->faculty->isHOD() && $isHODSameDepartment && $auth_user->faculty_id != $faculty_id) {
+        $isHODSameDepartment = $faculty->department_code == $auth_user->faculty?->department_code;
+        $sameFaculty = $auth_user->faculty_id == $faculty_id;
+        if ($auth_user->faculty?->isHOD() && $isHODSameDepartment && !$sameFaculty || $auth_user->isAdmin()) {
             Faculty::destroy(array($faculty_id));
             return response("OK");
-        }
-        elseif ($auth_user->faculty_id == $faculty_id) {
+        } elseif ($auth_user->faculty_id == $faculty_id) {
             abort(400, "You can't delete yourself");
         }
         abort(403);

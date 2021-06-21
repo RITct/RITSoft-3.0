@@ -19,7 +19,7 @@ class AttendanceTest extends TestCase
     public function testIndex(): void
     {
         // Attendance requires login
-        $this->get('/attendance')->assertRedirect("/auth/login");
+        $this->assertLoginRequired("/attendance");
 
         $this->assertUsersOnEndpoint(
             "/attendance",
@@ -28,6 +28,7 @@ class AttendanceTest extends TestCase
                 Roles::ADMIN => 200,
                 Roles::HOD => 200,
                 Roles::FACULTY => 200,
+                Roles::PRINCIPAL => 200,
                 Roles::STUDENT => 403,
             )
         );
@@ -36,6 +37,7 @@ class AttendanceTest extends TestCase
     {
         foreach ($this->users[Roles::STUDENT] as $student_user) {
             $url = sprintf("/attendance/%s", $student_user->student_admission_id);
+            $this->assertLoginRequired($url);
             $this->assertUsersOnEndpoint(
                 $url,
                 "get",
@@ -62,6 +64,8 @@ class AttendanceTest extends TestCase
 
     public function testAttendanceCreate(): void
     {
+        $this->assertLoginRequired("/attendance/create");
+        $this->assertLoginRequired("/attendance", "post");
         $this->assertUsersOnEndpoint(
             "/attendance/create",
             "get",
@@ -128,11 +132,13 @@ class AttendanceTest extends TestCase
         }
     }
 
-    private function alterAttendance($mainMethod, $edit = false, $data = array()): void
+    private function alterAttendance($method, $edit = false, $data = array()): void
     {
         $all_attendance = Attendance::with("course.faculty")->get();
         foreach ($all_attendance as $attendance) {
-            $urls = [sprintf("/attendance/%d", $attendance->id) => $mainMethod];
+            $url = sprintf("/attendance/%d", $attendance->id);
+            $this->assertLoginRequired($url, $method);
+
             if ($edit) {
                 $urls[sprintf("/attendance/%d/edit", $attendance->id)] = "get";
             }
@@ -140,30 +146,29 @@ class AttendanceTest extends TestCase
                 $this->pickRandomUser(Roles::ADMIN),
                 User::find($attendance->course->faculty->user_id)
             );
-            foreach ($urls as $url => $method) {
-                // Non admin users other than the faculty that owns the attendance are all denied delete
-                $users = User::where("faculty_id", "!=", $attendance->course->faculty_id)
-                    ->whereHas("roles", function ($q) {
-                        return $q->where("name", "!=", Roles::ADMIN);
-                    })->get();
-                foreach ($users as $user) {
-                    call_user_func(
-                        array($this->actingAs($user), $method),
-                        $url,
-                        $data
-                    )->assertStatus(403);
-                }
 
-                // Choose either admin/valid faculty randomly and perform operation
+            // Non admin users other than the faculty that owns the attendance are all denied delete
+            $users = User::where("faculty_id", "!=", $attendance->course->faculty_id)
+                ->whereHas("roles", function ($q) {
+                    return $q->where("name", "!=", Roles::ADMIN);
+                })->get();
+            foreach ($users as $user) {
                 call_user_func(
-                    array($this->actingAs($valid_users[array_rand($valid_users)]), $method),
+                    array($this->actingAs($user), $method),
                     $url,
                     $data
-                )->assertStatus(200);
+                )->assertStatus(403);
+            }
 
-                if (!$edit) {
-                    $this->assertEquals(null, Attendance::find($attendance->id));
-                }
+            // Choose either admin/valid faculty randomly and perform operation
+            call_user_func(
+                array($this->actingAs($valid_users[array_rand($valid_users)]), $method),
+                $url,
+                $data
+            )->assertStatus(200);
+
+            if (!$edit) {
+                $this->assertEquals(null, Attendance::find($attendance->id));
             }
         }
     }
@@ -180,10 +185,11 @@ class AttendanceTest extends TestCase
         ];
 
         foreach ($request_datas as $request_data) {
+            $url = sprintf("/attendance/%d", $absentee->attendance->id);
             $this->actingAs($faculty->user)
                 ->json(
                     "PATCH",
-                    sprintf("/attendance/%d", $absentee->attendance->id),
+                    $url,
                     ["absentees" => $request_data]
                 )->assertStatus(200);
 

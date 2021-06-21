@@ -25,6 +25,7 @@ class FacultyFactory extends Factory
     public function definition()
     {
         return [
+            "id" => $this->faker->unique()->realText(20),
             "name" => Str::random(10),
             "address" => Str::random(10),
             "phone" => $this->faker->unique()->numerify("##########"),
