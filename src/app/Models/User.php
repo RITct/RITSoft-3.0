@@ -69,15 +69,23 @@ class User extends Authenticatable
         return $this->belongsTo(Faculty::class);
     }
 
-    public function getProfile($authType = null)
+    public function officeStaff()
     {
-        $profileType = $authType ? $authType : $this->roles->first()->name;
+        return $this->belongsTo(OfficeStaff::class);
+    }
+
+    public function getProfile()
+    {
+        $profileType = $this->roles->first()->name;
         switch ($profileType) {
             case Roles::STUDENT:
                 return $this->student->first();
-            // Map roles as we create them
+            case Roles::OFFICE:
+                return $this->officeStaff->first();
+            // Faculty has so many roles covered, HOD, PRINCIPAL, DEAN etc
+            default:
+                return $this->faculty;
         }
-        return null;
     }
 
     public function hasMultipleProfiles()
