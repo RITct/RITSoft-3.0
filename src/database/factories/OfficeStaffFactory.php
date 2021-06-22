@@ -2,20 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Enums\Roles;
-use App\Models\Faculty;
-use App\Models\User;
+use App\Models\OfficeStaff;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 
-class FacultyFactory extends Factory
+class OfficeStaffFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Faculty::class;
+    protected $model = OfficeStaff::class;
 
     /**
      * Define the model's default state.
@@ -25,11 +22,9 @@ class FacultyFactory extends Factory
     public function definition()
     {
         return [
-            "id" => $this->faker->unique()->realText(20),
             "name" => $this->faker->name,
-            "address" => $this->faker->realText(),
-            "phone" => $this->faker->unique()->numerify("##########"),
-            "department_code" => "CSE"
+            "phone" => $this->faker->numerify("##########"),
+            "address" => $this->faker->realText(30)
         ];
     }
 }

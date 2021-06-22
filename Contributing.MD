@@ -40,6 +40,8 @@ docker exec -it ritsoft_app sh initialsetup.sh
 | csefaculty2@rit.com | Faculty, StaffAdvisor |
 | hodcse@rit.com | HOD, Faculty |
 | principal@rit.com | Principal |
+| office_staff1@rit.com | Office |
+| office_staff0@rit.com | Office | 
 | admin@rit.com | Admin |
 
 - Principal is an ECE faculty, without any courses

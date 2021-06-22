@@ -48,5 +48,7 @@ class RoleSeeder extends Seeder
 
         $roleStudent = Role::create(['name' => Roles::STUDENT]);
         $roleStudent->syncPermissions("attendance.retrieve");
+
+        $roleOffice = Role::create(['name' => Roles::OFFICE]);
     }
 }

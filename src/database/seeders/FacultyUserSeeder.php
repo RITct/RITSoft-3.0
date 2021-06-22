@@ -22,27 +22,22 @@ class FacultyUserSeeder extends Seeder
     {
         $user1 = User::factory([
             'username' => 'csefaculty1@rit.com',
-            'password' => '123456'
         ])->create();
 
         $user2 = User::factory([
             'username' => 'csefaculty2@rit.com',
-            'password' => '123456'
         ])->create();
 
         $hod_cse_user = User::factory([
             'username' => 'hodcse@rit.com',
-            'password' => '123456'
         ])->create();
 
         $hod_ece_user = User::factory([
             'username' => 'hodece@rit.com',
-            'password' => '123456'
         ])->create();
 
         $principal_user = User::factory([
             'username' => 'principal@rit.com',
-            'password' => '123456'
         ])->create();
 
         $faculty_1 = Faculty::factory([
