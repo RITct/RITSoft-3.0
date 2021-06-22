@@ -22,6 +22,7 @@ class OfficeStaffFactory extends Factory
     public function definition()
     {
         return [
+            "id" => $this->faker->unique()->realText(20),
             "name" => $this->faker->name,
             "phone" => $this->faker->numerify("##########"),
             "address" => $this->faker->realText(30)

@@ -9,6 +9,10 @@ class OfficeStaff extends PersonalData
 {
     use HasFactory;
 
+    protected $primaryKey = 'id';
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     public $timestamps = false;
 
     public function user(): HasOne

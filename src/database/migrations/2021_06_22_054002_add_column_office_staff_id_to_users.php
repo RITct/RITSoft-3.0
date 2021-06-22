@@ -14,7 +14,7 @@ class AddColumnOfficeStaffIdToUsers extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->integer("office_staff_id")->nullable();
+            $table->string("office_staff_id", 20)->nullable();
             $table->foreign("office_staff_id")
                 ->references("id")
                 ->on("office_staff");
