@@ -1,53 +1,64 @@
 version: "3"
 
 services:
-    db:
-        container_name: "ritsoft_db"
-        image: postgres:13-alpine
-        environment:
-            POSTGRES_DB: ritsoft
-            POSTGRES_USER: ritsoft
-            POSTGRES_PASSWORD: ritsoft
-        networks:
-            - app-network
-        volumes:
-            - "./db-data:/var/lib/postgresql"
+  db:
+    container_name: "ritsoft_db"
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: ritsoft
+      POSTGRES_USER: ritsoft
+      POSTGRES_PASSWORD: ritsoft
+    networks:
+      - app-network
+    volumes:
+      - "./db-data:/var/lib/postgresql"
 
-    test-db:
-        profiles: ["test"]
-        image: postgres:13-alpine
-        environment:
-            POSTGRES_DB: ritsoft
-            POSTGRES_USER: ritsoft
-            POSTGRES_PASSWORD: ritsoft
-        networks:
-            - app-network
+  test-db:
+    profiles: ["test"]
+    image: postgres:13-alpine
+    environment:
+      POSTGRES_DB: ritsoft
+      POSTGRES_USER: ritsoft
+      POSTGRES_PASSWORD: ritsoft
+    networks:
+      - app-network
 
-    app:
-        container_name: "ritsoft_app"
-        build: .
-        ports:
-            - "8000:8000"
-        depends_on:
-            - db
-        networks:
-            - app-network
-        volumes:
-            - "./src:/ritsoft"
-            - "/ritsoft/node_modules"
-            - "/ritsoft/vendor"
-    pg-admin:
-        profiles: ["pg-admin"]
-        container_name: "pg-admin-ritsoft"
-        image: dpage/pgadmin4
-        ports:
-            - "9000:80"
-        environment:
-            PGADMIN_DEFAULT_EMAIL: "admin@rit.com"
-            PGADMIN_DEFAULT_PASSWORD: "123456"
-        networks:
-            - app-network
+  app:
+    container_name: "ritsoft_app"
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - app-network
+    volumes:
+      - "./src:/ritsoft"
+      - "/ritsoft/node_modules"
+      - "/ritsoft/vendor"
+  pg-admin:
+    profiles: ["pg-admin"]
+    container_name: "pg-admin-ritsoft"
+    image: dpage/pgadmin4
+    ports:
+      - "9000:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@rit.com"
+      PGADMIN_DEFAULT_PASSWORD: "123456"
+    networks:
+      - app-network
+  smtp:
+    image: mailhog/mailhog
+    command: ["-smtp-bind-addr", "0.0.0.0:25"]
+    user: root
+    expose:
+      - 25
+      - 8025
+    ports:
+      - 8025:8025
+    healthcheck:
+      test: echo | telnet 127.0.0.1 25
 
 networks:
-    app-network:
-        driver: bridge
+  app-network:
+    driver: bridge
