@@ -29,6 +29,6 @@ class ForgotPassword extends Mailable
     public function build()
     {
         return $this->from('forgotYourPassword@ritsoft.com')
-                    ->view('emails.password.forgot');
+                    ->view('emails.password');
     }
 }

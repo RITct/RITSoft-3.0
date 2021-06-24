@@ -14,13 +14,16 @@ class MailController extends Controller
      * Send reset password mail
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function sendEmail(Request $request)
     {
 
         // Send the mail
+        $data = array(
+            'to' => "xyz@qwe.com",
+          );
+          
 
-        Mail::to("localhost:1026")->send(new ForgotPassword());
+        Mail::to('xyz@qwe.com')->send(new ForgotPassword());
     }
 }

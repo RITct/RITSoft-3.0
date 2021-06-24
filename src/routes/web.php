@@ -5,6 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\MailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +20,8 @@ use App\Http\Controllers\AttendanceController;
 
 Route::view("/", "welcome");
 
+Route::get('email', [MailController::class, 'sendEmail']);
+
 Route::group(["middleware" => ["auth"]], function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
@@ -30,7 +33,6 @@ Route::group(["middleware" => ["guest"]], function () {
     Route::get("auth/login", [AuthController::class, "login"])->name("login");
     Route::post("auth/login", [AuthController::class, "authenticate"]);
 });
-
 
 /*
 |--------------------------------------------------------------------------
