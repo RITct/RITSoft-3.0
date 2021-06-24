@@ -20,7 +20,7 @@ class Classroom extends Model
     }
     public function staffAdvisors()
     {
-        return $this->hasMany(Faculty::class);
+        return $this->hasMany(Faculty::class, "advisor_classroom_id");
     }
     public function department()
     {

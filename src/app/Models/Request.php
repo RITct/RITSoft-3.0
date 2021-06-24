@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\RequestStates;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -11,16 +12,15 @@ class Request extends Model
 {
     use HasFactory;
 
+    protected $with = ["signees"];
+
     protected $fillable = [
-        "position",
-        "current_position",
-        "type"
-    ];
-
-    protected $with = ["currentSignee", "signees"];
-
-    protected $guarded = [
-        "payload"
+        "payload",
+        "current_position" => 1,
+        "type",
+        "table_name",
+        "primary_key",
+        "status" => RequestStates::PENDING
     ];
 
     public function signees(): HasMany
@@ -28,22 +28,23 @@ class Request extends Model
         return $this->hasMany(RequestSignee::class);
     }
 
-    public function currentSignee(): HasOne
+    public function currentSignee()
     {
-        return $this->hasOne(RequestSignee::class, "current_signee");
+        return $this->signees->where("position", $this->current_position)->first();
     }
 
     public function setNextSignee(): bool
     {
-        if ($this->currentSignee->position == $this->signees->count()) {
+        $current_signee = $this->currentSignee();
+        $current_signee->state = RequestStates::APPROVED;
+        $this->save();
+
+        if ($this->current_position == $this->signees->count()) {
             // Last Signee
-            $this->currentSignee->approved = true;
-            $this->currentSignee->save();
+            $this->state = RequestStates::APPROVED;
             return true;
         } else {
-            $this->current_signee_id = $this->signees->where("position", $this->currentSignee->position + 1)
-                ->first()->id;
-
+            $this->current_position += 1;
             $this->save();
             return false;
         }

@@ -3,6 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use \App\Enums\RequestTypes;
+use \App\Enums\RequestStates;
 
 class CreateRequestTables extends Migration
 {
@@ -15,8 +17,12 @@ class CreateRequestTables extends Migration
     {
         Schema::create('requests', function (Blueprint $table) {
             $table->id();
-            $table->integer("current_signee_id");
+            $table->integer("current_position")->default(1);
             $table->json("payload");
+            $table->string("table_name");
+            $table->string("primary_key");
+            $table->enum("type", RequestTypes::getValues());
+            $table->enum("state", RequestStates::getValues())->default(RequestStates::PENDING);
             $table->timestamps();
         });
 
@@ -31,17 +37,11 @@ class CreateRequestTables extends Migration
             $table->integer("user_id");
             $table->foreign("user_id")
                 ->references("id")
-                ->on("requests")
+                ->on("users")
                 ->onDelete("cascade");
 
-            $table->boolean("approved")->default(false);
+            $table->enum("state", RequestStates::getValues())->default(RequestStates::PENDING);
             $table->smallInteger("position");
-        });
-
-        Schema::table('requests', function (Blueprint $table){
-            $table->foreign("current_signee_id")
-                ->references("id")
-                ->on("request_signees");
         });
     }
 
@@ -52,7 +52,7 @@ class CreateRequestTables extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requests');
         Schema::dropIfExists('request_signees');
+        Schema::dropIfExists('requests');
     }
 }
