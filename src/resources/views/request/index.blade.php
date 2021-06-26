@@ -23,6 +23,8 @@
         <h2>{{ $request->type }}</h2>
         <h3>{{ $request->primary_value }}</h3>
         <p>{{ $request->payload }}</p>
-        <button onclick="sendPatch({{ $request->id }})">Approve</button>
+        @if( app("request")->input("mode") != "applicant")
+            <button onclick="sendPatch({{ $request->id }})">Approve</button>
+        @endif
     @endforeach
 @endsection

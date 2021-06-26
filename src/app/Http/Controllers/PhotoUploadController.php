@@ -19,13 +19,6 @@ class PhotoUploadController extends Controller
         $this->photoUploadService = $photoUploadService;
     }
 
-    public function index()
-    {
-        $requests = RequestModel::where("user_id", Auth::user()->id)
-            ->where("status", "!=", RequestStates::APPROVED)->get();
-        return view("photo_upload.index", ["requests" => $requests]);
-    }
-
     public function create()
     {
         return view("photo_upload.create");
@@ -43,11 +36,11 @@ class PhotoUploadController extends Controller
         if (!$auth_user->student) {
             $auth_user->getProfile()->updateProfileImage($imageUrl);
         } else {
-            if (!RequestModel::isLastRequestIsPending(RequestTypes::STUDENT_PHOTO_UPLOAD, $auth_user->id)) {
+            if (!RequestModel::isLastRequestIsPending(RequestTypes::STUDENT_PHOTO_UPLOAD, $auth_user->student_admission_id)) {
                 RequestModel::createNewRequest(
                     RequestTypes::STUDENT_PHOTO_UPLOAD,
                     new Student(),
-                    $auth_user->id,
+                    $auth_user->student_admission_id,
                     ["photo_url" => $imageUrl],
                     [[
                         "user_id" => $auth_user->student->classroom->staffAdvisors->first()->user_id,

@@ -53,13 +53,21 @@ class RequestModel extends Model
         return $returnVal;
     }
 
+    public function reject(string $remark = null)
+    {
+        $this->state = RequestStates::REJECTED;
+        $this->currentSignee()->remark = $remark;
+        $this->currentSignee()->state = RequestStates::REJECTED;
+        $this->save();
+    }
+
     public function performUpdation()
     {
         DB::table($this->table_name)->where($this->primary_field, $this->primary_value)
             ->update(json_decode($this->payload, true));
     }
 
-    static function createNewRequest(string $type, Model $model, string $primaryVal, array $payload, array $signees)
+    public static function createNewRequest(string $type, Model $model, string $primaryVal, array $payload, array $signees)
     {
         $request = new RequestModel([
             "type" => $type,
@@ -75,12 +83,12 @@ class RequestModel extends Model
         RequestSignee::insert($signees);
     }
 
-    public static function isLastRequestIsPending($requestType, $userId): bool
+    public static function isLastRequestIsPending($requestType, $primaryVal): bool
     {
-        // Get last record with same type for the user
-        $lastRecord = RequestModel::where(["type" => $requestType, "user_id" => $userId])
-            ->order_by("created_at", "desc")
-            ->first();
-        return $lastRecord->state == RequestStates::PENDING;
+        // Get last record with same type for the given primaryVal
+        $lastRecord = RequestModel::where(["type" => $requestType, "primary_value" => $primaryVal])
+            ->latest()->first();
+
+        return $lastRecord?->state == RequestStates::PENDING;
     }
 }

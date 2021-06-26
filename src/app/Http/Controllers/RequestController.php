@@ -9,15 +9,29 @@ use Illuminate\Support\Facades\Auth;
 
 class RequestController extends Controller
 {
+    /**
+     * GET mode: signee - view requests where user is signee, applicant - view requests where user is the applicant
+     * GET state: RequestStates, filter queries based on state
+     */
     public function index(Request $request)
     {
         $authUser = Auth::user();
+        $mode = $request->input("mode", "signee");
         $state = $request->input("state", RequestStates::PENDING);
-        $requests = RequestModel::where("state", $state)->get()->filter(
-            function ($request) use ($authUser) {
-                return $request->currentSignee()->user_id == $authUser->id || $authUser->isAdmin();
-            }
-        );
+        if ($mode == "signee") {
+            $requests = RequestModel::where("state", $state)->get()->filter(
+                function ($request) use ($authUser) {
+                    return $request->currentSignee()->user_id == $authUser->id || $authUser->isAdmin();
+                }
+            );
+        } else {
+            $profile = $authUser->getProfile();
+            $requests = RequestModel::where([
+                "primary_value" => $profile->getKey(),
+                "state" => $state
+            ])->get();
+        }
+
         return view("request.index", ["requests" => $requests]);
     }
 
@@ -41,7 +55,7 @@ class RequestController extends Controller
         if ($newStatus == RequestStates::APPROVED && $thisRequest->setNextSignee($remark)) {
             $thisRequest->performUpdation();
         } elseif ($newStatus == RequestStates::REJECTED) {
-            $thisRequest->update(["state" => $newStatus, "remark" => $remark]);
+            $thisRequest->reject($remark);
         }
 
         return response("OK");
