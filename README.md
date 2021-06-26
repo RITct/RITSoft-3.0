@@ -36,7 +36,9 @@ To stop the container run `docker-compose down`
 
 ## Contributors Guideline
 
-[Contributing](Contributing.MD)
+[Contributing](docs/Contributing.MD)
+
+[The various types of users and permissions](docs/UserRolesAndPermissions.MD)
 
 ## Licence
 
