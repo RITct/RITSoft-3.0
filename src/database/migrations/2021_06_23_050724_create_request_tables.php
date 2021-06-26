@@ -20,7 +20,8 @@ class CreateRequestTables extends Migration
             $table->integer("current_position")->default(1);
             $table->json("payload");
             $table->string("table_name");
-            $table->string("primary_key");
+            $table->string("primary_value");
+            $table->string("primary_field");
             $table->enum("type", RequestTypes::getValues());
             $table->enum("state", RequestStates::getValues())->default(RequestStates::PENDING);
             $table->timestamps();
@@ -42,6 +43,7 @@ class CreateRequestTables extends Migration
 
             $table->enum("state", RequestStates::getValues())->default(RequestStates::PENDING);
             $table->smallInteger("position");
+            $table->string("remark")->nullable();
         });
     }
 

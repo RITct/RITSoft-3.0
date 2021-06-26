@@ -79,9 +79,9 @@ class User extends Authenticatable
         $profileType = $this->roles->first()->name;
         switch ($profileType) {
             case Roles::STUDENT:
-                return $this->student->first();
+                return $this->student;
             case Roles::OFFICE:
-                return $this->officeStaff->first();
+                return $this->officeStaff;
             // Faculty has so many roles covered, HOD, PRINCIPAL, DEAN etc
             default:
                 return $this->faculty;

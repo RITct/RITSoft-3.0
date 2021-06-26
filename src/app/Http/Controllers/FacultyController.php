@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Common\CommonFaculty;
 use App\Http\Requests\FacultyRequest;
-use App\Models\Department;
 use App\Models\Faculty;
 use App\Models\User;
 use Illuminate\Http\Request;

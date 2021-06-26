@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Database\Seeders\CommonMigrations;
 
 class CreateStudentsTable extends Migration
 {
@@ -17,10 +18,8 @@ class CreateStudentsTable extends Migration
             $table->string('admission_id', 15);
             $table->primary('admission_id');
 
-            $table->string('name', 50);
-            $table->string('address', 200);
-            $table->string('phone', 13);
-            $table->integer('roll_no')->nullable()->default(null);
+            CommonMigrations::definePersonalData($table);
+            $table->integer('roll_no')->nullable();
 
             $table->integer('user_id')->unsigned();
             $table->foreign('user_id')

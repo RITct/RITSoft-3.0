@@ -3,31 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Enums\RequestStates;
+use App\Models\RequestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class RequestController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $auth_user = Auth::user();
-        $requests = \App\Models\Request::where("state", RequestStates::PENDING)->get()->filter(function ($request) use ($auth_user) {
-            return $request->currentSignee()->user_id == $auth_user->id;
-        });
+        $authUser = Auth::user();
+        $state = $request->input("state", RequestStates::PENDING);
+        $requests = RequestModel::where("state", $state)->get()->filter(
+            function ($request) use ($authUser) {
+                return $request->currentSignee()->user_id == $authUser->id || $authUser->isAdmin();
+            }
+        );
         return view("request.index", ["requests" => $requests]);
     }
 
     public function update(Request $request, $request_id)
     {
-        $this_request = \App\Models\Request::find($request_id);
-        $new_status = $request->json("state");
-        if ($new_status == RequestStates::APPROVED) {
-           if ($this_request->setNextSignee()) {
-              echo DB::table($this_request->table_name)->where(["admission_id" => $this_request->primary_key])
-                  ->update(json_decode($this_request->payload, true));
-           }
+        $thisRequest = RequestModel::findOrFail($request_id);
+        $authUser = Auth::user();
+
+        if ($thisRequest->currentSignee()->user_id != $authUser->id && !$authUser->isAdmin()) {
+            abort(403);
         }
+
+        if ($thisRequest->state != RequestStates::PENDING) {
+            // Not even admin can bypass this, only PENDING requests can be updated
+            abort(400, "This request is " . $thisRequest->state);
+        }
+
+        $newStatus = $request->json("state");
+        $remark = $request->json("remark");
+
+        if ($newStatus == RequestStates::APPROVED && $thisRequest->setNextSignee($remark)) {
+            $thisRequest->performUpdation();
+        } elseif ($newStatus == RequestStates::REJECTED) {
+            $thisRequest->update(["state" => $newStatus, "remark" => $remark]);
+        }
+
         return response("OK");
     }
 }

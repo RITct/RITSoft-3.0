@@ -29,7 +29,8 @@ class FacultyFactory extends Factory
             "name" => $this->faker->name,
             "address" => $this->faker->realText(),
             "phone" => $this->faker->unique()->numerify("##########"),
-            "department_code" => "CSE"
+            "department_code" => "CSE",
+            "photo_url" => $this->faker->url
         ];
     }
 }

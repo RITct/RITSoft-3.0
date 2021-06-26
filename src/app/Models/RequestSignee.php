@@ -11,9 +11,10 @@ class RequestSignee extends Model
 {
     use HasFactory;
 
-    protected $guarded = [
+    protected $fillable = [
         "state" => RequestStates::PENDING,
-        "position"
+        "position",
+        "remark"
     ];
 
     public $timestamps = false;
@@ -25,6 +26,6 @@ class RequestSignee extends Model
 
     public function request()
     {
-        return $this->belongsTo(Request::class);
+        return $this->belongsTo(RequestModel::class);
     }
 }

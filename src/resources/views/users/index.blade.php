@@ -20,6 +20,8 @@
         </div>
     @endif
 
+    <a href="{{ route("uploadPhotoCreate") }}">Upload your photo</a>
+
     <table class="table table-bordered">
         <tr>
             <th>No</th>
