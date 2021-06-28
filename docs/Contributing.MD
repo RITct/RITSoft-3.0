@@ -7,7 +7,7 @@
 - [Running shell commands inside container](#running-shell-commands-inside-the-container)
 - [Installing PHP Packages](#installing-php-packages)
 - [Creating Controllers](#creating-controllers)
-- [Creating Request Class](#creating-requests-class)
+- [Creating Request Class](#creating-request-class)
 - [Creating Middlewares](#creating-middleware)
 - [Creating Models](#creating-models)
 - [Creating Migrations](#creating-migrations)
@@ -21,6 +21,8 @@
 ### Standard of code
 
 The code should be strictly be maintained in PSR12 standard. It's enforced by PHPCodeSniffer linter.
+
+[Best Practices](https://github.com/alexeymezenin/laravel-best-practices)
 
 ### Initial setup and credentials
 

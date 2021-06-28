@@ -20,6 +20,8 @@
         </div>
     @endif
 
+    <p><a href="{{ route("uploadPhotoCreate") }}">Upload your photo</a></p>
+
     <table class="table table-bordered">
         <tr>
             <th>No</th>
@@ -39,6 +41,9 @@
                             <label class="badge badge-success">{{ $v }}</label>
                         @endforeach
                     @endif
+                </td>
+                <td>
+                    <a href="{{ $user->getProfile()->photo_url }}">Photo</a>
                 </td>
                 <td>
                     <a class="btn btn-info" href="{{ route('users.show',$user->id) }}">Show</a>

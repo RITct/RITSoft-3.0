@@ -10,11 +10,6 @@ use Tests\TestCase;
 
 class FacultyTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
     public function testIndex()
     {
         $this->assertLoginRequired("/faculty");

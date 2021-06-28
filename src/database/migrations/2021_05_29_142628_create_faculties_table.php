@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Database\Seeders\CommonMigrations;
 
 class CreateFacultiesTable extends Migration
 {
@@ -17,9 +18,7 @@ class CreateFacultiesTable extends Migration
             $table->string('id', 20);
             $table->primary('id');
 
-            $table->string('name', 50);
-            $table->string('address', 200)->nullable();
-            $table->string('phone', 13)->unique();
+            CommonMigrations::definePersonalData($table);
 
             $table->integer('user_id');
             $table->foreign('user_id')

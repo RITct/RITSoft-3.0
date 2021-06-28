@@ -8,8 +8,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function testLoginOk()
     {
         $loginData = ["username" => "blah@rit.com", "password" => TestCase::$defaultPassword];

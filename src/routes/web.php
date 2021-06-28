@@ -6,6 +6,9 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\FacultyController;
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\PhotoUploadController;
+use App\Http\Controllers\TestRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,6 +29,24 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
     Route::resource("attendance", AttendanceController::class);
     Route::resource("faculty", FacultyController::class);
+    Route::resource("requests", RequestController::class, [
+        "names" => [
+            "index" => "viewAllRequests",
+            "update" => "updateRequest"
+        ]
+    ]);
+    Route::resource("users/photo", PhotoUploadController::class, [
+        "names" => [
+            "store" => "uploadPhotoStore",
+            "create" => "uploadPhotoCreate"
+        ]
+    ]);
+    Route::resource("testrequest", TestRequestController::class, [
+        "names" => [
+            "store" => "testRequestStore",
+            "create" => "testRequestCreate"
+        ]
+    ]);
 });
 
 Route::group(["middleware" => ["guest"]], function () {
