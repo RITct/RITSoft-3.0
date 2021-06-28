@@ -43,7 +43,7 @@ class TestRequestController extends Controller
             Faculty::getPrincipal()->user_id
         ];
 
-        $status = RequestModel::createNewRequest(
+        $request_id = RequestModel::createNewRequest(
             RequestTypes::TEST_REQUEST,
             new Student(),
             $student->admission_id,
@@ -51,10 +51,10 @@ class TestRequestController extends Controller
             $signees
         );
 
-        if (!$status) {
+        if ($request_id == null) {
             abort(400, "The last request is still pending, please try again later");
         }
 
-        return response("OK");
+        return response(json_encode(["id" => $request_id]));
     }
 }

@@ -29,7 +29,12 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
     Route::resource("attendance", AttendanceController::class);
     Route::resource("faculty", FacultyController::class);
-    Route::resource("requests", RequestController::class);
+    Route::resource("requests", RequestController::class, [
+        "names" => [
+            "index" => "viewAllRequests",
+            "update" => "updateRequest"
+        ]
+    ]);
     Route::resource("users/photo", PhotoUploadController::class, [
         "names" => [
             "store" => "uploadPhotoStore",

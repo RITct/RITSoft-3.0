@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use App\Enums\RequestErrors;
 use App\Enums\RequestStates;
+use App\Exceptions\InvalidRequestOperation;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -35,8 +37,19 @@ class RequestModel extends Model
         return $this->signees->where("position", $this->current_position)->first();
     }
 
+    private function checkRequestPendingOrThrow()
+    {
+        if ($this->state != RequestStates::PENDING) {
+            throw new InvalidRequestOperation(
+                "Illegal attempt to update a non pending request",
+                RequestErrors::ATTEMPT_TO_UPDATE_NON_PENDING_REQUEST
+            );
+        }
+    }
+
     public function setNextSignee($remark): bool
     {
+        $this->checkRequestPendingOrThrow();
         $current_signee = $this->currentSignee();
         $current_signee->state = RequestStates::APPROVED;
         $current_signee->remark = $remark;
@@ -49,20 +62,29 @@ class RequestModel extends Model
             $this->current_position += 1;
             $returnVal = false;
         }
+        $current_signee->save();
         $this->save();
         return $returnVal;
     }
 
     public function reject(string $remark = null)
     {
+        $this->checkRequestPendingOrThrow();
         $this->state = RequestStates::REJECTED;
         $this->currentSignee()->remark = $remark;
         $this->currentSignee()->state = RequestStates::REJECTED;
+        $this->currentSignee()->save();
         $this->save();
     }
 
     public function performUpdation()
     {
+        if ($this->state != RequestStates::APPROVED) {
+            throw new InvalidRequestOperation(
+                "Illegal attempt to alter payload, before approval",
+                RequestErrors::ATTEMPT_TO_ALTER_PAYLOAD_WITHOUT_APPROVAL
+            );
+        }
         DB::table($this->table_name)->where($this->primary_field, $this->primary_value)
             ->update(json_decode($this->payload, true));
     }
@@ -76,7 +98,7 @@ class RequestModel extends Model
         bool $checkSpam = true,
     ) {
         if ($checkSpam && RequestModel::isLastRequestIsPending($type, $primaryVal)) {
-            return false;
+            return null;
         }
 
         $request = new RequestModel([
@@ -96,7 +118,7 @@ class RequestModel extends Model
         }
         RequestSignee::insert($signee_objs);
 
-        return true;
+        return $request->id;
     }
 
     public static function getRequestsFromProfile($primaryVal, $requestType = null)

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\RequestErrors;
 use App\Enums\RequestStates;
+use App\Exceptions\InvalidRequestOperation;
+use App\Http\Requests\RequestRequest;
 use App\Models\RequestModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -35,29 +38,26 @@ class RequestController extends Controller
         return view("request.index", ["requests" => $requests]);
     }
 
-    public function update(Request $request, $request_id)
+    public function update(RequestRequest $request)
     {
-        $thisRequest = RequestModel::findOrFail($request_id);
-        $authUser = Auth::user();
+        try {
+            $thisRequest = $request->requestInDb;
 
-        if ($thisRequest->currentSignee()->user_id != $authUser->id && !$authUser->isAdmin()) {
-            abort(403);
+            $newStatus = $request->json("state");
+            $remark = $request->json("remark");
+
+            if ($newStatus == RequestStates::APPROVED && $thisRequest->setNextSignee($remark)) {
+                $thisRequest->performUpdation();
+            } elseif ($newStatus == RequestStates::REJECTED) {
+                $thisRequest->reject($remark);
+            }
+            return response("OK");
+        } catch (InvalidRequestOperation $e) {
+            if ($e->getCode() == RequestErrors::ATTEMPT_TO_UPDATE_NON_PENDING_REQUEST) {
+                abort(400, "This request is " . $thisRequest->state);
+            } else {
+                abort(500, "Oops, something is wrong with the server, please try again later");
+            }
         }
-
-        if ($thisRequest->state != RequestStates::PENDING) {
-            // Not even admin can bypass this, only PENDING requests can be updated
-            abort(400, "This request is " . $thisRequest->state);
-        }
-
-        $newStatus = $request->json("state");
-        $remark = $request->json("remark");
-
-        if ($newStatus == RequestStates::APPROVED && $thisRequest->setNextSignee($remark)) {
-            $thisRequest->performUpdation();
-        } elseif ($newStatus == RequestStates::REJECTED) {
-            $thisRequest->reject($remark);
-        }
-
-        return response("OK");
     }
 }

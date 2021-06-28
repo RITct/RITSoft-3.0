@@ -2,11 +2,13 @@
 
 @section("head")
     <script>
-        function sendPatch(id) {
-            fetch(`/requests/${id}/`, {
+        function sendPatch(id, state) {
+            let remark = document.getElementsByName("remark")[0].value;
+            let url = `/requests/${id}/`;
+            fetch(url, {
                 "method": "PATCH",
                 "headers": {"X-CSRF-TOKEN": "{{ csrf_token() }}"},
-                "body": JSON.stringify({"state": "approved"})
+                "body": JSON.stringify({"state": state, "remark": remark})
             }).then((r) => {
                 if (r.ok)
                     location.reload();
@@ -24,7 +26,9 @@
         <h3>{{ $request->primary_value }}</h3>
         <p>{{ $request->payload }}</p>
         @if( app("request")->input("mode") != "applicant")
-            <button onclick="sendPatch({{ $request->id }})">Approve</button>
+            <input type="text" name="remark" placeholder="Remarks">
+            <button onclick="sendPatch({{ $request->id }}, '{{ \App\Enums\RequestStates::APPROVED }}')">Approve</button>
+            <button onclick="sendPatch({{ $request->id }}, '{{ \App\Enums\RequestStates::REJECTED }}')">Reject</button>
         @endif
     @endforeach
 @endsection

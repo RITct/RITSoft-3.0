@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * This file is supposed to be within migrations folder
+ * But due to namespacing issues, it is now here
+ */
+
 namespace Database\Seeders;
 
 use Illuminate\Database\Schema\Blueprint;
