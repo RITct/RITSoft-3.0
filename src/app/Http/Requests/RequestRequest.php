@@ -43,11 +43,11 @@ class RequestRequest extends FormRequest
 
     /**
      * Make json data validatable
-     * @return array
+     *
      */
-    public function all($keys = null)
+    public function all($keys = null): array
     {
-        if(empty($keys)){
+        if (empty($keys)) {
             return parent::json()->all();
         }
         return collect(parent::json()->all())->only($keys)->toArray();

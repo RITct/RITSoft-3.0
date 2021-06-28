@@ -47,6 +47,18 @@ class RequestModel extends Model
         }
     }
 
+    public function getRemarks()
+    {
+        $data = [];
+        $signees = $this->signees->filter(function ($signee) {
+            return $signee->position <= $this->current_position && $signee->remark != null;
+        })->sortByDesc("position");
+        foreach ($signees as $signee) {
+            array_push($data, sprintf("%s: %s", $signee->user->name(), $signee->remark));
+        }
+        return $data;
+    }
+
     public function setNextSignee($remark): bool
     {
         $this->checkRequestPendingOrThrow();

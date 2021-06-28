@@ -25,10 +25,18 @@
         <h2>{{ $request->type }}</h2>
         <h3>{{ $request->primary_value }}</h3>
         <p>{{ $request->payload }}</p>
-        @if( app("request")->input("mode") != "applicant")
+        @if( app("request")->input("mode") != "applicant" && $request->state == \App\Enums\RequestStates::PENDING)
             <input type="text" name="remark" placeholder="Remarks">
             <button onclick="sendPatch({{ $request->id }}, '{{ \App\Enums\RequestStates::APPROVED }}')">Approve</button>
             <button onclick="sendPatch({{ $request->id }}, '{{ \App\Enums\RequestStates::REJECTED }}')">Reject</button>
+        @else
+            Status: {{ $request->state }}<br/>
+            <p>Remarks</p>
+            <ul>
+                @foreach($request->getRemarks() as $remark)
+                    <li>{{ $remark }}</li>
+                @endforeach
+            </ul>
         @endif
     @endforeach
 @endsection

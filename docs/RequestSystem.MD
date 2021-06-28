@@ -11,7 +11,7 @@ Quick Note: This system is best implemented in a NoSQL DB, but due to technologi
 - [The API](#the-api)
     - [RequestStates Enum](#appenumsrequeststates)
     - [RequestTypes Enum](#appenumsrequesttypes)
-    - [Create Request](#requestmodelcreatenewrequeststring-type-model-model-string-primaryval-array-payload-array-signees-void)
+    - [Create Request](#requestmodelcreatenewrequestargs-void)
     - [Current Signee](#requestmodelcurrentsignee-requestsignee)
     - [Is Last Request Pending](#requestmodelislastrequestispendingstring-requesttype-string-primaryval-bool)
     - [Perform Updation](#requestmodelperformupdation-void)
@@ -103,6 +103,10 @@ Function to create a new request and its signees.
 #### `RequestModel.currentSignee(): RequestSignee`
 
 Function to return the current signee's signee instance.
+
+#### `RequestModel.getRemarks(): array`
+
+Function to return all signees remarks in the latest order
 
 #### `RequestModel::isLastRequestIsPending(string $requestType, string $primaryVal): bool`
 

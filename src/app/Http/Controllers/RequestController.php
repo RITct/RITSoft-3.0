@@ -20,19 +20,20 @@ class RequestController extends Controller
     {
         $authUser = Auth::user();
         $mode = $request->input("mode", "signee");
-        $state = $request->input("state", RequestStates::PENDING);
+        $state = $request->input("state");
         if ($mode == "signee") {
-            $requests = RequestModel::where("state", $state)->get()->filter(
+            $requests = RequestModel::where("state", $state ?? RequestStates::PENDING)->get()->filter(
                 function ($request) use ($authUser) {
                     return $request->currentSignee()->user_id == $authUser->id || $authUser->isAdmin();
                 }
             );
         } else {
             $profile = $authUser->getProfile();
-            $requests = RequestModel::where([
-                "primary_value" => $profile->getKey(),
-                "state" => $state
-            ])->get();
+            $requests = RequestModel::where("primary_value", $profile->getKey());
+            if ($state) {
+                $requests = $requests->where("state", $state);
+            }
+            $requests = $requests->get();
         }
 
         return view("request.index", ["requests" => $requests]);
