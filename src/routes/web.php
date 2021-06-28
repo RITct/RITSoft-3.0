@@ -8,7 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\PhotoUploadController;
-
+use App\Http\Controllers\TestRequestController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +34,12 @@ Route::group(["middleware" => ["auth"]], function () {
         "names" => [
             "store" => "uploadPhotoStore",
             "create" => "uploadPhotoCreate"
+        ]
+    ]);
+    Route::resource("testrequest", TestRequestController::class, [
+        "names" => [
+            "store" => "testRequestStore",
+            "create" => "testRequestCreate"
         ]
     ]);
 });

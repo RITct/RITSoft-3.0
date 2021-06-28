@@ -14,8 +14,6 @@ use Tests\TestCase;
 
 class AttendanceTest extends TestCase
 {
-    use RefreshDatabase;
-
     public function testIndex(): void
     {
         // Attendance requires login

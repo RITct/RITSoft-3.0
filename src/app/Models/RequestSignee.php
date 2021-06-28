@@ -28,4 +28,19 @@ class RequestSignee extends Model
     {
         return $this->belongsTo(RequestModel::class);
     }
+
+    public static function createSignee(int $user_id, int $position, int $request_id, bool $isArray)
+    {
+        $signee = new RequestSignee([
+            "position" => $position,
+        ]);
+        $signee->user_id = $user_id;
+        $signee->request_id = $request_id;
+
+        if ($isArray) {
+            return $signee->toArray();
+        }
+
+        return $signee;
+    }
 }

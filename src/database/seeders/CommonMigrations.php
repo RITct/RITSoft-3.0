@@ -6,7 +6,8 @@ use Illuminate\Database\Schema\Blueprint;
 
 class CommonMigrations
 {
-    static function definePersonalData(Blueprint $table) {
+    public static function definePersonalData(Blueprint $table)
+    {
         $table->string('name', 50);
         $table->string('address', 200)->nullable();
         $table->string('phone', 13);

@@ -4,6 +4,7 @@ namespace Tests;
 
 use App\Enums\Roles;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Artisan;
@@ -13,11 +14,12 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
     use WithFaker;
-
-    public static $defaultPassword = "123456";
-    public $users;
+    use RefreshDatabase;
 
     protected $seed = true;
+
+    public static string $defaultPassword = "123456";
+    public array $users;
 
     public function setUp(): void
     {

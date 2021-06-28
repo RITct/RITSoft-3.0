@@ -67,8 +67,18 @@ class RequestModel extends Model
             ->update(json_decode($this->payload, true));
     }
 
-    public static function createNewRequest(string $type, Model $model, string $primaryVal, array $payload, array $signees)
-    {
+    public static function createNewRequest(
+        string $type,
+        Model $model,
+        string $primaryVal,
+        array $payload,
+        array $signees,
+        bool $checkSpam = true,
+    ) {
+        if ($checkSpam && RequestModel::isLastRequestIsPending($type, $primaryVal)) {
+            return false;
+        }
+
         $request = new RequestModel([
             "type" => $type,
             "table_name" => $model->getTable(),
@@ -77,17 +87,31 @@ class RequestModel extends Model
             "payload" => json_encode($payload)
         ]);
         $request->save();
-        for ($i =0; $i < count($signees); $i++) {
-            $signees[$i]["request_id"] = $request->id;
+        $signee_objs = [];
+        for ($i = 0; $i < count($signees); $i++) {
+            array_push(
+                $signee_objs,
+                RequestSignee::createSignee($signees[$i], $i + 1, $request->id, true)
+            );
         }
-        RequestSignee::insert($signees);
+        RequestSignee::insert($signee_objs);
+
+        return true;
+    }
+
+    public static function getRequestsFromProfile($primaryVal, $requestType = null)
+    {
+        $requestQuery = RequestModel::where(["primary_value" => $primaryVal]);
+        if ($requestType) {
+            $requestQuery->where("type", $requestType);
+        }
+        return $requestQuery->latest()->get();
     }
 
     public static function isLastRequestIsPending($requestType, $primaryVal): bool
     {
         // Get last record with same type for the given primaryVal
-        $lastRecord = RequestModel::where(["type" => $requestType, "primary_value" => $primaryVal])
-            ->latest()->first();
+        $lastRecord = RequestModel::getRequestsFromProfile($primaryVal, $requestType)->first();
 
         return $lastRecord?->state == RequestStates::PENDING;
     }

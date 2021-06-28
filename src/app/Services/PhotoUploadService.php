@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 class PhotoUploadService
 {
@@ -10,7 +8,7 @@ class PhotoUploadService
      * Return the url of uploaded image
      * @return string
      */
-    function handleUploadedImage($image): string
+    public function handleUploadedImage($image): string
     {
         $localDir = "profile_photos";
         $imageName = time() . '.' . $image->extension();

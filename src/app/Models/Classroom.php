@@ -18,16 +18,24 @@ class Classroom extends Model
     {
         return $this->hasMany(Student::class);
     }
+
     public function staffAdvisors()
     {
         return $this->hasMany(Faculty::class, "advisor_classroom_id");
     }
+
     public function department()
     {
         return $this->belongsTo(Department::class);
     }
+
     public function promotion()
     {
         return $this->hasOne(Classroom::class, "promotion_id");
+    }
+
+    public function getRandomAdvisor()
+    {
+        return $this->staffAdvisors->random();
     }
 }

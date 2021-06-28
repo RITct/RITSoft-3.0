@@ -40,6 +40,8 @@ To stop the container run `docker-compose down`
 
 [The various types of users and permissions](docs/UserRolesAndPermissions.MD)
 
+[Request System](docs/RequestSystem.MD)
+
 ## Licence
 
 ## Docs

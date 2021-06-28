@@ -36,24 +36,16 @@ class PhotoUploadController extends Controller
         if (!$auth_user->student) {
             $auth_user->getProfile()->updateProfileImage($imageUrl);
         } else {
-            if (!RequestModel::isLastRequestIsPending(RequestTypes::STUDENT_PHOTO_UPLOAD, $auth_user->student_admission_id)) {
-                RequestModel::createNewRequest(
-                    RequestTypes::STUDENT_PHOTO_UPLOAD,
-                    new Student(),
-                    $auth_user->student_admission_id,
-                    ["photo_url" => $imageUrl],
-                    [[
-                        "user_id" => $auth_user->student->classroom->staffAdvisors->first()->user_id,
-                        "position" => 1
-                    ]]
-                );
-            }
-            else {
-                $msg = sprintf(
-                    "The last request for %s is still pending, please try again later",
-                    RequestTypes::STUDENT_PHOTO_UPLOAD
-                );
-                abort(400, $msg);
+            $status = RequestModel::createNewRequest(
+                RequestTypes::STUDENT_PHOTO_UPLOAD,
+                new Student(),
+                $auth_user->student_admission_id,
+                ["photo_url" => $imageUrl],
+                [$auth_user->student->classroom->getRandomAdvisor()->user_id],
+            );
+
+            if (!$status) {
+                abort(400, "The last request for photo upload is still pending, please try again later");
             }
         }
         return redirect(route("uploadPhotoCreate"));

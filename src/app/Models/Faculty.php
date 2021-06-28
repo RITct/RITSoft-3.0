@@ -53,4 +53,11 @@ class Faculty extends PersonalData
     {
         return $this->hasMany(Course::class);
     }
+
+    public static function getPrincipal()
+    {
+        return Faculty::whereHas("user.roles", function ($q) {
+            $q->where("name", Roles::PRINCIPAL);
+        })->first();
+    }
 }
