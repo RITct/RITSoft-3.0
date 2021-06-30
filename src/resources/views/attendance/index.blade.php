@@ -42,8 +42,8 @@
                             @endforeach
                         </li>
                         @if($course["editable"])
-                            <li><a href="{{ route("attendance.edit", $period["id"]) }}">Edit</a></li>
-                            <li><a href="#" onclick="deleteAttendance('{{ route("attendance.destroy", $period["id"]) }}')">Delete</a></li>
+                            <li><a href="{{ route("editAttendance", $period["id"]) }}">Edit</a></li>
+                            <li><a href="#" onclick="deleteAttendance('{{ route("destroyAttendance", $period["id"]) }}')">Delete</a></li>
                         @endif
                     </ul>
 
@@ -52,6 +52,6 @@
             @endforeach
         </ul>
     @endforeach
-    <a href="{{ route("attendance.create") }}">Add</a>
+    <a href="{{ route("createAttendance") }}">Add</a>
 @endsection
 

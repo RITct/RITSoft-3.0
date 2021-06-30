@@ -92,35 +92,35 @@ class FacultyTest extends TestCase
                 Roles::STUDENT => 403,
             )
         );
-        $random_existing_faculty_id = Faculty::all()->random()->id;
-        $random_existing_phone = Faculty::all()->random()->phone;
-        $random_existing_email = User::all()->random()->email;
+        $randomExistingFacultyId = Faculty::all()->random()->id;
+        $randomExistingPhone = Faculty::all()->random()->phone;
+        $randomExistingEmail = User::all()->random()->email;
 
-        $new_faculty =  Faculty::factory()->make();
-        $new_valid_faculty_id = $new_faculty->id;
-        $new_valid_phone = $new_faculty->phone;
-        $new_valid_email = User::factory()->make()->email;
+        $newFaculty =  Faculty::factory()->make();
+        $newValidFacultyId = $newFaculty->id;
+        $newValidPhone = $newFaculty->phone;
+        $newValidEmail = User::factory()->make()->email;
 
-        $invalid_data = [
+        $invalidData = [
             [],
             ["id" => $this->faker->userName, "email" => $this->faker->name,
                 "phone" => $this->faker->numerify("##########"), "name" => $this->faker->name],
             ["id" => $this->faker->userName, "email" => $this->faker->email,
                 "phone" => $this->faker->realText(10), "name" => $this->faker->name],
-            ["id" => $random_existing_faculty_id, "email" => $new_valid_email,
-                "phone" => $new_valid_phone, "name" => $this->faker->name],
-            ["id" => $new_valid_faculty_id, "email" => $random_existing_email,
-                "phone" => $new_valid_phone, "name" => $this->faker->name],
-            ["id" => $new_valid_faculty_id, "email" => $new_valid_email,
-                "phone" => $random_existing_phone, "name" => $this->faker->name],
+            ["id" => $randomExistingFacultyId, "email" => $newValidEmail,
+                "phone" => $newValidPhone, "name" => $this->faker->name],
+            ["id" => $newValidFacultyId, "email" => $randomExistingEmail,
+                "phone" => $newValidPhone, "name" => $this->faker->name],
+            ["id" => $newValidFacultyId, "email" => $newValidEmail,
+                "phone" => $randomExistingPhone, "name" => $this->faker->name],
         ];
-        foreach ($invalid_data as $data) {
+        foreach ($invalidData as $data) {
             $this->actingAs($this->pickRandomUser(Roles::HOD))->post("/faculty", $data)
             ->assertRedirect("/faculty/create");
         }
 
         // Admin has to provide a department manually
-        $data = array_merge($new_faculty->toArray(), ["email" => $new_valid_email]);
+        $data = array_merge($newFaculty->toArray(), ["email" => $newValidEmail]);
         unset($data["department_code"]);
         $this->actingAs($this->pickRandomUser(Roles::ADMIN))->post(route("storeFaculty"), $data)
             ->assertRedirect(route("createFaculty"));
@@ -133,8 +133,8 @@ class FacultyTest extends TestCase
 
     public function testUpdate()
     {
-        foreach ($this->users[Roles::FACULTY] as $faculty_user) {
-            $url = sprintf("/faculty/%s", $faculty_user->faculty_id);
+        foreach ($this->users[Roles::FACULTY] as $facultyUser) {
+            $url = sprintf("/faculty/%s", $facultyUser->faculty_id);
             $this->assertLoginRequired(sprintf("%s/edit", $url));
             $this->assertUsersOnEndpoint(
                 $url,
@@ -145,23 +145,23 @@ class FacultyTest extends TestCase
                     Roles::STUDENT => 403
                 )
             );
-            $new_phone = Faculty::factory()->make()->phone;
-            $new_email = User::factory()->make()->email;
-            $other_faculty = Faculty::with("user")
-                ->where("id", "!=", $faculty_user->faculty_id)->first();
+            $newPhone = Faculty::factory()->make()->phone;
+            $newEmail = User::factory()->make()->email;
+            $otherFaculty = Faculty::with("user")
+                ->where("id", "!=", $facultyUser->faculty_id)->first();
 
-            $this->actingAs($other_faculty->user)
-                ->patch($url, ["phone" => $new_phone, "email" => $new_email])
+            $this->actingAs($otherFaculty->user)
+                ->patch($url, ["phone" => $newPhone, "email" => $newEmail])
                 ->assertStatus(403);
 
-            $valid_users = [$faculty_user, $this->pickRandomUser(Roles::ADMIN)];
-            $this->actingAs($valid_users[array_rand($valid_users)])
-                ->json("patch", $url, array("phone" => $new_phone, "email" => $new_email))
+            $validUsers = [$facultyUser, $this->pickRandomUser(Roles::ADMIN)];
+            $this->actingAs($validUsers[array_rand($validUsers)])
+                ->json("patch", $url, array("phone" => $newPhone, "email" => $newEmail))
                 ->assertStatus(200);
 
-            $faculty_in_db = Faculty::where("user_id", $faculty_user->id)->first();
-            $this->assertEquals($faculty_in_db->phone, $new_phone);
-            $this->assertEquals($faculty_in_db->user->email, $new_email);
+            $facultyInDb = Faculty::where("user_id", $facultyUser->id)->first();
+            $this->assertEquals($facultyInDb->phone, $newPhone);
+            $this->assertEquals($facultyInDb->user->email, $newEmail);
         }
     }
 
@@ -178,11 +178,11 @@ class FacultyTest extends TestCase
                     Roles::STUDENT => 403
                 )
             );
-            $other_hod = Department::where("code", "!=", $faculty_user->faculty->department_code)->first()->getHOD();
-            $this->actingAs($other_hod->user)->delete($url)->assertStatus(403);
+            $otherHod = Department::where("code", "!=", $faculty_user->faculty->department_code)->first()->getHOD();
+            $this->actingAs($otherHod->user)->delete($url)->assertStatus(403);
 
-            $valid_users = [$faculty_user->faculty->department->getHOD()->user, $this->pickRandomUser(Roles::ADMIN)];
-            $this->actingAs($valid_users[array_rand($valid_users)])->delete($url)->assertStatus(200);
+            $validUsers = [$faculty_user->faculty->department->getHOD()->user, $this->pickRandomUser(Roles::ADMIN)];
+            $this->actingAs($validUsers[array_rand($validUsers)])->delete($url)->assertStatus(200);
             $this->assertEquals(Faculty::find($faculty_user->faculty_id), null);
         }
     }

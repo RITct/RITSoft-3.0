@@ -68,10 +68,10 @@ class FacultyController extends Controller
         return view("faculty.edit", ["faculty" => $faculty]);
     }
 
-    public function update(Request $request, $faculty_id)
+    public function update(Request $request, $facultyId)
     {
         $this->service->updateFaculty(
-            facultyId: $faculty_id,
+            facultyId: $facultyId,
             name: $request->input("name"),
             phone: $request->input("phone"),
             email: $request->input("email")

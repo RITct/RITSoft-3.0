@@ -27,7 +27,17 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
-    Route::resource("attendance", AttendanceController::class);
+    Route::resource("attendance", AttendanceController::class, [
+        "names" => [
+            "index" => "listAttendance",
+            "create" => "createAttendance",
+            "store" => "storeAttendance",
+            "show" => "retrieveAttendance",
+            "edit" => "editAttendance",
+            "update" => "updateAttendance",
+            "destroy" => "destroyAttendance"
+        ]
+    ]);
     Route::resource("faculty", FacultyController::class, [
         "names" => [
             "index" => "listFaculty",
