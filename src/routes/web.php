@@ -70,8 +70,8 @@ Route::group(["middleware" => ["auth"]], function () {
 });
 
 Route::group(["middleware" => ["guest"]], function () {
-    Route::get("auth/login", [AuthController::class, "login"])->name("login");
-    Route::post("auth/login", [AuthController::class, "authenticate"]);
+    Route::get("auth/login", [AuthController::class, "login"])->name("getLogin");
+    Route::post("auth/login", [AuthController::class, "authenticate"])->name("postLogin");
 });
 
 
