@@ -104,8 +104,7 @@ class AttendanceTest extends TestCase
                 "course_id" => Course::all()->random()->id,
                 "date" => date("Y-m-d", strtotime("tomorrow")),
                 "hour" => 3,
-            ])
-            ->assertStatus(400);
+            ])->assertStatus(400);
 
         // Hour is changed, to prevent conflicting attendance records because I dont trust laravel
         $hour = 1;
