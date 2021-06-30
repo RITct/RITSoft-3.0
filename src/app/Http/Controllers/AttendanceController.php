@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\IntendedException;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\Absentee;
 use App\Models\Attendance;
@@ -163,8 +164,7 @@ class AttendanceController extends Controller
                 // Create new absentee
                 try {
                     $absentee = $this->service->createAbsentee($attendance, $admissionId);
-                }
-                catch (\Exception $e) {
+                } catch (IntendedException $e) {
                     abort(400, $e->getMessage());
                 }
             } else {

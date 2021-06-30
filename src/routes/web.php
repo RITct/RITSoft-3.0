@@ -28,10 +28,20 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::resource('roles', RoleController::class);
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
     Route::resource("attendance", AttendanceController::class);
-    Route::resource("faculty", FacultyController::class);
+    Route::resource("faculty", FacultyController::class, [
+        "names" => [
+            "index" => "listFaculty",
+            "create" => "createFaculty",
+            "store" => "storeFaculty",
+            "show" => "retrieveFaculty",
+            "edit" => "editFaculty",
+            "update" => "updateFaculty",
+            "destroy" => "destroyFaculty"
+        ]
+    ]);
     Route::resource("requests", RequestController::class, [
         "names" => [
-            "index" => "viewAllRequests",
+            "index" => "listRequests",
             "update" => "updateRequest"
         ]
     ]);

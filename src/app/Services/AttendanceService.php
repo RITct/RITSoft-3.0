@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Enums\CourseTypes;
+use App\Exceptions\IntendedException;
 use App\Models\Absentee;
 use App\Models\Attendance;
 use App\Models\Student;
@@ -221,7 +222,9 @@ class AttendanceService
             $admissionId
         );
         if (!$student_curriculum) {
-            throw new Exception(`Student with admission id $admissionId doesn't exist, or isn't enrolled in your class`);
+            throw new IntendedException(
+                `Student with admission id $admissionId doesn't exist, or isn't enrolled in your class`
+            );
         }
         $absentee = new Absentee();
         $absentee->attendance()->associate($attendance);

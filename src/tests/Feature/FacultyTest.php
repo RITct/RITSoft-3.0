@@ -122,8 +122,8 @@ class FacultyTest extends TestCase
         // Admin has to provide a department manually
         $data = array_merge($new_faculty->toArray(), ["email" => $new_valid_email]);
         unset($data["department_code"]);
-        $this->actingAs($this->pickRandomUser(Roles::ADMIN))->post("/faculty", $data)
-            ->assertRedirect("/faculty/create");
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))->post(route("storeFaculty"), $data)
+            ->assertRedirect(route("createFaculty"));
 
         foreach ($this->users[Roles::HOD] as $hod_user) {
             $this->createAndAssertFaculty($hod_user, $hod_user->faculty->department_code);
