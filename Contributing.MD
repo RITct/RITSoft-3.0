@@ -3,6 +3,7 @@
 ## Table of contents
 
 - [Standard of Code](#standard-of-code)
+- [Laravel Best Practices ](https://github.com/alexeymezenin/laravel-best-practices)
 - [Initial Setup](#initial-setup-and-credentials)
 - [Running shell commands inside container](#running-shell-commands-inside-the-container)
 - [Installing PHP Packages](#installing-php-packages)

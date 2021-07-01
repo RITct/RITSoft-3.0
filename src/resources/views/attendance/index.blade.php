@@ -1,5 +1,4 @@
 @extends("layouts.layout")
-
 @section("head")
     <script>
         function deleteAttendance(url){

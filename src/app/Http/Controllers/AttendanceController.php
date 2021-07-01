@@ -31,9 +31,11 @@ class AttendanceController extends Controller
         // HOD can view their dept
         // Staff advisor, Faculty can view their class
         $request->validated();
+        print $request->ip();
 
         $auth_user = Auth::user();
         $faculty = $auth_user->faculty;
+        // print $auth_user;
         if ($auth_user->isAdmin() || $faculty?->isPrincipal()) {
             // OR Principal
             $query = Attendance::getBaseQuery($request->get("from"), $request->get("to"));
@@ -258,7 +260,7 @@ class AttendanceController extends Controller
             }
             $absentee->leave_excuse = $leave_type;
 
-            // TODO Bulk update is possible?
+            // TODO Bulk update is <po></po>ssible?
             $absentee->save();
         }
 

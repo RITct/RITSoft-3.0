@@ -5,6 +5,10 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\SubjectController;
+use App\Http\Controllers\CourseController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +28,8 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::resource('roles', RoleController::class);
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
     Route::resource("attendance", AttendanceController::class);
+    Route::resource("subjects",SubjectController::class);
+    Route::resource("courses",CourseController::class);
 });
 
 Route::group(["middleware" => ["guest"]], function () {

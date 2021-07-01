@@ -17,7 +17,7 @@ class Subject extends Model
 
     protected $fillable = [
         'name',
-        'credit'
+        'credits'
     ];
 
     protected function courses()
@@ -29,4 +29,6 @@ class Subject extends Model
     {
         return $this->hasOne(Department::class);
     }
+
+
 }
