@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class AuthTest extends TestCase
 {
@@ -13,7 +12,7 @@ class AuthTest extends TestCase
         $loginData = ["username" => "blah@rit.com", "password" => TestCase::$defaultPassword];
         User::factory()->create($loginData);
 
-        $this->post('/auth/login', $loginData, ["HTTP_REFERER" => "/auth/login"])
+        $this->post(route("login.post"), $loginData, ["HTTP_REFERER" => route("login.post")])
             ->assertRedirect("/");
 
         $this->assertAuthenticated();
@@ -22,8 +21,8 @@ class AuthTest extends TestCase
     public function testLoginFail()
     {
         $loginData = ['username' => 'testuser', 'password' => '123456'];
-        $this->post('/auth/login', $loginData, ["HTTP_REFERER" => "/auth/login"])
-            ->assertRedirect("/auth/login");
+        $this->post(route("login.post"), $loginData, ["HTTP_REFERER" => route("login.post")])
+            ->assertRedirect(route("login.post"));
 
         $this->assertGuest();
     }

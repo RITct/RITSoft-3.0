@@ -6,7 +6,7 @@
         @foreach($faculties as $faculty)
             <h3>{{ $faculty["name"] }}</h3>
             @if($faculty->editable)
-                <p><a href="/faculty/{{ $faculty->id }}/edit">Edit</a></p>
+                <p><a href="{{ route("faculty.edit", $faculty->id) }}">Edit</a></p>
             @endif
             @if($faculty->deletable)
                 <p><a href="#" onclick="deleteFaculty('{{ $faculty->id }}')">Delete</a></p>

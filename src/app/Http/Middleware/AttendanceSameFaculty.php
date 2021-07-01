@@ -18,13 +18,13 @@ class AttendanceSameFaculty
      */
     public function handle(Request $request, Closure $next)
     {
-        $auth_user = Auth::user();
+        $authUser = Auth::user();
 
         $attendance = Attendance::with("course.faculty")
             ->findOrFail($request->route()->parameter("attendance"));
 
-        if ($attendance->course->faculty_id != $auth_user->faculty_id && !$auth_user->isAdmin()) {
-            abort("403");
+        if ($attendance->course->faculty_id != $authUser->faculty_id && !$authUser->isAdmin()) {
+            abort(403);
         }
 
         return $next($request);

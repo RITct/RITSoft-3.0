@@ -24,7 +24,7 @@ class TestRequestController extends Controller
 
     public function index()
     {
-        return redirect(route("testRequestCreate"));
+        return redirect(route("testrequest.create"));
     }
 
     public function store(Request $request)

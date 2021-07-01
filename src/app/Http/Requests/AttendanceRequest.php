@@ -30,7 +30,7 @@ class AttendanceRequest extends FormRequest
                 "to" => ["date"],
             ];
         }
-        if ($this->method() == "POST") {
+        if ($this->route()->getName() == "attendance.store") {
             // store
             return [
                 "date" => ["required", "date"],

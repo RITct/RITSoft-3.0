@@ -1,7 +1,7 @@
 @extends("layouts.layout")
 
 @section("content")
-    <form method="post" action="/faculty">
+    <form method="post" action="{{ route("faculty.store") }}">
         <input type="text" value="{{ old("id") }}" name="id" placeholder="KTU ID"><br/>
         <input type="text" value="{{ old("name") }}" name="name" placeholder="Name"><br/>
         <input type="text" value="{{ old("email") }}" name="email" placeholder="Email"><br/>

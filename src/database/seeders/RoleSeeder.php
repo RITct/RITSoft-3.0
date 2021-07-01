@@ -20,13 +20,13 @@ class RoleSeeder extends Seeder
         $permissions = Permission::pluck('id', 'id')->all();
         $roleAdmin->syncPermissions($permissions);
 
-        $attendance_permissions = [
+        $attendancePermissions = [
             "view" => ["attendance.retrieve", "attendance.list"],
             "alter" => ["attendance.create", "attendance.update"],
             "delete" => ["attendance.delete"],
             "all" => "attendance.*"
         ];
-        $faculty_permissions = [
+        $facultyPermissions = [
             "view" => ["faculty.retrieve", "faculty.list"],
             "alter" => ["faculty.create", "faculty.update"],
             "delete" => ["faculty.delete"],
@@ -39,12 +39,12 @@ class RoleSeeder extends Seeder
         $rolePrincipal = Role::create(["name" => Roles::PRINCIPAL]);
 
         $roleHOD->syncPermissions(
-            $attendance_permissions["view"],
-            array_merge(["faculty.create", "faculty.delete"], $faculty_permissions["view"]),
+            $attendancePermissions["view"],
+            array_merge(["faculty.create", "faculty.delete"], $facultyPermissions["view"]),
         );
-        $roleFaculty->syncPermissions($attendance_permissions["all"], ["faculty.retrieve", "faculty.update"]);
-        $roleAdvisor->syncPermissions($attendance_permissions["view"]);
-        $rolePrincipal->syncPermissions($attendance_permissions["view"], $faculty_permissions["view"]);
+        $roleFaculty->syncPermissions($attendancePermissions["all"], ["faculty.retrieve", "faculty.update"]);
+        $roleAdvisor->syncPermissions($attendancePermissions["view"]);
+        $rolePrincipal->syncPermissions($attendancePermissions["view"], $facultyPermissions["view"]);
 
         $roleStudent = Role::create(['name' => Roles::STUDENT]);
         $roleStudent->syncPermissions("attendance.retrieve");

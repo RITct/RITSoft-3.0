@@ -28,6 +28,18 @@ class Attendance extends Model
         return $this->hasMany(Absentee::class);
     }
 
+    public static function createAttendance($date, $hour, $course): Attendance
+    {
+        $attendance = new Attendance([
+            "date" => $date,
+            "hour" => $hour,
+        ]);
+        $attendance->course()->associate($course);
+        $attendance->save();
+
+        return $attendance;
+    }
+
     protected static function filterByDate($base_query, $from_date, $to_date)
     {
         if ($from_date) {

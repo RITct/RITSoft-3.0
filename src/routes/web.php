@@ -29,29 +29,19 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
     Route::resource("attendance", AttendanceController::class);
     Route::resource("faculty", FacultyController::class);
-    Route::resource("requests", RequestController::class, [
-        "names" => [
-            "index" => "viewAllRequests",
-            "update" => "updateRequest"
-        ]
-    ]);
+    Route::resource("requests", RequestController::class);
     Route::resource("users/photo", PhotoUploadController::class, [
         "names" => [
-            "store" => "uploadPhotoStore",
-            "create" => "uploadPhotoCreate"
+            "store" => "uploadPhoto.store",
+            "create" => "uploadPhoto.create"
         ]
     ]);
-    Route::resource("testrequest", TestRequestController::class, [
-        "names" => [
-            "store" => "testRequestStore",
-            "create" => "testRequestCreate"
-        ]
-    ]);
+    Route::resource("testrequest", TestRequestController::class);
 });
 
 Route::group(["middleware" => ["guest"]], function () {
     Route::get("auth/login", [AuthController::class, "login"])->name("login");
-    Route::post("auth/login", [AuthController::class, "authenticate"]);
+    Route::post("auth/login", [AuthController::class, "authenticate"])->name("login.post");
 });
 
 
