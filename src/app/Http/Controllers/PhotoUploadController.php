@@ -43,6 +43,6 @@ class PhotoUploadController extends Controller
                 abort(400, "The last request for photo upload is still pending, please try again later");
             }
         }
-        return redirect(route("uploadPhotoCreate"));
+        return redirect(route("uploadPhoto.create"));
     }
 }

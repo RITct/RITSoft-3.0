@@ -17,13 +17,13 @@ class FacultyRequest extends FormRequest
     {
         $currentRoute = $this->route()->getName();
         $this->authUser = Auth::user();
-        $objectRoutes = ["retrieveFaculty", "destroyFaculty"];
+        $objectRoutes = ["faculty.show", "faculty.destroy"];
 
         if (in_array($currentRoute, $objectRoutes)) {
             $facultyId = $this->route()->parameter("faculty");
             $this->faculty = Faculty::with("user")->findOrFail($facultyId);
 
-            if ($currentRoute == "retrieveFaculty") {
+            if ($currentRoute == "faculty.show") {
                 $hasUnrestrictedAccess = $this->authUser->isAdmin() || $this->authUser->faculty->isPrincipal();
 
                 $isDepartmentHOD = $this->authUser->faculty?->isHOD()
@@ -32,7 +32,7 @@ class FacultyRequest extends FormRequest
                 $isSameFaculty = $facultyId == $this->authUser->faculty_id;
 
                 return $isSameFaculty || $isDepartmentHOD || $hasUnrestrictedAccess;
-            } elseif ($currentRoute == "destroyFaculty") {
+            } elseif ($currentRoute == "faculty.destroy") {
                 $isHODSameDepartment = $this->faculty->department_code == $this->authUser->faculty?->department_code;
 
                 $sameFaculty = $this->authUser->faculty_id == $facultyId;
@@ -52,7 +52,7 @@ class FacultyRequest extends FormRequest
     public function rules()
     {
 
-        if ($this->route()->getName() == "storeFaculty") {
+        if ($this->route()->getName() == "faculty.store") {
             return [
                 "id" => "required|unique:faculties,id",
                 "name" => "required",
@@ -62,7 +62,7 @@ class FacultyRequest extends FormRequest
             ];
         }
 
-        if ($this->route()->getName() == "updateFaculty") {
+        if ($this->route()->getName() == "faculty.update") {
             return [
                 "phone" => "numeric|digits:10",
                 "email" => "email|unique:users,email"

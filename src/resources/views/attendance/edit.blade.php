@@ -10,7 +10,7 @@
             for(const element of document.getElementsByClassName("form-element"))
                 data.absentees[element.name] = element.value;
 
-            fetch("/attendance/{{ $attendance->id }}/", {
+            fetch({{ route("attendance.update", $attendance->id) }}, {
                 "method": "PATCH",
                 "headers": {"X-CSRF-TOKEN": "{{ csrf_token() }}"},
                 "body": JSON.stringify(data)

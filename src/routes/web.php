@@ -27,51 +27,21 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::resource('users', UserController::class);
     Route::resource('roles', RoleController::class);
     Route::get("auth/logout", [AuthController::class, "logout"])->name("logout");
-    Route::resource("attendance", AttendanceController::class, [
-        "names" => [
-            "index" => "listAttendance",
-            "create" => "createAttendance",
-            "store" => "storeAttendance",
-            "show" => "retrieveAttendance",
-            "edit" => "editAttendance",
-            "update" => "updateAttendance",
-            "destroy" => "destroyAttendance"
-        ]
-    ]);
-    Route::resource("faculty", FacultyController::class, [
-        "names" => [
-            "index" => "listFaculty",
-            "create" => "createFaculty",
-            "store" => "storeFaculty",
-            "show" => "retrieveFaculty",
-            "edit" => "editFaculty",
-            "update" => "updateFaculty",
-            "destroy" => "destroyFaculty"
-        ]
-    ]);
-    Route::resource("requests", RequestController::class, [
-        "names" => [
-            "index" => "listRequests",
-            "update" => "updateRequest"
-        ]
-    ]);
+    Route::resource("attendance", AttendanceController::class);
+    Route::resource("faculty", FacultyController::class);
+    Route::resource("requests", RequestController::class);
     Route::resource("users/photo", PhotoUploadController::class, [
         "names" => [
-            "store" => "uploadPhotoStore",
-            "create" => "uploadPhotoCreate"
+            "store" => "uploadPhoto.store",
+            "create" => "uploadPhoto.create"
         ]
     ]);
-    Route::resource("testrequest", TestRequestController::class, [
-        "names" => [
-            "store" => "testRequestStore",
-            "create" => "testRequestCreate"
-        ]
-    ]);
+    Route::resource("testrequest", TestRequestController::class);
 });
 
 Route::group(["middleware" => ["guest"]], function () {
-    Route::get("auth/login", [AuthController::class, "login"])->name("getLogin");
-    Route::post("auth/login", [AuthController::class, "authenticate"])->name("postLogin");
+    Route::get("auth/login", [AuthController::class, "login"])->name("login");
+    Route::post("auth/login", [AuthController::class, "authenticate"])->name("login.post");
 });
 
 

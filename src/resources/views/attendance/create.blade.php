@@ -1,7 +1,7 @@
 @extends("layouts.layout")
 
 @section("content")
-    <form method="post" action="/attendance">
+    <form method="post" action="{{ route("attendance.store") }}">
         <select name="course_id">
             <option>Choose Course</option>
             @foreach($courses as $course)

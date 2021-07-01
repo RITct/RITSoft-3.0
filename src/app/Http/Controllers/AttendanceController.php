@@ -101,7 +101,7 @@ class AttendanceController extends Controller
             }
             Absentee::insert($absentees);
 
-            return redirect("/attendance");
+            return redirect()->route("attendance.index");
         }
         abort(403);
     }

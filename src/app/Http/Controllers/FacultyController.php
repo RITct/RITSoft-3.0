@@ -51,7 +51,7 @@ class FacultyController extends Controller
             return back()->withErrors($e->getMessage());
         }
 
-        return redirect(route("listFaculty"));
+        return redirect(route("faculty.index"));
     }
 
     public function show(FacultyRequest $request)

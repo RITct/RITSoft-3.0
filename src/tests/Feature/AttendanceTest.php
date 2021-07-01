@@ -9,7 +9,6 @@ use App\Models\Attendance;
 use App\Models\Course;
 use App\Models\Student;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class AttendanceTest extends TestCase
@@ -17,7 +16,7 @@ class AttendanceTest extends TestCase
     public function testIndex(): void
     {
         // Attendance requires login
-        $this->assertLoginRequired(route("listAttendance"));
+        $this->assertLoginRequired(route("attendance.index"));
 
         $this->assertUsersOnEndpoint(
             "/attendance",
@@ -31,6 +30,7 @@ class AttendanceTest extends TestCase
             )
         );
     }
+
     public function testStudentAttendance(): void
     {
         foreach ($this->users[Roles::STUDENT] as $student_user) {
@@ -62,10 +62,10 @@ class AttendanceTest extends TestCase
 
     public function testAttendanceCreate(): void
     {
-        $this->assertLoginRequired(route("createAttendance"));
-        $this->assertLoginRequired(route("storeAttendance"), "post");
+        $this->assertLoginRequired(route("attendance.create"));
+        $this->assertLoginRequired(route("attendance.store"), "post");
         $this->assertUsersOnEndpoint(
-            route("createAttendance"),
+            route("attendance.create"),
             "get",
             array(
                 Roles::ADMIN => 200,
@@ -77,22 +77,22 @@ class AttendanceTest extends TestCase
 
         // Validation Errors
         $this->actingAs($this->pickRandomUser(Roles::FACULTY))
-            ->post(route("storeAttendance"), ["date" => "abcd", "hour" => "mosf", "course_id" => "jwse"])
-            ->assertRedirect(route("createAttendance"));
+            ->post(route("attendance.store"), ["date" => "abcd", "hour" => "mosf", "course_id" => "jwse"])
+            ->assertRedirect(route("attendance.create"));
 
         $this->actingAs($this->pickRandomUser(Roles::FACULTY))
-            ->post(route("storeAttendance"), ["hour" => 1, "course_id" => 1])
-            ->assertRedirect(route("createAttendance"));
+            ->post(route("attendance.store"), ["hour" => 1, "course_id" => 1])
+            ->assertRedirect(route("attendance.create"));
 
         // Invalid course id
         $this->actingAs($this->pickRandomUser(Roles::FACULTY))
-            ->post(route("storeAttendance"), ["date" => "29-11-2021", "hour" => 1, "course_id" => 0])
+            ->post(route("attendance.store"), ["date" => "29-11-2021", "hour" => 1, "course_id" => 0])
             ->assertStatus(400);
 
         // Test conflicting attendance
         $attendance = Attendance::factory(["course_id" => Course::all()->first()->id])->create();
         $this->actingAs($this->pickRandomUser(Roles::ADMIN))
-            ->post(route("storeAttendance"), [
+            ->post(route("attendance.store"), [
                 "date" => $attendance->date,
                 "hour" => $attendance->hour,
                 "course_id" => $attendance->course_id
@@ -100,7 +100,7 @@ class AttendanceTest extends TestCase
 
         // Future date shouldn't work
         $this->actingAs($this->pickRandomUser(Roles::ADMIN))
-            ->post(route("storeAttendance"), [
+            ->post(route("attendance.store"), [
                 "course_id" => Course::all()->random()->id,
                 "date" => date("Y-m-d", strtotime("tomorrow")),
                 "hour" => 3,
@@ -120,8 +120,8 @@ class AttendanceTest extends TestCase
             ];
             // Either correct faculty or Admin(Random)
             $this->actingAs($valid_users[array_rand($valid_users)])
-                ->post(route("storeAttendance"), $array_attendance)
-                ->assertRedirect(route("listAttendance"));
+                ->post(route("attendance.store"), $array_attendance)
+                ->assertRedirect(route("attendance.index"));
 
             // Check in DB
             $this->assertNotNull(Attendance::where($array_attendance)->first());
@@ -133,7 +133,7 @@ class AttendanceTest extends TestCase
     {
         $allAttendance = Attendance::with("course.faculty")->get();
         foreach ($allAttendance as $attendance) {
-            $url = route("updateAttendance", $attendance->id);
+            $url = route("attendance.update", $attendance->id);
             $this->assertLoginRequired($url, $method);
 
             if ($edit) {
@@ -182,7 +182,7 @@ class AttendanceTest extends TestCase
         ];
 
         foreach ($requestDatas as $request_data) {
-            $url = route("updateAttendance", $absentee->attendance->id);
+            $url = route("attendance.update", $absentee->attendance->id);
             $this->actingAs($faculty->user)
                 ->json(
                     "PATCH",
@@ -195,12 +195,13 @@ class AttendanceTest extends TestCase
         }
 
         // Try to add a student who's not enrolled in this course
+
         $studentUser = User::factory()->create();
         $student = Student::factory(["user_id" => $studentUser->id])->create();
         $this->actingAs($this->pickRandomUser(Roles::ADMIN))
             ->json(
                 "PATCH",
-                sprintf("/attendance/%d", $absentee->attendance->id),
+                $url,
                 ["absentees" => [$student->admission_id => LeaveType::NO_EXCUSE]]
             )->assertStatus(400);
 
@@ -212,7 +213,7 @@ class AttendanceTest extends TestCase
         $this->actingAs($this->pickRandomUser(Roles::ADMIN))
             ->json(
                 "PATCH",
-                sprintf("/attendance/%d", $attendance->id),
+                route("attendance.update", $attendance->id),
                 ["absentees" => [$randomStudentId => $leaveExcuse]]
             )->assertStatus(200);
 
@@ -226,4 +227,5 @@ class AttendanceTest extends TestCase
     {
         $this->alterAttendance("delete");
     }
+
 }

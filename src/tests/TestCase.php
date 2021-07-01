@@ -92,6 +92,6 @@ abstract class TestCase extends BaseTestCase
     public function assertLoginRequired($url, $method = "get")
     {
         Auth::logout();
-        call_user_func([$this, $method], $url)->assertRedirect("/auth/login");
+        call_user_func([$this, $method], $url)->assertRedirect(route("login"));
     }
 }

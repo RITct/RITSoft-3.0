@@ -16,7 +16,7 @@ class RequestSystemTest extends TestCase
         $payload = ["name" => $this->faker->name];
         $studentUser = $this->pickRandomUser(Roles::STUDENT);
         $response = $this->actingAs($studentUser)
-            ->post(route("testRequestStore"), $payload);
+            ->post(route("testrequest.store"), $payload);
 
         $response->assertStatus(200);
         return ["id" => $response->json("id"), "payload" => $payload];
@@ -45,7 +45,7 @@ class RequestSystemTest extends TestCase
         $this->actingAs($requestInDB->currentSignee()->user)
             ->json(
                 "PATCH",
-                route("updateRequest", ["request" => $requestId]),
+                route("requests.update", ["request" => $requestId]),
                 ["remark" => $remark, "state" => $state]
             )->assertStatus(200);
 
@@ -70,7 +70,7 @@ class RequestSystemTest extends TestCase
             $this->actingAs($user)
                 ->json(
                     "PATCH",
-                    route("updateRequest", ["request" => $requestId]),
+                    route("requests.update", ["request" => $requestId]),
                     ["state" => $state]
                 )
                 ->assertStatus($status);
@@ -98,7 +98,7 @@ class RequestSystemTest extends TestCase
     private function approveSignee($request)
     {
         $previousSignee = $request->currentSignee();
-        $url = route("updateRequest", ["request" => $request->id]);
+        $url = route("requests.update", ["request" => $request->id]);
         $remark = $this->faker->realText("10");
         $this->actingAs($request->currentSignee()->user)
             ->json(

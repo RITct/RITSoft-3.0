@@ -4,7 +4,7 @@
 @endsection
 
 @section("content")
-    <form enctype="multipart/form-data" action="{{ route("uploadPhotoStore") }}" method="POST">
+    <form enctype="multipart/form-data" action="{{ route("uploadPhoto.store") }}" method="POST">
         <input type="file" name="image">
         <input type="submit">
         {!! csrf_field() !!}

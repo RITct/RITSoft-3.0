@@ -12,10 +12,10 @@ class FacultyTest extends TestCase
 {
     public function testIndex()
     {
-        $this->assertLoginRequired("/faculty");
+        $this->assertLoginRequired(route("faculty.index"));
 
         $this->assertUsersOnEndpoint(
-            "/faculty",
+            route("faculty.index"),
             "get",
             array(
                 Roles::ADMIN => 200,
@@ -31,7 +31,7 @@ class FacultyTest extends TestCase
     {
 
         foreach (Faculty::with("user")->get() as $faculty) {
-            $url = sprintf("/faculty/%s", $faculty->id);
+            $url = route("faculty.show", $faculty->id);
             $this->assertLoginRequired($url);
 
             $this->assertUsersOnEndpoint(
@@ -65,7 +65,7 @@ class FacultyTest extends TestCase
         $data = array_merge($faculty->toArray(), ["email" => $email]);
 
         $this->actingAs($user)
-            ->post("/faculty", $data)->assertRedirect("/faculty");
+            ->post(route("faculty.store"), $data)->assertRedirect(route("faculty.index"));
 
         $faculty_in_db = Faculty::find($faculty->id);
         $this->assertNotNull($faculty_in_db);
@@ -78,11 +78,11 @@ class FacultyTest extends TestCase
 
     public function testCreate()
     {
-        $this->assertLoginRequired("/faculty/create");
-        $this->assertLoginRequired("/faculty", "post");
+        $this->assertLoginRequired(route("faculty.create"));
+        $this->assertLoginRequired(route("faculty.store"), "post");
 
         $this->assertUsersOnEndpoint(
-            "/faculty/create",
+            route("faculty.create"),
             "get",
             array(
                 Roles::ADMIN => 200,
@@ -115,15 +115,15 @@ class FacultyTest extends TestCase
                 "phone" => $randomExistingPhone, "name" => $this->faker->name],
         ];
         foreach ($invalidData as $data) {
-            $this->actingAs($this->pickRandomUser(Roles::HOD))->post("/faculty", $data)
-            ->assertRedirect("/faculty/create");
+            $this->actingAs($this->pickRandomUser(Roles::HOD))->post(route("faculty.store"), $data)
+            ->assertRedirect(route("faculty.create"));
         }
 
         // Admin has to provide a department manually
         $data = array_merge($newFaculty->toArray(), ["email" => $newValidEmail]);
         unset($data["department_code"]);
-        $this->actingAs($this->pickRandomUser(Roles::ADMIN))->post(route("storeFaculty"), $data)
-            ->assertRedirect(route("createFaculty"));
+        $this->actingAs($this->pickRandomUser(Roles::ADMIN))->post(route("faculty.store"), $data)
+            ->assertRedirect(route("faculty.create"));
 
         foreach ($this->users[Roles::HOD] as $hod_user) {
             $this->createAndAssertFaculty($hod_user, $hod_user->faculty->department_code);
@@ -134,7 +134,7 @@ class FacultyTest extends TestCase
     public function testUpdate()
     {
         foreach ($this->users[Roles::FACULTY] as $facultyUser) {
-            $url = sprintf("/faculty/%s", $facultyUser->faculty_id);
+            $url = route("faculty.update", $facultyUser->faculty_id);
             $this->assertLoginRequired(sprintf("%s/edit", $url));
             $this->assertUsersOnEndpoint(
                 $url,
@@ -168,7 +168,7 @@ class FacultyTest extends TestCase
     public function testDestroy()
     {
         foreach ($this->users[Roles::FACULTY] as $faculty_user) {
-            $url = sprintf("/faculty/%s", $faculty_user->faculty_id);
+            $url = route("faculty.destroy", $faculty_user->faculty_id);
             $this->assertUsersOnEndpoint(
                 $url,
                 "delete",

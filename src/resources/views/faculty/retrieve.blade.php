@@ -6,7 +6,7 @@
     <p>Email: {{ $faculty->user->email }}</p>
     <p>Phone: {{ $faculty->phone }}</p>
     @if($faculty->editable)
-        <a href="/faculty/{{ $faculty->id }}/edit">Edit</a>
+        <a href="{{ route("faculty.edit", $faculty->id) }}">Edit</a>
     @endif
     @if($faculty->deletable)
         <a href="#" onclick="deleteFaculty('{{ $faculty->id }}')">Delete</a>

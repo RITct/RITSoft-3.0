@@ -9,11 +9,11 @@
         <nav>
             <div id="nav-auth">
                 @guest
-                    {{ route("getLogin") }}
+                    {!! link_to_route("login", "Login") !!}
                 @endguest
 
                 @auth
-                    <span>You're logged in as {{ Auth::user()->username }}, {{ route("logout") }}</span>
+                    <span>You're logged in as {{ Auth::user()->username }}, {!! link_to_route("logout", "Logout") !!}</span>
                 @endauth
             </div>
         </nav>

@@ -23,7 +23,7 @@ class PhotoUploadRequest extends FormRequest
      */
     public function rules(): array
     {
-        if ($this->route()->getName() == "uploadPhotoStore") {
+        if ($this->route()->getName() == "uploadPhoto.store") {
             return [
                 'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ];
