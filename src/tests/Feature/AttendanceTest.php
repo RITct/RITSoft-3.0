@@ -227,5 +227,4 @@ class AttendanceTest extends TestCase
     {
         $this->alterAttendance("delete");
     }
-
 }
