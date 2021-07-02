@@ -6,6 +6,7 @@ use App\Enums\CourseTypes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
@@ -20,9 +21,9 @@ class Course extends Model
         'active' => true
     ];
 
-    public function faculty(): BelongsTo
+    public function faculties(): BelongsToMany
     {
-        return $this->belongsTo(Faculty::class);
+        return $this->belongsToMany(Faculty::class, "faculty_course");
     }
 
     public function subject(): BelongsTo
