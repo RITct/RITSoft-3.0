@@ -80,8 +80,9 @@ abstract class TestCase extends BaseTestCase
     ): void {
         // Function to assert level permissions on endpoints
         foreach ($user_status_map as $role => $status) {
+            $user = $this->pickRandomUser($role);
             $response = call_user_func(
-                array($this->actingAs($this->pickRandomUser($role)), $method),
+                array($this->actingAs($user), $method),
                 $url,
                 $data
             );

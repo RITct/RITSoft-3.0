@@ -20,10 +20,10 @@ class AttendanceSameFaculty
     {
         $authUser = Auth::user();
 
-        $attendance = Attendance::with("course.faculty")
+        $attendance = Attendance::with("course.faculties")
             ->findOrFail($request->route()->parameter("attendance"));
 
-        if ($attendance->course->faculty_id != $authUser->faculty_id && !$authUser->isAdmin()) {
+        if (!$attendance->course->hasFaculty($authUser->faculty_id) && !$authUser->isAdmin()) {
             abort(403);
         }
 

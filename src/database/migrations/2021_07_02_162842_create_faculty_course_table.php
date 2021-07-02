@@ -16,12 +16,13 @@ class CreateFacultyCourseTable extends Migration
         Schema::create('faculty_course', function (Blueprint $table) {
             $table->id();
 
-            $table->string("faculty_id")->unsigned();
+            $table->string("faculty_id")->unsigned()->nullable();
             $table->integer("course_id")->unsigned();
 
             $table->foreign("faculty_id")
                 ->references("id")
-                ->on("faculties");
+                ->on("faculties")
+                ->onDelete("set null");
 
             $table->foreign("course_id")
                 ->references("id")

@@ -136,15 +136,6 @@ class FacultyTest extends TestCase
         foreach ($this->users[Roles::FACULTY] as $facultyUser) {
             $url = route("faculty.update", $facultyUser->faculty_id);
             $this->assertLoginRequired(sprintf("%s/edit", $url));
-            $this->assertUsersOnEndpoint(
-                $url,
-                "get",
-                array(
-                    Roles::ADMIN => 200,
-                    Roles::FACULTY => 200,
-                    Roles::STUDENT => 403
-                )
-            );
             $newPhone = Faculty::factory()->make()->phone;
             $newEmail = User::factory()->make()->email;
             $otherFaculty = Faculty::with("user")
