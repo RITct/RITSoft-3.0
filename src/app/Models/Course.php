@@ -21,6 +21,8 @@ class Course extends Model
         'active' => true
     ];
 
+    protected $with = ["faculties"];
+
     public function faculties(): BelongsToMany
     {
         return $this->belongsToMany(Faculty::class, "faculty_course");
@@ -56,10 +58,17 @@ class Course extends Model
     {
         return $this->subject->department;
     }
+
     public function isAnElective(): bool
     {
         return $this->type != CourseTypes::REGULAR;
     }
+
+    public function hasFaculty($facultyId): bool
+    {
+        return $this->faculties()->find($facultyId) != null;
+    }
+
     public static function getBaseQuery()
     {
         return Course::with("subject")->where("active", true);

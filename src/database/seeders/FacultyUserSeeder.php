@@ -26,6 +26,10 @@ class FacultyUserSeeder extends Seeder
             'username' => 'csefaculty2@rit.com',
         ])->create();
 
+        $user3 = User::factory([
+            'username' => 'csefaculty3@rit.com',
+        ])->create();
+
         $hodCSEUser = User::factory([
             'username' => 'hodcse@rit.com',
         ])->create();
@@ -50,6 +54,12 @@ class FacultyUserSeeder extends Seeder
             'department_code' => 'CSE',
         ])->create();
 
+        $faculty3 = Faculty::factory([
+            'user_id' => $user3->id,
+            'id' => 'faculty_3',
+            'department_code' => 'CSE',
+        ])->create();
+
         $hodCSE = Faculty::factory([
             'user_id' => $hodCSEUser->id,
             'id' => 'hod_cse',
@@ -71,6 +81,7 @@ class FacultyUserSeeder extends Seeder
         $user1->assignRole(Roles::FACULTY);
         $user2->assignRole(Roles::FACULTY);
         $user2->assignRole(Roles::STAFF_ADVISOR);
+        $user3->assignRole(Roles::FACULTY);
         $hodCSEUser->assignRole(Roles::HOD);
         $hodCSEUser->assignRole(Roles::FACULTY);
         $hodECEUser->assignRole(Roles::HOD);
@@ -87,6 +98,7 @@ class FacultyUserSeeder extends Seeder
 
         $user1->faculty()->associate($faculty1)->save();
         $user2->faculty()->associate($faculty2)->save();
+        $user3->faculty()->associate($faculty3)->save();
         $hodCSEUser->faculty()->associate($hodCSE)->save();
         $hodECEUser->faculty()->associate($hodECE)->save();
         $principalUser->faculty()->associate($principal)->save();
