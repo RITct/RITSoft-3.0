@@ -51,12 +51,14 @@ class AttendanceController extends Controller
     public function create()
     {
         // Only Faculty
-        $auth_user = Auth::user();
+        $authUser = Auth::user();
         $courses = Course::getBaseQuery();
-        if ($auth_user->isAdmin()) {
+        if ($authUser->isAdmin()) {
             $courses = $courses->get();
         } else {
-            $courses = $courses->where("faculty_id", $auth_user->faculty_id)->get();
+            $courses = $courses->whereHas("faculties", function ($q) use ($authUser) {
+                $q->where("faculties.id", $authUser->faculty_id);
+            })->get();
         }
         return view("attendance.create", ["courses" => $courses]);
     }
@@ -64,7 +66,7 @@ class AttendanceController extends Controller
     public function store(AttendanceRequest $request)
     {
         // Only Faculty
-        $auth_user = Auth::user();
+        $authUser = Auth::user();
         $date = date_create_from_format("Y-m-d", $request->input("date"));
         $course = Course::with("curriculums.student")->find($request->input("course_id"));
 
@@ -85,7 +87,7 @@ class AttendanceController extends Controller
             array_push($valid_student_ids, $curriculum->student->admission_id);
         }
 
-        if ($auth_user->isAdmin() || $course->faculty_id == $auth_user->faculty_id) {
+        if ($authUser->isAdmin() || $course->hasFaculty($authUser->faculty_id)) {
             $absentee_ids = $this->service->parseAttendanceInput($request->input("absentee_admission_nums"));
             $attendance = Attendance::createAttendance($date, $request->input("hour"), $course);
 

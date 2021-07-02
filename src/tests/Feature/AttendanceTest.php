@@ -108,23 +108,27 @@ class AttendanceTest extends TestCase
 
         // Hour is changed, to prevent conflicting attendance records because I dont trust laravel
         $hour = 1;
-        foreach (Course::with("faculty.user")->get() as $course) {
+        foreach (Course::with("faculties.user")->get() as $course) {
             $attendance = Attendance::factory(["course_id" => $course->id, "hour" => $hour])->make();
-
-            $valid_users = [$course->faculty->user, $this->pickRandomUser(Roles::ADMIN)];
+            $validUsers = $course->faculties->map(
+                function ($faculty) {
+                    return $faculty->user;
+                }
+            );
+            $validUsers->push($this->pickRandomUser(Roles::ADMIN));
             // these 3 values together are unique
-            $array_attendance = [
+            $arrayAttendance = [
                 "date" => $attendance->date,
                 "hour" => $attendance->hour,
                 "course_id" => $attendance->course_id
             ];
             // Either correct faculty or Admin(Random)
-            $this->actingAs($valid_users[array_rand($valid_users)])
-                ->post(route("attendance.store"), $array_attendance)
+            $this->actingAs($validUsers->random())
+                ->post(route("attendance.store"), $arrayAttendance)
                 ->assertRedirect(route("attendance.index"));
 
             // Check in DB
-            $this->assertNotNull(Attendance::where($array_attendance)->first());
+            $this->assertNotNull(Attendance::where($arrayAttendance)->first());
             $hour++;
         }
     }

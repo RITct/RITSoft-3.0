@@ -7,7 +7,12 @@
             <h3>{{$period->course->subject->name}} | {{$period->course->subject->code}}</h3>
             Date: {{ $period->date }}<br/>
             Hour: {{ $period->hour }}<br/>
-            Faculty: {{ $period->course->faculty->name }}<br/>
+            Faculties:
+                <ul>
+                    @foreach($period->course->faculties as $faculty)
+                        <li>{{ $faculty->name }}</li>
+                    @endforeach
+                </ul>
             Status: @if($period->absent)
                 Absent
                 <br/>Medical Leave: {{ ($period->medical_leave) ? "True" : "False" }}

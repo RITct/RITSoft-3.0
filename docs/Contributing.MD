@@ -40,6 +40,7 @@ docker exec -it ritsoft_app sh initialsetup.sh
 | csestudent2@rit.com | Student |
 | csefaculty1@rit.com | Faculty |
 | csefaculty2@rit.com | Faculty, StaffAdvisor |
+| csefaculty3@rit.com | Faculty |
 | hodcse@rit.com | HOD, Faculty |
 | principal@rit.com | Principal |
 | office_staff1@rit.com | Office |
