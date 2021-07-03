@@ -21,8 +21,6 @@ class FacultyController extends Controller
         $this->middleware("permission:faculty.update", ["only" => ["edit", "update"]]);
         $this->middleware("permission:faculty.delete", ["only" => "destroy"]);
 
-        $this->middleware("same_faculty", ["only" => ["edit", "update"]]);
-
         $this->service = $facultyService;
     }
 
@@ -62,19 +60,18 @@ class FacultyController extends Controller
         );
     }
 
-    public function edit($facultyId)
+    public function edit(FacultyRequest $request)
     {
-        $faculty = Faculty::with("user")->findOrFail($facultyId);
-        return view("faculty.edit", ["faculty" => $faculty]);
+        return view("faculty.edit", ["faculty" => $request->faculty]);
     }
 
-    public function update(Request $request, $facultyId)
+    public function update(FacultyRequest $request)
     {
         $this->service->updateFaculty(
-            facultyId: $facultyId,
-            name: $request->input("name"),
-            phone: $request->input("phone"),
-            email: $request->input("email")
+            faculty: $request->faculty,
+            name: $request->json("name"),
+            phone: $request->json("phone"),
+            email: $request->json("email")
         );
 
         return response("OK");

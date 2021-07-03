@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\Roles;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -49,9 +50,9 @@ class Faculty extends PersonalData
         return $this->belongsTo(Classroom::class, "advisor_classroom_id");
     }
 
-    public function courses(): HasMany
+    public function courses(): BelongsToMany
     {
-        return $this->hasMany(Course::class);
+        return $this->belongsToMany(Course::class, "faculty_course");
     }
 
     public static function getPrincipal()

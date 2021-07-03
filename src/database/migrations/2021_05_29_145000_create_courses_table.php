@@ -19,13 +19,6 @@ class CreateCoursesTable extends Migration
             $table->enum('type', \App\Enums\CourseTypes::getValues());
             $table->boolean('active')->default(true);
 
-            # Faculty is null only when deleted
-            $table->string('faculty_id', 20)->nullable();
-            $table->foreign('faculty_id')
-                ->on('faculties')
-                ->references('id')
-                ->onDelete('set null');
-
             $table->string('subject_code', 6);
             $table->foreign('subject_code')
                 ->references('code')

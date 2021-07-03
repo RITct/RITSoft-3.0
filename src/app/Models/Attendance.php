@@ -59,7 +59,7 @@ class Attendance extends Model
                 'course.classroom',
                 'course.subject',
                 'course.curriculums.student',
-                'course.faculty',
+                'course.faculties',
                 'absentees'
             ]),
             $from_date,
@@ -112,8 +112,8 @@ class Attendance extends Model
             $base_query = Attendance::getBaseQuery($from_date, $to_date);
         }
 
-        return $base_query->whereHas("course", function ($q) use ($faculty_id) {
-            $q->where("faculty_id", $faculty_id);
+        return $base_query->whereHas("course.faculties", function ($q) use ($faculty_id) {
+            $q->where("faculties.id", $faculty_id);
         });
     }
 
