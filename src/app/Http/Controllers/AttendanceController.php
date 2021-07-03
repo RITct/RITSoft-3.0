@@ -23,8 +23,7 @@ class AttendanceController extends Controller
         $this->middleware("permission:attendance.update", ["only" => ["edit", "update"]]);
         $this->middleware("permission:attendance.delete", ["only" => "destroy"]);
 
-        $this->middleware("attendance_same_faculty", ["only" => ["edit", "update", "destroy"]]);
-        $this->middleware("attendance_same_student", ["only" => "show"]);
+        //$this->middleware("attendance_same_faculty", ["only" => ["edit", "update", "destroy"]]);
 
         $this->service = $attendanceService;
     }
@@ -82,24 +81,24 @@ class AttendanceController extends Controller
             abort(400, "Date shouldn't be in the future");
         }
 
-        $valid_student_ids = [];
+        $validStudentIds = [];
         foreach ($course->curriculums as $curriculum) {
-            array_push($valid_student_ids, $curriculum->student->admission_id);
+            array_push($validStudentIds, $curriculum->student->admission_id);
         }
 
         if ($authUser->isAdmin() || $course->hasFaculty($authUser->faculty_id)) {
-            $absentee_ids = $this->service->parseAttendanceInput($request->input("absentee_admission_nums"));
+            $absenteeIds = $this->service->parseAttendanceInput($request->input("absentee_admission_nums"));
             $attendance = Attendance::createAttendance($date, $request->input("hour"), $course);
 
             $absentees = [];
-            foreach ($absentee_ids as $absentee_id) {
-                if (!in_array($absentee_id, $valid_student_ids)) {
-                    $error = sprintf("Student with admission no %s is not enrolled in your course", $absentee_id);
+            foreach ($absenteeIds as $absenteeId) {
+                if (!in_array($absenteeId, $validStudentIds)) {
+                    $error = sprintf("Student with admission no %s is not enrolled in your course", $absenteeId);
                     abort(400, $error);
                 }
 
                 // Only arrays support bulk insert
-                array_push($absentees, $this->service->getAbsenteeAsArray($course, $absentee_id, $attendance->id));
+                array_push($absentees, $this->service->getAbsenteeAsArray($course, $absenteeId, $attendance->id));
             }
             Absentee::insert($absentees);
 
@@ -137,36 +136,35 @@ class AttendanceController extends Controller
         ]);
     }
 
-    public function edit($attendanceId)
+    public function edit(AttendanceRequest $request)
     {
         // Faculty, Staff Advisor/HOD?(For duty leave)
-        $attendance = Attendance::getBaseQuery()->findOrFail($attendanceId);
-        $students = $this->service->getStudentsFromCurriculums($attendance->course->curriculums);
+        $students = $this->service->getStudentsFromCurriculums($request->attendance->course->curriculums);
 
         // Sort alphabetically
         usort($students, function ($student1, $student2) {
             return strtolower($student1["name"]) <=> strtolower($student2["name"]);
         });
         return view("attendance.edit", [
-            "attendance" => $attendance,
+            "attendance" => $request->attendance,
             "students" => $students,
         ]);
     }
 
-    public function update(AttendanceRequest $request, $attendanceId)
+    public function update(AttendanceRequest $request)
     {
         // Faculty
         // Staff Advisor/HOD?(For duty leave) -> NOT IMPLEMENTED
-        $attendance = Attendance::getBaseQuery()->findOrFail($attendanceId);
+
         // To aid in removing absentees
         $absenteeExistMap = [];
 
         foreach ($request->json("absentees", array()) as $admissionId => $leaveType) {
-            $absentee = $attendance->absentees->firstWhere("student_admission_id", $admissionId);
+            $absentee = $request->attendance->absentees->firstWhere("student_admission_id", $admissionId);
             if (!$absentee) {
                 // Create new absentee
                 try {
-                    $absentee = $this->service->createAbsentee($attendance, $admissionId);
+                    $absentee = $this->service->createAbsentee($request->attendance, $admissionId);
                 } catch (IntendedException $e) {
                     abort(400, $e->getMessage());
                 }
@@ -180,7 +178,7 @@ class AttendanceController extends Controller
         }
 
         $removed_absentees = array_filter(
-            $attendance->absentees->toArray(),
+            $request->attendance->absentees->toArray(),
             function ($absentee) use ($absenteeExistMap) {
                 return !array_key_exists($absentee["id"], $absenteeExistMap);
             }
@@ -197,11 +195,10 @@ class AttendanceController extends Controller
         return response("OK");
     }
 
-    public function destroy(int $attendance_id)
+    public function destroy(AttendanceRequest $request)
     {
         // Faculty
-        echo $attendance_id;
-        Attendance::find($attendance_id)->delete();
+        $request->attendance->delete();
         return response("OK");
     }
 }

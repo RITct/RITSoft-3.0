@@ -27,13 +27,13 @@ class FacultyService
         return $faculties->get();
     }
 
-    public function markEditableFaculty($faculty, $auth_user)
+    public function markEditableFaculty($faculty, $authUser)
     {
-        $faculty->editable = $auth_user->faculty_id == $faculty->id || $auth_user->isAdmin();
-        if (!$auth_user->isAdmin()) {
-            $is_same_department = $auth_user->faculty->department_code == $faculty->department_code;
-            $is_same_faculty = $auth_user->faculty_id == $faculty->id;
-            $faculty->deletable = $auth_user->faculty->isHOD() && $is_same_department && !$is_same_faculty;
+        $faculty->editable = $authUser->faculty_id == $faculty->id || $authUser->isAdmin();
+        if (!$authUser->isAdmin()) {
+            $is_same_department = $authUser->faculty->department_code == $faculty->department_code;
+            $is_same_faculty = $authUser->faculty_id == $faculty->id;
+            $faculty->deletable = $authUser->faculty->isHOD() && $is_same_department && !$is_same_faculty;
         } else {
             $faculty->deletable = true;
         }
