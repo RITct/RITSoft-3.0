@@ -11,7 +11,7 @@
                     if(r.ok)
                         location.reload();
                     else
-                        alert("Failed, are you sure this is your class?");
+                        alert("Failed, are you sure this is your course?");
                 })
         }
     </script>
@@ -23,7 +23,12 @@
             {{ $course["subject"]["name"] }} -> {{ $course["subject"]["code"] }} -> Semester {{  $course["semester"] }}
         </h2>
         <ul>
-            <li>Faculty: {{ $course["faculty"]["name"] }}</li>
+            <li>Faculties</li>
+            <ul>
+                @foreach($course["faculties"] as $faculty)
+                    <li>{{ $faculty["name"] }}</li>
+                @endforeach
+            </ul>
             @foreach($course["attendances"] as $period)
                 <li>
                     <ul>

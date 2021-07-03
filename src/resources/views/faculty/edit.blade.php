@@ -6,7 +6,7 @@
             let fields = Array.prototype.slice.call(document.getElementsByClassName("data"));
             let data = {};
             fields.forEach((field) => data[field.name] = field.value);
-            fetch({{ route("faculty.update", $faculty->id) }}, {
+            fetch("{{ route("faculty.update", $faculty->id) }}", {
                 "method": "PATCH",
                 "headers": {"X-CSRF-TOKEN": "{{ csrf_token() }}"},
                 "body": JSON.stringify(data)

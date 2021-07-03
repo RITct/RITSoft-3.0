@@ -52,7 +52,12 @@ class AttendanceService
             );
         }
 
-        return $query;
+        return $query->unique();
+    }
+
+    private function isEditableAttendance($period, $faculty, $is_admin): bool
+    {
+        return $period->course->hasFaculty($faculty?->id) || $is_admin;
     }
 
     /**
@@ -70,11 +75,11 @@ class AttendanceService
             } else {
                 $new_data[$period->course_id] = [
                     "id" => $period->course_id,
-                    "faculty" => $period->course->faculty,
+                    "faculties" => $period->course->faculties,
                     "subject" => $period->course->subject,
                     "semester" => $period->course->semester,
                     "attendances" => [$period],
-                    "editable" => $faculty && $faculty->id == $period->course->faculty_id || $is_admin
+                    "editable" => $this->isEditableAttendance($period, $faculty, $is_admin)
                 ];
             }
         }
@@ -128,7 +133,7 @@ class AttendanceService
      * @param int $attendance_id
      * @return array
      */
-    public function getAbsenteeAsArray($course, int $absentee_id, int $attendance_id): array
+    public function getAbsenteeAsArray($course, string $absentee_id, int $attendance_id): array
     {
         $absentee = (new Absentee())->toArray();
         $absentee["student_admission_id"] = $course->curriculums->filter(
@@ -163,8 +168,8 @@ class AttendanceService
             $attendance = $attendance->get();
         } elseif ($faculty) {
             // Filter by course
-            $attendance = $attendance->whereHas('course.faculty', function ($q) use ($faculty) {
-                $q->where('id', $faculty->id);
+            $attendance = $attendance->whereHas('course.faculties', function ($q) use ($faculty) {
+                $q->where('faculties.id', $faculty->id);
             })->get();
         }
 
@@ -189,7 +194,7 @@ class AttendanceService
                 $period->duty_leave = $absentee->duty_leave;
             }
             $period->absent = $absent;
-            if ($faculty && $period->course->faculty_id == $faculty->id || $is_admin) {
+            if ($this->isEditableAttendance($period, $faculty, $is_admin)) {
                 // Only allow that particular faculty or admin to edit
                 $period->editable = true;
             } else {

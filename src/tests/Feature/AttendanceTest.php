@@ -108,30 +108,34 @@ class AttendanceTest extends TestCase
 
         // Hour is changed, to prevent conflicting attendance records because I dont trust laravel
         $hour = 1;
-        foreach (Course::with("faculty.user")->get() as $course) {
+        foreach (Course::with("faculties.user")->get() as $course) {
             $attendance = Attendance::factory(["course_id" => $course->id, "hour" => $hour])->make();
-
-            $valid_users = [$course->faculty->user, $this->pickRandomUser(Roles::ADMIN)];
+            $validUsers = $course->faculties->map(
+                function ($faculty) {
+                    return $faculty->user;
+                }
+            );
+            $validUsers->push($this->pickRandomUser(Roles::ADMIN));
             // these 3 values together are unique
-            $array_attendance = [
+            $arrayAttendance = [
                 "date" => $attendance->date,
                 "hour" => $attendance->hour,
                 "course_id" => $attendance->course_id
             ];
             // Either correct faculty or Admin(Random)
-            $this->actingAs($valid_users[array_rand($valid_users)])
-                ->post(route("attendance.store"), $array_attendance)
+            $this->actingAs($validUsers->random())
+                ->post(route("attendance.store"), $arrayAttendance)
                 ->assertRedirect(route("attendance.index"));
 
             // Check in DB
-            $this->assertNotNull(Attendance::where($array_attendance)->first());
+            $this->assertNotNull(Attendance::where($arrayAttendance)->first());
             $hour++;
         }
     }
 
     private function alterAttendance($method, $edit = false, $data = array()): void
     {
-        $allAttendance = Attendance::with("course.faculty")->get();
+        $allAttendance = Attendance::with("course.faculties")->get();
         foreach ($allAttendance as $attendance) {
             $url = route("attendance.update", $attendance->id);
             $this->assertLoginRequired($url, $method);
@@ -139,13 +143,15 @@ class AttendanceTest extends TestCase
             if ($edit) {
                 $urls[sprintf("%s/edit", $url)] = "get";
             }
-            $validUsers = array(
-                $this->pickRandomUser(Roles::ADMIN),
-                User::find($attendance->course->faculty->user_id)
-            );
-
+            $validUsers = $attendance->course->faculties->map(function ($faculty) {
+                return $faculty->user;
+            });
+            $validUsers->push($this->pickRandomUser(Roles::ADMIN));
+            $validFacultyIds = $attendance->course->faculties->map(function ($faculty) {
+                return $faculty->id;
+            });
             // Non admin users other than the faculty that owns the attendance are all denied delete
-            $users = User::where("faculty_id", "!=", $attendance->course->faculty_id)
+            $users = User::whereNotIn("faculty_id", $validFacultyIds->toArray())
                 ->whereHas("roles", function ($q) {
                     return $q->where("name", "!=", Roles::ADMIN);
                 })->get();
@@ -159,7 +165,7 @@ class AttendanceTest extends TestCase
 
             // Choose either admin/valid faculty randomly and perform operation
             call_user_func(
-                array($this->actingAs($validUsers[array_rand($validUsers)]), $method),
+                array($this->actingAs($validUsers->random()), $method),
                 $url,
                 $data
             )->assertStatus(200);
@@ -172,38 +178,38 @@ class AttendanceTest extends TestCase
 
     public function testAttendanceUpdate(): void
     {
-        $absentee = Absentee::with("attendance.course.faculty")->first();
-        $faculty = $absentee->attendance->course->faculty;
+        $absentee = Absentee::with("attendance.course.faculties")->first();
+        $faculties = $absentee->attendance->course->faculties;
+        foreach ($faculties as $faculty) {
+            $requestDatas = [
+                [$absentee->student_admission_id => LeaveType::NO_EXCUSE],
+                [$absentee->student_admission_id => LeaveType::DUTY_LEAVE],
+                [$absentee->student_admission_id => LeaveType::MEDICAL_LEAVE]
+            ];
 
-        $requestDatas = [
-            [$absentee->student_admission_id => LeaveType::NO_EXCUSE],
-            [$absentee->student_admission_id => LeaveType::DUTY_LEAVE],
-            [$absentee->student_admission_id => LeaveType::MEDICAL_LEAVE]
-        ];
+            foreach ($requestDatas as $request_data) {
+                $url = route("attendance.update", $absentee->attendance->id);
+                $this->actingAs($faculty->user)
+                    ->json(
+                        "PATCH",
+                        $url,
+                        ["absentees" => $request_data]
+                    )->assertStatus(200);
 
-        foreach ($requestDatas as $request_data) {
-            $url = route("attendance.update", $absentee->attendance->id);
-            $this->actingAs($faculty->user)
+                $absentee = Absentee::find($absentee->id);
+                $this->assertEquals(array_values($request_data)[0], $absentee->leave_excuse);
+            }
+
+            // Try to add a student who's not enrolled in this course
+            $studentUser = User::factory()->create();
+            $student = Student::factory(["user_id" => $studentUser->id])->create();
+            $this->actingAs($this->pickRandomUser(Roles::ADMIN))
                 ->json(
                     "PATCH",
                     $url,
-                    ["absentees" => $request_data]
-                )->assertStatus(200);
-
-            $absentee = Absentee::find($absentee->id);
-            $this->assertEquals(array_values($request_data)[0], $absentee->leave_excuse);
+                    ["absentees" => [$student->admission_id => LeaveType::NO_EXCUSE]]
+                )->assertStatus(400);
         }
-
-        // Try to add a student who's not enrolled in this course
-
-        $studentUser = User::factory()->create();
-        $student = Student::factory(["user_id" => $studentUser->id])->create();
-        $this->actingAs($this->pickRandomUser(Roles::ADMIN))
-            ->json(
-                "PATCH",
-                $url,
-                ["absentees" => [$student->admission_id => LeaveType::NO_EXCUSE]]
-            )->assertStatus(400);
 
         // Create a new absentee
         $randomCourse = Course::with("curriculums.student")->get()->random();
@@ -219,7 +225,8 @@ class AttendanceTest extends TestCase
 
         $absenteeInDB = Attendance::find($attendance->id)->absentees->first();
         $this->assertEquals($absenteeInDB->leave_excuse, $leaveExcuse);
-        // Verify object-level permissions & remove absentees
+
+        // Verify object-level permissions
         $this->alterAttendance("patch", edit: true);
     }
 
