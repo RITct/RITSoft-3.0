@@ -52,7 +52,7 @@ class AttendanceService
             );
         }
 
-        return $query;
+        return $query->unique();
     }
 
     private function isEditableAttendance($period, $faculty, $is_admin): bool
@@ -133,7 +133,7 @@ class AttendanceService
      * @param int $attendance_id
      * @return array
      */
-    public function getAbsenteeAsArray($course, int $absentee_id, int $attendance_id): array
+    public function getAbsenteeAsArray($course, string $absentee_id, int $attendance_id): array
     {
         $absentee = (new Absentee())->toArray();
         $absentee["student_admission_id"] = $course->curriculums->filter(

@@ -160,6 +160,7 @@ class AttendanceController extends Controller
         $attendance = Attendance::getBaseQuery()->findOrFail($attendanceId);
         // To aid in removing absentees
         $absenteeExistMap = [];
+
         foreach ($request->json("absentees", array()) as $admissionId => $leaveType) {
             $absentee = $attendance->absentees->firstWhere("student_admission_id", $admissionId);
             if (!$absentee) {
@@ -196,10 +197,11 @@ class AttendanceController extends Controller
         return response("OK");
     }
 
-    public function destroy($attendance_id)
+    public function destroy(int $attendance_id)
     {
         // Faculty
-        Attendance::destroy(array($attendance_id));
+        echo $attendance_id;
+        Attendance::find($attendance_id)->delete();
         return response("OK");
     }
 }

@@ -8,7 +8,7 @@
                 "method": "DELETE",
             }).then((r) => {
                 if (r.ok)
-                    alert("OK");
+                    location.reload();
                 else
                     alert("Failed");
             });

@@ -88,9 +88,8 @@ class FacultyService
         $user->faculty()->associate($faculty);
     }
 
-    public function updateFaculty($facultyId, $name, $phone, $email)
+    public function updateFaculty($faculty, $name, $phone, $email)
     {
-        $faculty = Faculty::with("user")->findOrFail($facultyId);
         $faculty_update_array = [
             "name" => $name,
             "phone" => $phone

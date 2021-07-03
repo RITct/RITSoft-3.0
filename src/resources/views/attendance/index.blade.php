@@ -11,7 +11,7 @@
                     if(r.ok)
                         location.reload();
                     else
-                        alert("Failed, are you sure this is your class?");
+                        alert("Failed, are you sure this is your course?");
                 })
         }
     </script>

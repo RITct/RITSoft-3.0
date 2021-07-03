@@ -17,7 +17,7 @@ class FacultyRequest extends FormRequest
     {
         $currentRoute = $this->route()->getName();
         $this->authUser = Auth::user();
-        $objectRoutes = ["faculty.show", "faculty.destroy"];
+        $objectRoutes = ["faculty.show", "faculty.destroy", "faculty.edit", "faculty.update"];
 
         if (in_array($currentRoute, $objectRoutes)) {
             $facultyId = $this->route()->parameter("faculty");
@@ -39,6 +39,8 @@ class FacultyRequest extends FormRequest
 
                 return $this->authUser->faculty?->isHOD() && $isHODSameDepartment && !$sameFaculty
                     || $this->authUser->isAdmin();
+            } elseif ($currentRoute == "faculty.edit" || $currentRoute == "faculty.update") {
+                return $this->faculty->id == $this->authUser->faculty_id || $this->authUser->isAdmin();
             }
         }
         return true;

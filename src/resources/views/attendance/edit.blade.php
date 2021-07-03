@@ -10,7 +10,7 @@
             for(const element of document.getElementsByClassName("form-element"))
                 data.absentees[element.name] = element.value;
 
-            fetch({{ route("attendance.update", $attendance->id) }}, {
+            fetch("{{ route("attendance.update", $attendance->id) }}", {
                 "method": "PATCH",
                 "headers": {"X-CSRF-TOKEN": "{{ csrf_token() }}"},
                 "body": JSON.stringify(data)
@@ -31,9 +31,9 @@
                 <p>Student: ${getStudentByAdmissionNo(admission_id).name}</p>
                 <p>
                     Reason for absence: <select class=\"form-element\" name=\"${admission_id}\">
-                        <option value=\"\" selected>No Excuse</option>
-                        <option value=\"medical_leave\">Medical Leave</option>
-                        <option value=\"duty_leave\">Duty Leave</option>
+                        <option value=\"{{ \App\Enums\LeaveType::NO_EXCUSE }}\" selected>No Excuse</option>
+                        <option value=\"{{ \App\Enums\LeaveType::MEDICAL_LEAVE }}\">Medical Leave</option>
+                        <option value=\"{{ \App\Enums\LeaveType::DUTY_LEAVE }}\">Duty Leave</option>
                     </select>
         `;
         return element;

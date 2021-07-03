@@ -143,12 +143,12 @@ class AttendanceTest extends TestCase
             if ($edit) {
                 $urls[sprintf("%s/edit", $url)] = "get";
             }
-            $validUsers = $attendance->course->faculties->map(function ($faculty){
+            $validUsers = $attendance->course->faculties->map(function ($faculty) {
                 return $faculty->user;
             });
             $validUsers->push($this->pickRandomUser(Roles::ADMIN));
-            $validFacultyIds = $attendance->course->faculties->map(function ($faculty){
-               return $faculty->id;
+            $validFacultyIds = $attendance->course->faculties->map(function ($faculty) {
+                return $faculty->id;
             });
             // Non admin users other than the faculty that owns the attendance are all denied delete
             $users = User::whereNotIn("faculty_id", $validFacultyIds->toArray())
