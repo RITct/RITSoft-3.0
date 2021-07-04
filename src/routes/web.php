@@ -10,7 +10,7 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\PhotoUploadController;
 use App\Http\Controllers\TestRequestController;
 use App\Http\Controllers\FeedbackController;
-
+use App\Http\Controllers\FeedbackCourseController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,6 +39,14 @@ Route::group(["middleware" => ["auth"]], function () {
     ]);
     Route::resource("testrequest", TestRequestController::class);
     Route::resource("feedbacks", FeedbackController::class);
+    Route::resource("feedbacks/courses/{course_id}", FeedbackCourseController::class, [
+        "only" => ["index", "create", "store"],
+        "names" => [
+            "index" => "faculties.courses.index",
+            "create" => "feedbacks.store",
+            "store" => "feedbacks.store"
+        ]
+    ]);
 });
 
 Route::group(["middleware" => ["guest"]], function () {

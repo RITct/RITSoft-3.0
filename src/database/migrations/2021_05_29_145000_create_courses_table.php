@@ -29,6 +29,9 @@ class CreateCoursesTable extends Migration
             $table->foreign('classroom_id')
                 ->references('id')
                 ->on('classrooms');
+
+            $table->boolean("is_feedback_open")->default(false);
+            $table->json("feedback_format")->nullable();
         });
     }
 

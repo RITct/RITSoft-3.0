@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\CourseTypes;
+use App\Enums\FeedbackQuestionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -72,5 +73,34 @@ class Course extends Model
     public static function getBaseQuery()
     {
         return Course::with("subject")->where("active", true);
+    }
+
+    public function getFeedbackFormat(): array
+    {
+        $default = [
+            [
+                "question" => "Question 1",
+                "type" => FeedbackQuestionType::MCQ,
+                "options" => [
+                    ["string" => "option1", "score" => 1],
+                    ["string" => "option2", "score" => 2],
+                    ["string" => "option3", "score" => 3],
+                    ["string" => "option4", "score" => 4],
+                ],
+                "required" => true
+            ],
+            [
+                "question" => "Question 2",
+                "type" => FeedbackQuestionType::BOOLEAN,
+                "required" => true
+            ],
+            [
+                "question" => "Question 3",
+                "type" => FeedbackQuestionType::TEXT,
+                "required" => true
+            ],
+        ];
+
+        return json_decode($this->feedback_format) ?? $default;
     }
 }

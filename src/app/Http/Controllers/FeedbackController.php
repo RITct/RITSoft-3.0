@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\Roles;
 use App\Http\Requests\FeedbackRequest;
 use App\Services\FeedbackService;
 
@@ -14,7 +13,6 @@ class FeedbackController extends Controller
     {
         $this->middleware("permission:feedback.list", ["only" => ["index"]]);
         $this->middleware("permission:feedback.retrieve", ["only" => ["show"]]);
-        $this->middleware("role:" . Roles::STUDENT, ["only" => ["create", "store"]]);
 
         $this->service = $feedbackService;
     }
