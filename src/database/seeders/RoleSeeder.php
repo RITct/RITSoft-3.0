@@ -32,19 +32,25 @@ class RoleSeeder extends Seeder
             "delete" => ["faculty.delete"],
             "all" => "faculty.*"
         ];
+        $feedbackPermissions = [
+            "view" => ["feedback.retrieve", "feedback.list"],
+        ];
 
         $roleHOD = Role::create(['name' => Roles::HOD]);
         $roleFaculty = Role::create(['name' => Roles::FACULTY]);
         $roleAdvisor = Role::create(["name" => Roles::STAFF_ADVISOR]);
         $rolePrincipal = Role::create(["name" => Roles::PRINCIPAL]);
 
-        $roleHOD->syncPermissions(
-            $attendancePermissions["view"],
-            array_merge(["faculty.create", "faculty.delete"], $facultyPermissions["view"]),
+        $roleFaculty->syncPermissions(
+            $attendancePermissions["all"],
+            ["faculty.retrieve", "faculty.update"],
+            $feedbackPermissions["view"]
         );
-        $roleFaculty->syncPermissions($attendancePermissions["all"], ["faculty.retrieve", "faculty.update"]);
-        $roleAdvisor->syncPermissions($attendancePermissions["view"]);
-        $rolePrincipal->syncPermissions($attendancePermissions["view"], $facultyPermissions["view"]);
+        $roleHOD->syncPermissions(
+            ["faculty.create", "faculty.delete"],
+            $facultyPermissions["view"]
+        );
+        $rolePrincipal->syncPermissions($facultyPermissions["view"]);
 
         $roleStudent = Role::create(['name' => Roles::STUDENT]);
         $roleStudent->syncPermissions("attendance.retrieve");

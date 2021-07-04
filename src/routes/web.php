@@ -9,6 +9,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\PhotoUploadController;
 use App\Http\Controllers\TestRequestController;
+use App\Http\Controllers\FeedbackController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,7 @@ Route::group(["middleware" => ["auth"]], function () {
         ]
     ]);
     Route::resource("testrequest", TestRequestController::class);
+    Route::resource("feedbacks", FeedbackController::class);
 });
 
 Route::group(["middleware" => ["guest"]], function () {

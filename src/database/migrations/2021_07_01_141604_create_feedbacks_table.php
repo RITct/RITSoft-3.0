@@ -15,10 +15,16 @@ class CreateFeedbacksTable extends Migration
     {
         Schema::create('feedbacks', function (Blueprint $table) {
             $table->id();
-            $table->integer("curriculum_id");
-            $table->foreign("curriculum_id")
+            $table->integer("course_id");
+            $table->foreign("course_id")
                 ->references("id")
-                ->on("curriculums")
+                ->on("courses")
+                ->onDelete("cascade");
+
+            $table->string("faculty_id");
+            $table->foreign("faculty_id")
+                ->references("id")
+                ->on("faculties")
                 ->onDelete("cascade");
 
             $table->json("data");
