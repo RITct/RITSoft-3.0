@@ -40,7 +40,7 @@ class FeedbackService
                 }
                 break;
             case FeedbackQuestionType::TEXT:
-                // TODO Is validation required?
+                // TODO Is validation required? YES
                 break;
         }
     }
@@ -79,8 +79,13 @@ class FeedbackService
 
         $validFacultyIds = $course->faculties->map(function ($faculty) {
             return $faculty->id;
-        });
+        })->toArray();
 
         return count(array_diff($userFacultyIds, $validFacultyIds)) == 0;
+    }
+
+    public function isFeedbackComplete($authUser, $courseId)
+    {
+        return $authUser->student->curriculums->firstWhere("course_id", $courseId)->is_feedback_complete;
     }
 }

@@ -21,6 +21,13 @@ class Feedback extends Model
 
     protected $with = ["course", "faculty"];
 
+    protected $casts = ["data" => "json"];
+
+    public function setDataAttribute($data)
+    {
+        $this->attributes["data"] = json_encode($data);
+    }
+
     public function course(): BelongsTo
     {
         return $this->belongsTo(Course::class);

@@ -28,17 +28,38 @@ class FeedbackCourseController extends Controller
 
     public function create(FeedbackCourseRequest $request)
     {
+        if ($this->service->isFeedbackComplete($request->authUser, $request->course->id)) {
+            abort(409, "You already completed feedback for this course");
+        }
+
         return view("feedback.create", [
+            "courseId" => $request->course->id,
+            "faculties" => $request->course->faculties,
             "format" => $request->course->getFeedbackFormat()
         ]);
     }
 
     public function store(FeedbackCourseRequest $request)
     {
-        $datas = $request->input("data");
+        /*
+         * {
+         *  faculty1_id: {
+         *      <feedback data>
+         *  },
+         *  faculty_2_id: {
+         *      <feedback data>
+         *  }
+         *  ...
+         * }
+         */
+        $datas = $request->json("data");
 
         if (!$this->service->verifyFaculties($datas, $request->course)) {
             abort(400, "Invalid faculties");
+        }
+
+        if ($this->service->isFeedbackComplete($request->authUser, $request->course->id)) {
+            abort(409, "You already completed feedback for this course");
         }
 
         $feedbacks = array();
@@ -49,12 +70,15 @@ class FeedbackCourseController extends Controller
                 abort(400, $e->getMessage());
             }
             array_push($feedbacks, [
-                "data" => $feedbackData,
+                // Eloquent isn't used for bulk insert so mutators won't word, so format manually
+                "data" => json_encode($feedbackData),
                 "faculty_id" => $faculty_id,
                 "course_id" => $request->course->id
             ]);
         }
+        // Bulk insert feedback and set feedback to complete
         Feedback::insert($feedbacks);
+        $request->authUser->student->finishFeedback($request->course->id);
 
         return response("OK");
     }

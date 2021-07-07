@@ -58,4 +58,12 @@ class Student extends PersonalData
 
         return $targetCourse != null && !$targetCourse->isEmpty();
     }
+
+    public function finishFeedback($courseId)
+    {
+        echo json_encode($this->curriculums);
+        $targetCurriculum = $this->curriculums->firstWhere("course_id", $courseId);
+        $targetCurriculum->is_feedback_complete = true;
+        $targetCurriculum->save();
+    }
 }
