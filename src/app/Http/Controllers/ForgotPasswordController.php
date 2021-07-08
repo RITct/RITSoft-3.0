@@ -20,7 +20,7 @@ class ForgotPasswordController extends Controller
 
     /**
      * Generate token for resetting password and send it via email
-     * 
+     *
      * @param \Illuminate\Http\Request  $request
      * @return Status
      */
@@ -30,7 +30,7 @@ class ForgotPasswordController extends Controller
         $status = Password::sendResetLink(
             $request->only('email')
         );
-    
+
         return $status === Password::RESET_LINK_SENT
                     ? back()->with(['status' => __($status)])
                     : back()->withErrors(['email' => __($status)]);
@@ -46,32 +46,30 @@ class ForgotPasswordController extends Controller
 
     /**
      * Reset new password.
-     * 
+     *
      * @param \Illuminate\Http\Request  $request
      */
     public function resetPassword(Request $request)
     {
-        
         $request->validate([
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|confirmed',
         ]);
-         
+
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
                     'password' => $password
                 ])->setRememberToken(Str::random(60));
-    
+
                 $user->save();
-    
+
                 event(new PasswordReset($user));
             }
         );
-        
-    
+
         return $status === Password::PASSWORD_RESET
                     ? redirect()->route('login')->with('status', __($status))
                     : back()->withErrors(['email' => [__($status)]]);
