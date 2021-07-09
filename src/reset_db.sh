@@ -1,2 +1,2 @@
-php artisan migrate:refresh
+php artisan migrate:fresh
 sh ./initialsetup.sh

@@ -33,12 +33,37 @@ class Student extends PersonalData
         return $this->belongsTo(Classroom::class);
     }
 
+    public function curriculums()
+    {
+        return $this->hasMany(Curriculum::class);
+    }
+
     public function semester()
     {
         return $this->classroom->semester;
     }
+
     public function department()
     {
         return $this->classroom->department;
+    }
+
+    public function hasCourse($courseId): bool
+    {
+        $targetCourse = $this?->curriculums?->map(function ($curriculum) {
+            return $curriculum->course_id;
+        })?->filter(function ($studentCourseId) use ($courseId) {
+            return $studentCourseId == $courseId;
+        });
+
+        return $targetCourse != null && !$targetCourse->isEmpty();
+    }
+
+    public function finishFeedback($courseId)
+    {
+        echo json_encode($this->curriculums);
+        $targetCurriculum = $this->curriculums->firstWhere("course_id", $courseId);
+        $targetCurriculum->is_feedback_complete = true;
+        $targetCurriculum->save();
     }
 }

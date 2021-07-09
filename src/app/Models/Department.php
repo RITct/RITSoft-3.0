@@ -30,7 +30,7 @@ class Department extends Model
         return $this->hasMany(Classroom::class);
     }
 
-    public function getHOD()
+    public function getHOD(): Faculty
     {
         return $this->faculties->first(function ($value, $_) {
             return $value->user->hasRole(Roles::HOD);

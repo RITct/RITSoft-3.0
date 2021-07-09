@@ -50,7 +50,7 @@ abstract class TestCase extends BaseTestCase
         } elseif (in_array(Roles::STAFF_ADVISOR, $role_names)) {
             return Roles::STAFF_ADVISOR;
         } else {
-            // Faculty, Student
+            // Faculty, Student, Office
             return array_pop($role_names);
         }
     }
