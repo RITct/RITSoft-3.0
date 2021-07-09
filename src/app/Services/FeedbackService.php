@@ -26,9 +26,12 @@ class FeedbackService
         }
     }
 
-    private function validateFeedbackQuestionOrThrow($type, $answer): void
+    private function validateFeedbackQuestionOrThrow($format, $answer): void
     {
-        switch ($type) {
+        if (!$format["required"] && $answer === "") {
+            return;
+        }
+        switch ($format["type"]) {
             case FeedbackQuestionType::MCQ:
                 if (!is_numeric($answer) || !in_array($answer, [1, 2, 3, 4])) {
                     throw new IntendedException("Invalid Feedback");
@@ -40,7 +43,9 @@ class FeedbackService
                 }
                 break;
             case FeedbackQuestionType::TEXT:
-                // TODO Is validation required? YES
+                if ($answer === "") {
+                    throw new IntendedException("Invalid Feedback");
+                }
                 break;
         }
     }
@@ -53,7 +58,7 @@ class FeedbackService
             throw new IntendedException("Invalid Feedback");
         }
         for ($i = 0; $i < count($feedbackFromUser); $i++) {
-            $this->validateFeedbackQuestionOrThrow($format[$i]["type"], $feedbackFromUser[$i]);
+            $this->validateFeedbackQuestionOrThrow($format[$i], $feedbackFromUser[$i]);
             array_push($feedbackResult, [
                 "question" => $format[$i]["question"],
                 "type" => $format[$i]["type"],

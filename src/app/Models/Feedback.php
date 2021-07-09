@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\FeedbackQuestionType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,6 +12,12 @@ class Feedback extends Model
 
     protected $fillable = [
         "data"
+    ];
+
+    static array $testFeedback = [
+        3,
+        0,
+        "testing the system"
     ];
 
     public $timestamps = false;

@@ -19,10 +19,35 @@ class Course extends Model
     protected $guarded = [
         'semester',
         'type',
-        'active' => true
+        'active' => true,
+        'is_feedback_open' => false
     ];
 
     protected $with = ["faculties"];
+
+    static array $defaultFeedbackFormat = [
+        [
+            "question" => "Question 1",
+            "type" => FeedbackQuestionType::MCQ,
+            "options" => [
+                ["string" => "option1", "score" => 1],
+                ["string" => "option2", "score" => 2],
+                ["string" => "option3", "score" => 3],
+                ["string" => "option4", "score" => 4],
+            ],
+            "required" => true
+        ],
+        [
+            "question" => "Question 2",
+            "type" => FeedbackQuestionType::BOOLEAN,
+            "required" => true
+        ],
+        [
+            "question" => "Question 3",
+            "type" => FeedbackQuestionType::TEXT,
+            "required" => true
+        ],
+    ];
 
     public function faculties(): BelongsToMany
     {
@@ -77,30 +102,6 @@ class Course extends Model
 
     public function getFeedbackFormat(): array
     {
-        $default = [
-            [
-                "question" => "Question 1",
-                "type" => FeedbackQuestionType::MCQ,
-                "options" => [
-                    ["string" => "option1", "score" => 1],
-                    ["string" => "option2", "score" => 2],
-                    ["string" => "option3", "score" => 3],
-                    ["string" => "option4", "score" => 4],
-                ],
-                "required" => true
-            ],
-            [
-                "question" => "Question 2",
-                "type" => FeedbackQuestionType::BOOLEAN,
-                "required" => true
-            ],
-            [
-                "question" => "Question 3",
-                "type" => FeedbackQuestionType::TEXT,
-                "required" => true
-            ],
-        ];
-
-        return json_decode($this->feedback_format) ?? $default;
+        return json_decode($this->feedback_format) ?? Course::$defaultFeedbackFormat;
     }
 }

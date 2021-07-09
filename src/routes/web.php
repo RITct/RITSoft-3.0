@@ -42,8 +42,8 @@ Route::group(["middleware" => ["auth"]], function () {
     Route::resource("feedbacks/courses/{course_id}", FeedbackCourseController::class, [
         "only" => ["index", "create", "store"],
         "names" => [
-            "index" => "faculties.courses.index",
-            "create" => "feedbacks.store",
+            "index" => "feedbacks.courses.index",
+            "create" => "feedbacks.create",
             "store" => "feedbacks.store"
         ]
     ]);

@@ -70,7 +70,7 @@ class FeedbackCourseController extends Controller
                 abort(400, $e->getMessage());
             }
             array_push($feedbacks, [
-                // Eloquent isn't used for bulk insert so mutators won't word, so format manually
+                // Eloquent isn't used for bulk insert so mutators won't work, so format manually
                 "data" => json_encode($feedbackData),
                 "faculty_id" => $faculty_id,
                 "course_id" => $request->course->id

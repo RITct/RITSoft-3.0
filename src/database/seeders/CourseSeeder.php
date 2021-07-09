@@ -23,6 +23,7 @@ class CourseSeeder extends Seeder
         $s1classroom = Classroom::where(["semester" => 1, "department_code" => "CSE"])->first();
 
         $course1 = Course::create([
+            'is_feedback_open' => true,
             'subject_code' => $subject1->code,
             'type' => CourseTypes::REGULAR,
             'semester' => 1,
@@ -30,6 +31,7 @@ class CourseSeeder extends Seeder
         ]);
 
         $course2 = Course::create([
+            'is_feedback_open' => true,
             'subject_code' => $subject2->code,
             'type' => CourseTypes::REGULAR,
             'semester' => 1,

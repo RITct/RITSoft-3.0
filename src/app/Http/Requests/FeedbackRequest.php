@@ -19,9 +19,9 @@ class FeedbackRequest extends FormRequest
         if ($this->route()->getName() == "feedbacks.show") {
             $this->feedback = Feedback::findOrFail($this->route()->parameter("feedback"));
 
-            $canViewEverything = $this->authUser?->faculty->isPrincipal() || $this->authUser->isAdmin();
+            $canViewEverything = $this->authUser->faculty?->isPrincipal() || $this->authUser->isAdmin();
 
-            $isHODAndSameDepartment = $this->authUser?->isHOD() &&
+            $isHODAndSameDepartment = $this->authUser->faculty?->isHOD() &&
                 $this->feedback->course->department_code == $this->authUser->faculty?->department_code;
 
             $isSameFaculty = $this->authUser->faculty_id == $this->feedback->faculty_id;
