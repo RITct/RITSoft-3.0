@@ -7,6 +7,20 @@
                 <input type="text" placeholder="Username" name="username"><br/>
                 <input type="password" placeholder="Password" name="password"><br/>
                 <button type="submit">Login</button>
-            </form>
+                <a href="{{ route('password.email') }}">Forgot Password?</a>
+            </form> 
+            <div class="message">
+                @if (session('status'))
+                    <div>{{ session('status') }}</div>
+                @endif 
+            </div>
+            <div class="errors">
+                @error('username')
+                 <div class="email-error">
+                    {{ $message }}
+                </div>   
+                @enderror
+            </div>
+
     </div>
 @endsection

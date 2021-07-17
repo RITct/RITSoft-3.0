@@ -9,6 +9,7 @@ use App\Http\Controllers\FacultyController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\PhotoUploadController;
 use App\Http\Controllers\TestRequestController;
+use App\Http\Controllers\ForgotPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,10 @@ Route::group(["middleware" => ["auth"]], function () {
 Route::group(["middleware" => ["guest"]], function () {
     Route::get("auth/login", [AuthController::class, "login"])->name("login");
     Route::post("auth/login", [AuthController::class, "authenticate"])->name("login.post");
+    Route::get("forgotPassword", [ForgotPasswordController::class, "index"])->name('password.request');
+    Route::post("forgotPassword", [ForgotPasswordController::class, "email"])->name('password.email');
+    Route::get("resetPassword/{token}", [ForgotPasswordController::class, "resetForm"])->name('password.reset');
+    Route::post("/resetPassword", [ForgotPasswordController::class, "resetPassword"])->name('password.update');;
 });
 
 
