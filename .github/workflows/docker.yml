@@ -8,7 +8,7 @@ on:
       - v*
 
 env:
-  IMAGE_NAME: RITSoft-3.0
+  IMAGE_NAME: RITSoft3
 
 jobs:
   test:
